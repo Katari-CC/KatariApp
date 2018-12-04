@@ -38,7 +38,9 @@ export default class HomeScreen extends React.Component {
           <View style={styles.getStartedContainer}>
             {this._maybeRenderDevelopmentModeWarning()}
 
-            <Text style={styles.getStartedText}>Get started by opening</Text>
+            <Text style={styles.getStartedText}>
+              Get started by ygvytvyv !!! sora chouyguobeck!
+            </Text>
 
             <View
               style={[styles.codeHighlightContainer, styles.homeScreenFilename]}
@@ -49,8 +51,8 @@ export default class HomeScreen extends React.Component {
             </View>
 
             <Text style={styles.getStartedText}>
-              Change this text and your app will automatically reload.
-              THIS IS A TEST PLEASE WORK PLEASE WORK
+              Change this text and your app will automatically reload. THIS IS A
+              TEST PLEASE WORK PLEASE WORK
             </Text>
           </View>
 
