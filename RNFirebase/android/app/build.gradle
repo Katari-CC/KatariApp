@@ -106,6 +106,7 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
+        multiDexEnabled true
     }
     splits {
         abi {
@@ -143,6 +144,7 @@ dependencies {
     implementation project(':react-native-firebase')
     implementation 'com.google.android.gms:play_services_base:15.0.1'
     implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation "com.google.firebase:firebase-firestore:17.1.2"
 }
 
 // Run this once to be able to run the application with BUCK
