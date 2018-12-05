@@ -18,14 +18,16 @@
     "@expo/samples": "2.1.1",
     "dotenv": "^6.1.0",
     "expo": "^31.0.2",
+    "firebase": "^5.6.0",
     "node": "^11.2.0",
     "react": "16.6.1",
     "react-native": "0.57.7",
     "react-native-cli": "^2.0.1",
+    "react-native-elements": "^0.19.1",
     "react-native-fcm": "^16.2.4",
     "react-native-firebase": "^5.1.1",
     "react-native-maps": "^0.22.1",
-    "react-navigation": "^2.18.2"
+    "react-navigation": "^3.0.5"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",
