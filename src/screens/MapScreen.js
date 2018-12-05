@@ -1,17 +1,19 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Marker, AnimatedRegion } from 'react-native-maps';
 
 export default class MapScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      lattitude: 35.708647,
+      latitude: 35.708647,
       longitude: 139.729769,
-      // coordinate: new AnimatedRegion({
-      //   latitude: 35.708647,
-      //   longitude: 139.729769
-      // }),
+      coordinate:
+      {
+        latitude: 35.708647,
+        longitude: 139.729769
+      }
+      ,
     };
   }
   static navigationOptions = {
@@ -20,50 +22,21 @@ export default class MapScreen extends React.Component {
 
 
   render() {
-    //   this.watchID = navigator.geolocation.watchPosition(
-    //     position => {
-    //       const { coordinate, routeCoordinates, distanceTravelled } = this.state;
-    //       const { latitude, longitude } = position.coords;
 
-    //       const newCoordinate = {
-    //         latitude,
-    //         longitude
-    //       };
-    //       if (Platform.OS === "android") {
-    //         if (this.marker) {
-    //           this.marker._component.animateMarkerToCoordinate(
-    //             newCoordinate,
-    //             500
-    //           );
-    //         }
-    //       } else {
-    //         coordinate.timing(newCoordinate).start();
-    //       }
-    //       this.setState({
-    //         latitude,
-    //         longitude,
-    //         routeCoordinates: routeCoordinates.concat([newCoordinate]),
-    //         distanceTravelled:
-    //           distanceTravelled + this.calcDistance(newCoordinate),
-    //         prevLatLng: newCoordinate
-    //       });
-    //     },
-    //     error => console.log(error),
-    //     { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-    //   );
-    // }
     return (
       <View style={styles.container} >
+        <Text>{JSON.stringify(this.state)}</Text>
         <MapView
           provider={PROVIDER_GOOGLE} // remove if not using Google Maps
           style={styles.map}
           region={{
-            latitude: 35.708647,
-            longitude: 139.729769,
-            latitudeDelta: 0.015,
-            longitudeDelta: 0.0121,
+            latitude: this.state.latitude,
+            longitude: this.state.longitude,
+            latitudeDelta: 0.010,
+            longitudeDelta: 0.009,
           }}
         >
+          <MapView.Marker coordinate={this.state.coordinate} />
         </MapView>
       </View>
     );
