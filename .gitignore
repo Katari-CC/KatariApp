@@ -31,6 +31,7 @@ DerivedData
 *.xcuserstate
 project.xcworkspace
 yarn.lock
+.env
 
 # Android/IntelliJ
 #
