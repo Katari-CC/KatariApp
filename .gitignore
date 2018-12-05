@@ -2,9 +2,7 @@ node_modules
 .expo
 
 
-android/
-app/
-google-services.json
+android/app/src/google-services.json
 
 
 # OSX
