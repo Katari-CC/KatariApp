@@ -36,9 +36,6 @@ export default class App extends Component<Props> {
     } else {
       return (
         <View style={styles.container}>
-          <Text style={styles.welcome}>Welcome to React Native!</Text>
-          <Text style={styles.instructions}>To get started, edit App.js</Text>
-          <Text style={styles.instructions}>{instructions}</Text>
           <AppNavigator />
         </View>
       );
@@ -47,13 +44,13 @@ export default class App extends Component<Props> {
 
   _loadResourcesAsync = async () => {
     return Promise.all([
-      Asset.loadAsync([require("./assets/images/icon.png")]),
+      Asset.loadAsync([require("../assets/images/icon.png")]),
       Font.loadAsync({
         // This is the font that we are using for our tab bar
         ...Icon.Ionicons.font,
         // We include SpaceMono because we use it in HomeScreen.js. Feel free
         // to remove this if you are not using it in your app
-        "space-mono": require("./assets/fonts/SpaceMono-Regular.ttf")
+        "space-mono": require("../assets/fonts/SpaceMono-Regular.ttf")
       })
     ]);
   };
