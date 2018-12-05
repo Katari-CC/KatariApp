@@ -34,7 +34,7 @@ MapStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-map' : 'md-map'}
+      name={Platform.OS === 'ios' ? 'ios-navigate' : 'md-navigate'}
     />
   ),
 };
@@ -48,7 +48,7 @@ ProfileStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-man' : 'md-man'}
+      name={Platform.OS === 'ios' ? 'ios-person' : 'md-person'}
     />
   ),
 };
