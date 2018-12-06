@@ -18,7 +18,8 @@ export default class MapScreen extends React.Component {
     this.addMarker = this.addMarker.bind(this);
   }
   static navigationOptions = {
-    title: "Map"
+    title: "Map",
+    header: null
   };
 
   //Add Marker function we can use later for adding
@@ -36,28 +37,26 @@ export default class MapScreen extends React.Component {
   render() {
 
     return (
-      <View style={styles.container} >
-        <MapView
-          provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-          style={styles.map}
-          region={{
-            latitude: this.state.latitude,
-            longitude: this.state.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.007,
-          }}
-        >
-          <MapView.Marker coordinate={this.state.coordinate} >
-            <View style={styles.currentLocation}>
-            </View>
-          </MapView.Marker>
-          {/* {this.state.markers.map((marker) => {
+      <MapView
+        provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+        style={styles.map}
+        region={{
+          latitude: this.state.latitude,
+          longitude: this.state.longitude,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.007,
+        }}
+      >
+        <MapView.Marker coordinate={this.state.coordinate} >
+          <View style={styles.currentLocation}>
+          </View>
+        </MapView.Marker>
+        {/* {this.state.markers.map((marker) => {
             return (
               <Marker {...marker} />
             )
           })} */}
-        </MapView>
-      </View>
+      </MapView>
     );
   }
 }
