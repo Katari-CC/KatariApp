@@ -18,7 +18,7 @@ export default class MapScreen extends React.Component {
     this.addMarker = this.addMarker.bind(this);
   }
   static navigationOptions = {
-    title: 'Map',
+    title: "Map"
   };
 
   //Add Marker function we can use later for adding
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff"
   },
   map: {
     ...StyleSheet.absoluteFillObject,
