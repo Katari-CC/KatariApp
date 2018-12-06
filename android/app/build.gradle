@@ -143,9 +143,11 @@ dependencies {
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation project(':react-native-firebase')
-    implementation 'com.google.android.gms:play_services_base:15.0.1'
-    implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'com.google.android.gms:play_services_base:16.0.1'
+    implementation 'com.google.firebase:firebase-core:16.0.4'
     implementation "com.google.firebase:firebase-firestore:17.1.2"
+    implementation "com.google.firebase:firebase-auth:16.0.5"
+    implementation "com.google.firebase:firebase-database:16.0.4"
     implementation project(':react-native-maps')
 }
 

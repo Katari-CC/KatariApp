@@ -7,10 +7,12 @@
  */
 
 import React, { Component } from "react";
-import { Platform, StatusBar, StyleSheet, View, Text } from "react-native";
+import { Platform, View, StyleSheet } from "react-native";
 import { AppLoading, Asset, Font, Icon } from "expo";
 import AppNavigator from "./navigation/AppNavigator";
-
+import UserInput from "./components/UserInput";
+import UserInputButton from "./components/UserInputButton";
+import firebase from "./utils/firebaseClient";
 const instructions = Platform.select({
   ios: "Press Cmd+R to reload,\n" + "Cmd+D or shake for dev menu",
   android:
@@ -21,8 +23,15 @@ const instructions = Platform.select({
 type Props = {};
 export default class App extends Component<Props> {
   state = {
-    isLoadingComplete: false
+    isLoadingComplete: false,
+    email: "",
+    password: "",
+    error: "",
+    loading: false,
+    isLoggedIn: true
   };
+
+  componentWillMount() {}
 
   render() {
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
@@ -69,7 +78,8 @@ export default class App extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
+    padding: 20
   },
   welcome: {
     fontSize: 20,
