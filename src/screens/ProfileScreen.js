@@ -2,9 +2,9 @@ import React from 'react';
 import { ScrollView, Text, StyleSheet } from 'react-native';
 export default class ProfileScreen extends React.Component {
   static navigationOptions = {
-    title: "User's username will go here!",
+    title: "Profile",
+    header: null
   };
-
   render() {
     return (
       <ScrollView style={styles.container}>
@@ -172,7 +172,7 @@ export default class ProfileScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 15,
+    paddingTop: 25,
     backgroundColor: '#fff',
   },
 });
