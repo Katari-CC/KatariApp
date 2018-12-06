@@ -1,10 +1,18 @@
 import React from "react";
-import { StyleSheet, Text, TextInput, View, Button } from "react-native";
-// import firebase from "react-native-firebase";
+import { StyleSheet, TextInput, View } from "react-native";
+import {
+  Input,
+  Text,
+  FormLabel,
+  FormInput,
+  FormValidationMessage,
+  Button
+} from "react-native-elements";
+import Icon from "react-native-vector-icons/FontAwesome";
 import firebase from "../utils/firebaseClient";
 
 export default class SignUp extends React.Component {
-  state = { email: "", password: "", errorMessage: null };
+  state = { email: "", password: "", errorMessage: null, username: "" };
 
   handleSignUp = () => {
     const { email, password } = this.state;
@@ -18,30 +26,42 @@ export default class SignUp extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Sign Up</Text>
         {this.state.errorMessage && (
           <Text style={{ color: "red" }}>{this.state.errorMessage}</Text>
         )}
-        <TextInput
-          placeholder="Email"
-          autoCapitalize="none"
-          style={styles.textInput}
+        <FormLabel>Username</FormLabel>
+        <FormInput
+          style={styles.size}
+          onChangeText={username => this.setState({ username })}
+          value={this.state.username}
+        />
+        <FormLabel>Email</FormLabel>
+        <FormInput
+          style={styles.size}
           onChangeText={email => this.setState({ email })}
           value={this.state.email}
         />
-        <TextInput
+        <FormValidationMessage>{"required"}</FormValidationMessage>
+        <FormLabel>Password</FormLabel>
+        <FormInput
           secureTextEntry
-          placeholder="Password"
-          autoCapitalize="none"
-          style={styles.textInput}
+          style={styles.size}
           onChangeText={password => this.setState({ password })}
           value={this.state.password}
         />
-        <Button title="Sign Up" onPress={this.handleSignUp} />
+        <FormValidationMessage>{"required"}</FormValidationMessage>
+        <Text style={styles.space} />
         <Button
-          title="Already have an account? Login"
-          onPress={() => this.props.navigation.navigate("Login")}
+          buttonStyle={styles.size}
+          title="Sign Up"
+          onPress={this.handleSignUp}
         />
+        <Text
+          style={styles.link}
+          onPress={() => this.props.navigation.navigate("Login")}
+        >
+          Has an account? Login from here!
+        </Text>
       </View>
     );
   }
@@ -49,15 +69,32 @@ export default class SignUp extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
+    marginTop: 50,
+    justifyContent: "center"
   },
-  textInput: {
-    height: 40,
-    width: "90%",
-    borderColor: "gray",
-    borderWidth: 1,
-    marginTop: 8
+  space: {
+    marginTop: 10,
+    marginBottom: 10
+  },
+  link: {
+    marginLeft: 25,
+    color: "grey",
+    fontWeight: "bold",
+    fontSize: 18,
+    textShadowColor: "pink",
+    textDecorationLine: "underline",
+    marginTop: 10,
+    marginBottom: 10,
+    width: "100%",
+    height: 50
+  },
+  size: {
+    backgroundColor: "rgba(92, 99,216, 1)",
+    width: "100%",
+    height: 50,
+    borderWidth: 0,
+    borderRadius: 5,
+    marginTop: 10,
+    marginBottom: 10
   }
 });

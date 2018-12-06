@@ -10,8 +10,6 @@ import React, { Component } from "react";
 import { Platform, View, StyleSheet } from "react-native";
 import { AppLoading, Asset, Font, Icon } from "expo";
 import AppNavigator from "./navigation/AppNavigator";
-import UserInput from "./components/UserInput";
-import UserInputButton from "./components/UserInputButton";
 import firebase from "./utils/firebaseClient";
 const instructions = Platform.select({
   ios: "Press Cmd+R to reload,\n" + "Cmd+D or shake for dev menu",

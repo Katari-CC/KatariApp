@@ -1,6 +1,12 @@
 import React from "react";
-import { StyleSheet, Text, TextInput, View, Button } from "react-native";
-// import firebase from "react-native-firebase";
+import { StyleSheet, TextInput, View } from "react-native";
+import {
+  FormLabel,
+  Text,
+  FormInput,
+  FormValidationMessage,
+  Button
+} from "react-native-elements";
 import firebase from "../utils/firebaseClient";
 
 export default class Login extends React.Component {
@@ -18,30 +24,37 @@ export default class Login extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Login</Text>
         {this.state.errorMessage && (
           <Text style={{ color: "red" }}>{this.state.errorMessage}</Text>
         )}
-        <TextInput
-          style={styles.textInput}
-          autoCapitalize="none"
-          placeholder="Email"
+
+        <FormLabel>Email</FormLabel>
+        <FormInput
+          style={styles.size}
           onChangeText={email => this.setState({ email })}
           value={this.state.email}
         />
-        <TextInput
+        <FormValidationMessage>{"required"}</FormValidationMessage>
+        <FormLabel>Password</FormLabel>
+        <FormInput
           secureTextEntry
-          style={styles.textInput}
-          autoCapitalize="none"
-          placeholder="Password"
+          style={styles.size}
           onChangeText={password => this.setState({ password })}
           value={this.state.password}
         />
-        <Button title="Login" onPress={this.handleLogin} />
+        <FormValidationMessage>{"required"}</FormValidationMessage>
+        <Text style={styles.space} />
         <Button
-          title="Don't have an account? Sign Up"
-          onPress={() => this.props.navigation.navigate("SignUp")}
+          buttonStyle={styles.size}
+          title="Login"
+          onPress={this.handleLogin}
         />
+        <Text
+          style={styles.link}
+          onPress={() => this.props.navigation.navigate("SignUp")}
+        >
+          Create a new account from here!
+        </Text>
       </View>
     );
   }
@@ -49,42 +62,32 @@ export default class Login extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
+    marginTop: 50,
+    justifyContent: "center"
   },
-  textInput: {
-    height: 40,
-    width: "90%",
-    borderColor: "gray",
-    borderWidth: 1,
-    marginTop: 8
+  space: {
+    marginTop: 10,
+    marginBottom: 10
+  },
+  link: {
+    marginLeft: 25,
+    color: "grey",
+    fontWeight: "bold",
+    fontSize: 18,
+    textShadowColor: "pink",
+    textDecorationLine: "underline",
+    marginTop: 10,
+    marginBottom: 10,
+    width: "100%",
+    height: 50
+  },
+  size: {
+    backgroundColor: "rgba(92, 99,216, 1)",
+    width: "100%",
+    height: 50,
+    borderWidth: 0,
+    borderRadius: 5,
+    marginTop: 10,
+    marginBottom: 10
   }
 });
-
-// return (
-//     <View style={styles.container}>
-//       <UserInput
-//         placeholder="Enter your email"
-//         label="Email"
-//         onChangeText={email => this.setState({ email })}
-//         value={this.state.email}
-//       />
-//       <UserInput
-//         placeholder="Enter your password"
-//         label="Password"
-//         secureTextEntry
-//         onChangeText={password => this.setState({ password })}
-//         value={this.state.password}
-//       />
-//       <UserInputButton
-//         onPress={() => {
-//           this.isLoggedIn = !this.isLoggedIn;
-//         }}
-//       >
-//         Log In
-//       </UserInputButton>
-//     </View>
-//   );
-// }
-// }
