@@ -15,7 +15,8 @@ import "firebase/firestore";
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
-    title: "Home"
+    title: "Home",
+    header: null
   };
 
   componentWillMount() {
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: 15
+    paddingTop: 50
   },
   developmentModeText: {
     marginBottom: 20,
