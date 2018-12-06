@@ -1,5 +1,6 @@
 import React from "react";
-import { View, StyleSheet, Text, TextInput } from "react-native";
+import { View, StyleSheet, Text, TextInput, Button } from "react-native";
+import { FormLabel, FormInput } from "react-native-elements";
 
 export const UserInput = ({
   label,
@@ -8,20 +9,76 @@ export const UserInput = ({
   placeholder,
   secureTextEntry
 }) => {
+  onLoginPress = () => {
+    this.state({ error: "", loading: true });
+
+    const { email, password } = this.state;
+    firebase
+      .auth()
+      .signInAndRetrieveDataWithEmailAndPassword(email, password)
+      .then(() => {
+        this.state({ error: "", loading: false });
+        this.props.navigation.navigate("Main");
+      })
+      .catch(() => {
+        this.state({ error: "Auth failed!", loading: false });
+      });
+  };
+
+  onSignUpPress = () => {
+    this.state({ error: "", loading: true });
+
+    const { email, password } = this.state;
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(() => {
+        this.state({ error: "", loading: false });
+        this.props.navigation.navigate("Main");
+      })
+      .catch(() => {
+        this.state({ error: "Auth failed!", loading: false });
+      });
+  };
+
+  renderButtonOrLoading = () => {
+    if (this.state.loading) {
+      return <Text>Loading</Text>;
+    }
+    return (
+      <View>
+        <Button onPress={this.onLoginPress}>Login</Button>
+        <Button onPress={this.onSignUpPress}>Sign Up</Button>
+      </View>
+    );
+  };
+
   return (
     <View style={style.container}>
-      <Text style={style.label}>{label}</Text>
-      <TextInput
+      <FormLabel>{label}</FormLabel>
+      <FormInput
         autoCorrect={false}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        style={styles.input}
         secureTextEntry={secureTextEntry}
         value={value}
       />
+      {this.renderButtonOrLoading}
     </View>
   );
 };
+
+// render() {
+//   return (
+//     <View>
+//       <FormLabel>Email</FormLabel>
+//       <FormInput onChangeText={email => this.state({ email })} />
+//       <FormLabel>Password</FormLabel>
+//       <FormInput onChangeText={password => this.state({ password })} />
+//       {this.renderButtonOrLoading}
+//     </View>
+//   );
+// }
 
 const style = StyleSheet.create({
   container: {

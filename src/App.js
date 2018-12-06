@@ -7,13 +7,12 @@
  */
 
 import React, { Component } from "react";
-import { Platform, StatusBar, StyleSheet, View, Text } from "react-native";
+import { Platform, View, StyleSheet } from "react-native";
 import { AppLoading, Asset, Font, Icon } from "expo";
 import AppNavigator from "./navigation/AppNavigator";
-import * as firebase from "firebase";
 import UserInput from "./components/UserInput";
 import UserInputButton from "./components/UserInputButton";
-
+import firebase from "./utils/firebaseClient";
 const instructions = Platform.select({
   ios: "Press Cmd+R to reload,\n" + "Cmd+D or shake for dev menu",
   android:
@@ -27,17 +26,12 @@ export default class App extends Component<Props> {
     isLoadingComplete: false,
     email: "",
     password: "",
+    error: "",
+    loading: false,
     isLoggedIn: true
   };
 
-  componentWillMount() {
-    const firebaseConfig = {
-      apiKey: "AIzaSyANM6fnXqlT2WBqzmEMKAocaP0tgX45sr4",
-      authDomain: "storymapapp.firebaseapp.com"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-  }
+  componentWillMount() {}
 
   render() {
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
@@ -49,38 +43,11 @@ export default class App extends Component<Props> {
         />
       );
     } else {
-      if (this.state.isLoggedIn) {
-        return (
-          <View style={styles.container}>
-            <AppNavigator />
-          </View>
-        );
-      } else {
-        return (
-          <View style={styles.container}>
-            {/* <UserInput
-              placeholder="Enter your email"
-              label="Email"
-              onChangeText={email => this.setState({ email })}
-              value={this.state.email}
-            />
-            <UserInput
-              placeholder="Enter your password"
-              label="Password"
-              secureTextEntry
-              onChangeText={password => this.setState({ password })}
-              value={this.state.password}
-            />
-            <UserInputButton
-              onPress={() => {
-                this.isLoggedIn = !this.isLoggedIn;
-              }}
-            >
-              Log In
-            </UserInputButton> */}
-          </View>
-        );
-      }
+      return (
+        <View style={styles.container}>
+          <AppNavigator />
+        </View>
+      );
     }
   }
 
