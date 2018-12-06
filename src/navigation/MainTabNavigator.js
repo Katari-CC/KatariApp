@@ -60,4 +60,8 @@ export default createBottomTabNavigator({
   HomeStack,
   MapStack,
   ProfileStack
-});
+},
+  {
+    initialRouteName: "HomeStack",
+    backBehavior: "initialRoute",
+  });
