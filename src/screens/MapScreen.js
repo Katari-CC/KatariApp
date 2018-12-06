@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 
 export default class MapScreen extends React.Component {
   constructor(props) {
@@ -15,7 +15,7 @@ export default class MapScreen extends React.Component {
     };
   }
   static navigationOptions = {
-    title: 'Map',
+    title: "Map"
   };
 
 
@@ -61,10 +61,9 @@ export default class MapScreen extends React.Component {
             latitude: 35.708647,
             longitude: 139.729769,
             latitudeDelta: 0.015,
-            longitudeDelta: 0.0121,
+            longitudeDelta: 0.0121
           }}
-        >
-        </MapView>
+        />
       </View>
     );
   }
@@ -74,9 +73,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff"
   },
   map: {
-    ...StyleSheet.absoluteFillObject,
-  },
+    ...StyleSheet.absoluteFillObject
+  }
 });
