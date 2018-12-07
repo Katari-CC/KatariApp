@@ -1,15 +1,8 @@
 import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet } from "react-native";
 import firebase from "../utils/firebaseClient";
 import AppNavigator from "../navigation/AppNavigator";
-import {
-  Input,
-  Text,
-  FormLabel,
-  FormInput,
-  FormValidationMessage,
-  Button
-} from "react-native-elements";
+import { Text, Button } from "react-native-elements";
 export default class ProfileScreen extends React.Component {
   static navigationOptions = {
     title: "Profile",
@@ -31,7 +24,7 @@ export default class ProfileScreen extends React.Component {
 
   render() {
     return (
-      <ScrollView style={styles.container}>
+      <View style={styles.container}>
         <Text>
           A bunch of random text to see if scrolling actually works. A bunch of
           random text to see if scrolling actually works.
@@ -46,7 +39,7 @@ export default class ProfileScreen extends React.Component {
           title="Logout"
           onPress={this.logout}
         />
-      </ScrollView>
+      </View>
     );
   }
 }
