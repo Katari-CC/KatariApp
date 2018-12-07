@@ -29,11 +29,6 @@ export default class ProfileScreen extends React.Component {
           A bunch of random text to see if scrolling actually works. A bunch of
           random text to see if scrolling actually works.
         </Text>
-        <Text>
-          A bunch of random text to see if scrolling actually works. A bunch of
-          random text to see if scrolling actually works. A bunch of random text
-          to see if scrolling actually works.
-        </Text>
         <Button
           buttonStyle={styles.size}
           title="Logout"
