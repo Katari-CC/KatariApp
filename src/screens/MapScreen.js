@@ -1,10 +1,13 @@
 import React from 'react';
 import { Platform, View, Text, StyleSheet } from 'react-native';
-import MapView, { PROVIDER_GOOGLE, Marker, AnimatedRegion, Polyline } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Marker, AnimatedRegion, Polyline, Callout } from 'react-native-maps';
+import MapLayout from "../constants/MapLayout";
+import { getLocationPermission } from '../utils/permissions';
+
 const DEFAULT_LATITUDE = 35.708647;
 const DEFAULT_LONGITUDE = 139.729769;
-const LATITUDE_DELTA = 0.005;
-const LONGITUDE_DELTA = 0.007;
+const LATITUDE_DELTA = 0.001;
+const LONGITUDE_DELTA = 0.003;
 
 export default class MapScreen extends React.Component {
   constructor(props) {
@@ -25,6 +28,19 @@ export default class MapScreen extends React.Component {
   }
 
   componentDidMount() {
+    getLocationPermission();
+    // firestore
+    //   .collection("locations")
+    //   .get()
+    //   .then(snapshot => {
+    //     this.setState({
+    //       locations: snapshot.docs
+    //     });
+    //   })
+    //   .catch(err => {
+    //     console.log("Error getting documents", err);
+    //   });
+
     this.watchID = navigator.geolocation.watchPosition(
       position => {
         const { coordinate, routeCoordinates, distanceTravelled } = this.state;
@@ -77,10 +93,10 @@ export default class MapScreen extends React.Component {
     })
   }
   render() {
-    this.state.coordinate
     return (
       <MapView
         provider={PROVIDER_GOOGLE}
+        customMapStyle={MapLayout}
         style={styles.map}
         showUserLocation
         followUserLocation
@@ -96,10 +112,12 @@ export default class MapScreen extends React.Component {
         >
           <View style={styles.currentLocation}></View>
         </Marker.Animated>
-        {/* <MapView.Marker coordinate={this.state.coordinate} >
-          <View style={styles.currentLocation}>
-          </View>
-        </MapView.Marker> */}
+        <MapView.Marker coordinate={{ latitude: 35.658226, longitude: 139.727757 }} >
+          <Callout onPress={() => console.log("This will take you to location page.")} >
+            <Text>Sensoji Temple</Text>
+          </Callout>
+        </MapView.Marker>
+
         {/* {this.state.markers.map((marker) => {
             return (
               <Marker {...marker} />

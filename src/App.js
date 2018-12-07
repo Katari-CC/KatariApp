@@ -11,7 +11,6 @@ import { Platform, View, StyleSheet } from "react-native";
 import { AppLoading, Asset, Font, Icon } from "expo";
 import AppNavigator from "./navigation/AppNavigator";
 import firebase from "./utils/firebaseClient";
-import { getLocationAsync } from "./utils/permissions";
 const instructions = Platform.select({
   ios: "Press Cmd+R to reload,\n" + "Cmd+D or shake for dev menu",
   android:
