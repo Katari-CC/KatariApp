@@ -8,10 +8,10 @@ import {
   RefreshControl,
   ScrollView,
   Picker,
+  Card,
   View
 } from "react-native";
 import Story from "./Story";
-// import firebase from "../utils/firebaseClient";
 import firestore from "../utils/firestore";
 import "firebase/firestore";
 import ModalDropdown from "react-native-modal-dropdown";
@@ -23,8 +23,12 @@ export default class Main extends React.Component {
       locations: [],
       storyArray: [],
       selectedLocation: "",
+      storyTitle: "",
       storyText: "",
-      refreshing: false
+      refreshing: false,
+      locationList: [],
+      storyType: "",
+      story_img_url: ""
     };
   }
 
@@ -40,6 +44,8 @@ export default class Main extends React.Component {
       .catch(err => {
         console.log("Error getting documents", err);
       });
+
+    this.state.locations.map(obj => this.setState({ locationList: obj.id }));
   }
   _onRefresh = () => {
     this.setState({ refreshing: true });
@@ -54,6 +60,9 @@ export default class Main extends React.Component {
       this.state.storyArray.push({
         date: d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate(),
         location: this.state.selectedLocation,
+        type: this.state.storyType,
+        url: this.state.story_img_url,
+        title: this.state.storyTitle,
         story: this.state.storyText
       });
       this.setState({ storyArray: this.state.storyArray });
@@ -82,12 +91,6 @@ export default class Main extends React.Component {
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerText}> - STORIES - </Text>
-          {/* <ScrollView style={styles.container}>
-            <FlatList
-              data={this.state.locations}
-              renderItem={({ item }) => <Text>{item.id}</Text>}
-            />
-          </ScrollView> */}
         </View>
 
         <ScrollView style={styles.scrollContainer}>
@@ -98,27 +101,47 @@ export default class Main extends React.Component {
           {stories}
         </ScrollView>
         <View style={styles.footer}>
-          {/* <ModalDropdown
-            style={styles.textInput}
-            defaultValue={"Please select location"}
-            textStyle={styles.textInput}
-            animated={true}
-            showsVerticalScrollIndicator={true}
-            dropdownStyle={styles.textInput}
-            dropdownTextStyle={styles.textInput}
-            onSelect={val => {
-              this.setState({ selectedLocation: val });
-            }}
-            options={[1, 2, 3, 4, 5, 6, 7, 8]}
-          >
-            textStyle
-          </ModalDropdown> */}
+          <TextInput
+            style={styles.textInputTitle}
+            onChangeText={selectedLocation =>
+              this.setState({ selectedLocation })
+            }
+            value={this.state.selectedLocation}
+            placeholder="location..."
+            placeholderTextColor="gray"
+            underlineColorAndroid="transparent"
+          />
+          <TextInput
+            style={styles.textInputTitle}
+            onChangeText={storyTitle => this.setState({ storyTitle })}
+            value={this.state.storyTitle}
+            placeholder="title..."
+            placeholderTextColor="gray"
+            underlineColorAndroid="transparent"
+          />
+          <TextInput
+            style={styles.textInputTitle}
+            onChangeText={storyType => this.setState({ storyType })}
+            value={this.state.storyType}
+            placeholder="story category"
+            placeholderTextColor="gray"
+            underlineColorAndroid="transparent"
+          />
+          <TextInput
+            style={styles.textInputTitle}
+            onChangeText={story_img_url => this.setState({ story_img_url })}
+            value={this.state.story_img_url}
+            placeholder="image url"
+            placeholderTextColor="gray"
+            underlineColorAndroid="transparent"
+          />
+
           <TextInput
             style={styles.textInput}
             onChangeText={storyText => this.setState({ storyText })}
             value={this.state.storyText}
             placeholder="Write your story here!"
-            placeholderTextColor="black"
+            placeholderTextColor="gray"
             underlineColorAndroid="transparent"
           />
         </View>
@@ -157,6 +180,15 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 10
+  },
+  textInputTitle: {
+    alignSelf: "stretch",
+    color: "#efefef",
+    padding: 20,
+    backgroundColor: "#dfdce3",
+    borderTopWidth: 4,
+    borderTopColor: "#fc4a1a",
+    fontWeight: "bold"
   },
   textInput: {
     alignSelf: "stretch",
