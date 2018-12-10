@@ -78,7 +78,7 @@ export default class SignUp extends React.Component {
           style={styles.link}
           onPress={() => this.props.navigation.navigate("Login")}
         >
-          Has an account? Login from here!
+          Already have an account? Login here!
         </Text>
       </View>
     );

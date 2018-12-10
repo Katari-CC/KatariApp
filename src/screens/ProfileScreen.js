@@ -1,6 +1,8 @@
 import React from "react";
-import { View, Image, StyleSheet, ImagePicker } from "react-native";
+
+import { ScrollView, View, Image, StyleSheet, ImagePicker } from "react-native";
 // import PhotoUpload from "react-native-photo-upload";
+
 import firebase from "../utils/firebaseClient";
 import AppNavigator from "../navigation/AppNavigator";
 import { FormLabel, FormInput, Text, Button } from "react-native-elements";
@@ -62,31 +64,24 @@ export default class ProfileScreen extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text>
-          A bunch of random text to see if scrolling actually works. A bunch of
-          random text to see if scrolling actually works.
+      <ScrollView >
+        <View style={styles.container}>
+          <Text>
+            A bunch of random text to see if scrolling actually works. A bunch of
+            random text to see if scrolling actually works.
         </Text>
-
-        <Image
-          style={styles.avatar}
-          resizeMode="cover"
-          source={{
-            uri:
-              "https://www.sparklabs.com/forum/styles/comboot/theme/images/default_avatar.jpg"
-          }}
-        />
-        <Button
-          buttonStyle={styles.size}
-          title="Change the profile picture"
-          onPress={this._uploadImage}
-        />
-        <Button
-          buttonStyle={styles.size}
-          title="Logout"
-          onPress={this.logout}
-        />
-      </View>
+          <Text>
+            A bunch of random text to see if scrolling actually works. A bunch of
+            random text to see if scrolling actually works. A bunch of random text
+            to see if scrolling actually works.
+        </Text>
+          <Button
+            buttonStyle={styles.size}
+            title="Logout"
+            onPress={this.logout}
+          />
+        </View>
+      </ScrollView>
     );
   }
 }
