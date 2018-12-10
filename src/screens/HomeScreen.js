@@ -4,13 +4,17 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  View
+  View,
+  Image,
+  Dimensions
 } from "react-native";
-import Main from "../components/Main";
+
+import { ListItem, Button } from "react-native-elements";
+import firestore from "../utils/firestore";
 
 import { MonoText } from "../components/StyledText";
 import "firebase/firestore";
+import { bold, gray } from "ansi-colors";
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -18,12 +22,122 @@ export default class HomeScreen extends React.Component {
     header: null
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      locations: [],
+      detail: {},
+      isListVisible: true
+    };
+  }
+
+  componentDidMount() {
+    newLocation = [];
+    firestore
+      .collection("locations")
+      // .where("image", ">=", "")
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          newDoc = doc.data();
+          newDoc["title"] = doc.id;
+          newLocation.push(newDoc);
+        });
+        this.setState({
+          locations: newLocation
+        });
+      })
+      .catch(err => {
+        console.log("Error getting documents", err);
+      });
+  }
+
+  handleClick = item => {
+    if (!this.state.isListVisible) {
+      this.setState({
+        isListVisible: true
+      });
+    } else {
+      this.setState({
+        detail: item,
+        isListVisible: false
+      });
+    }
+  };
+
   render() {
-    return <Main />;
+    console.log("Rendering...");
+
+    return (
+      <ScrollView style={styles.container}>
+        {this.state.isListVisible ? (
+          <View>
+            {this.state.locations.map((item, index) => {
+              return (
+                <ListItem
+                  key={index}
+                  title={item.title}
+                  subtitle={item.description}
+                  avatar={{ uri: item.image }}
+                  onPress={() => this.handleClick(item)}
+                />
+              );
+            })}
+          </View>
+        ) : (
+          <View>
+            {console.log(this.state.detail.description)}
+            <Button
+              title="Back"
+              style={styles.backButton}
+              onPress={this.handleClick.bind()}
+            />
+
+            <Text style={styles.detailTitle}>{this.state.detail.title}</Text>
+            {this.state.detail.image !== undefined ? (
+              <Image
+                style={styles.detailImage}
+                source={{ uri: this.state.detail.image }}
+              />
+            ) : (
+              <View />
+            )}
+            <Text style={styles.detailText}>
+              {this.state.detail.description}
+            </Text>
+          </View>
+        )}
+      </ScrollView>
+    );
   }
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    width: Dimensions.get("window").width / 5,
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#0061ff"
+  },
+  detailImage: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height / 3,
+    margin: 2
+  },
+  detailTitle: {
+    margin: 1,
+    fontSize: 25,
+    textAlign: "center",
+    color: "#898989",
+    fontWeight: "bold"
+  },
+  detailText: {
+    width: Dimensions.get("window").width - 20,
+    fontSize: 20,
+    textAlign: "center",
+    color: "#898989"
+  },
+
   container: {
     flex: 1,
     backgroundColor: "#fff",
