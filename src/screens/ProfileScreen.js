@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import firebase from "../utils/firebaseClient";
 import AppNavigator from "../navigation/AppNavigator";
 import {
@@ -31,21 +31,23 @@ export default class ProfileScreen extends React.Component {
 
   render() {
     return (
-      <ScrollView style={styles.container}>
-        <Text>
-          A bunch of random text to see if scrolling actually works. A bunch of
-          random text to see if scrolling actually works.
+      <ScrollView >
+        <View style={styles.container}>
+          <Text>
+            A bunch of random text to see if scrolling actually works. A bunch of
+            random text to see if scrolling actually works.
         </Text>
-        <Text>
-          A bunch of random text to see if scrolling actually works. A bunch of
-          random text to see if scrolling actually works. A bunch of random text
-          to see if scrolling actually works.
+          <Text>
+            A bunch of random text to see if scrolling actually works. A bunch of
+            random text to see if scrolling actually works. A bunch of random text
+            to see if scrolling actually works.
         </Text>
-        <Button
-          buttonStyle={styles.size}
-          title="Logout"
-          onPress={this.logout}
-        />
+          <Button
+            buttonStyle={styles.size}
+            title="Logout"
+            onPress={this.logout}
+          />
+        </View>
       </ScrollView>
     );
   }
