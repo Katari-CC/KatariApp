@@ -1,8 +1,9 @@
 import React from 'react';
-import { Platform, View, Text, StyleSheet } from 'react-native';
+import { Platform, View, Text, StyleSheet, FlatList } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, AnimatedRegion, Polyline, Callout } from 'react-native-maps';
 import MapLayout from "../constants/MapLayout";
 import { getLocationPermission } from '../utils/permissions';
+import firestore from "../utils/firestore";
 
 const DEFAULT_LATITUDE = 35.708647;
 const DEFAULT_LONGITUDE = 139.729769;
@@ -23,29 +24,40 @@ export default class MapScreen extends React.Component {
       markers: [],
     };
     this.addMarker = this.addMarker.bind(this);
-    this.calcDistance = this.calcDistance.bind(this);
     this.getMapRegion = this.getMapRegion.bind(this);
   }
 
   componentDidMount() {
     getLocationPermission();
-    // firestore
-    //   .collection("locations")
-    //   .get()
-    //   .then(snapshot => {
-    //     this.setState({
-    //       locations: snapshot.docs
-    //     });
-    //   })
-    //   .catch(err => {
-    //     console.log("Error getting documents", err);
-    //   });
+    let markers = [];
+    let count = 1;
+    firestore
+      .collection("locations")
+      .get()
+      .then(snapshot => {
+        snapshot.forEach((doc) => {
+          const marker = {
+            latitude: doc.data().latitude,
+            longitude: doc.data().longitude,
+            title: doc.id,
+            descriptions: doc.data().description,
+            key: count
+          };
+          count++;
+          this.setState({
+            markers: [...this.state.markers, marker]
+          });
+        })
+
+      })
+      .catch(err => {
+        console.log("Error getting documents", err);
+      });
 
     this.watchID = navigator.geolocation.watchPosition(
       position => {
         const { coordinate, routeCoordinates, distanceTravelled } = this.state;
         const { latitude, longitude } = position.coords;
-        console.log("POSITION", position);
         const newCoordinate = {
           latitude,
           longitude
@@ -75,11 +87,6 @@ export default class MapScreen extends React.Component {
     longitudeDelta: LONGITUDE_DELTA
   });
 
-  calcDistance = newLatLng => {
-    const { prevLatLng } = this.state;
-    return haversine(prevLatLng, newLatLng) || 0;
-  };
-
   //Add Marker function we can use later for adding
   addMarker(e) {
     this.setState({
@@ -93,36 +100,44 @@ export default class MapScreen extends React.Component {
     })
   }
   render() {
+    // let allMarkers = <View></View>;
+    // if (this.state.markers.length > 0) {
+    //   allMarkers = this.state.markers.map((marker, index) => {
+    //     return <MapView.Marker coordinate={marker.coordinate} key={index} />
+    //   });
+    // }
+
     return (
       <MapView
         provider={PROVIDER_GOOGLE}
         customMapStyle={MapLayout}
         style={styles.map}
         showUserLocation
-        followUserLocation
+        // followsUserLocation
+        showsMyLocationButton
+
         loadingEnabled
         region={this.getMapRegion()}
       >
-        <Polyline coordinates={this.state.routeCoordinates} strokeWidth={5} />
-        <Marker.Animated
+        <MapView.Marker.Animated
           ref={marker => {
             this.marker = marker;
           }}
           coordinate={this.state.coordinate}
         >
           <View style={styles.currentLocation}></View>
-        </Marker.Animated>
+        </MapView.Marker.Animated>
         <MapView.Marker coordinate={{ latitude: 35.658226, longitude: 139.727757 }} >
-          <Callout onPress={() => console.log("This will take you to location page.")} >
+          <Callout onPress={() => console.log(this.state.markers)} >
             <Text>Sensoji Temple</Text>
           </Callout>
         </MapView.Marker>
-
-        {/* {this.state.markers.map((marker) => {
-            return (
-              <Marker {...marker} />
-            )
-          })} */}
+        {/* {allMarkers} */}
+        {this.state.markers.map((marker, index) => {
+          this.marker = marker;
+          console.log(this.marker);
+          return <MapView.Marker coordinate={marker.coordinate} key={index} />
+        })}
       </MapView>
     );
   }

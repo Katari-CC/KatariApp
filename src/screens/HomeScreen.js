@@ -28,22 +28,25 @@ export default class HomeScreen extends React.Component {
 
   componentDidMount() {
     newLocation = [];
-    firestore
-      .collection("locations")
-      .get()
-      .then(snapshot => {
-        this.setState({
-          locations: snapshot.docs
-        });
-      })
-      .catch(err => {
-        console.log("Error getting documents", err);
-      });
+    // firestore
+    //   .collection("locations")
+    //   .get()
+    //   .then(snapshot => {
+    //     snapshot.forEach(doc => {
+    //       newDoc = doc.data();
+    //       newDoc["title"] = doc.id;
+    //       newLocation.push(newDoc);
+    //     })
+    //     this.setState({
+    //       locations: newLocation
+    //     });
+    //   })
+    //   .catch(err => {
+    //     console.log("Error getting documents", err);
+    //   });
   }
 
   render() {
-    // console.log("HomeScreen Rendering!");
-    // console.log(firebase.firestore().collection("locations"));
     return (
       <ScrollView style={styles.container}>
         <Text>We're gonna put lists of stories/locations here.</Text>
@@ -55,7 +58,6 @@ export default class HomeScreen extends React.Component {
     );
   }
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
