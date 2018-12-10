@@ -31,6 +31,7 @@ export default class Login extends React.Component {
         <FormLabel>Email</FormLabel>
         <FormInput
           style={styles.size}
+          underlineColorAndroid="transparent"
           onChangeText={email => this.setState({ email })}
           value={this.state.email}
         />
@@ -39,6 +40,7 @@ export default class Login extends React.Component {
         <FormInput
           secureTextEntry
           style={styles.size}
+          underlineColorAndroid="transparent"
           onChangeText={password => this.setState({ password })}
           value={this.state.password}
         />
