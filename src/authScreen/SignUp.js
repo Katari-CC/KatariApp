@@ -10,15 +10,30 @@ import {
 } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import firebase from "../utils/firebaseClient";
+import firestore from "../utils/firestore";
+import "firebase/firestore";
 
 export default class SignUp extends React.Component {
   state = { email: "", password: "", errorMessage: null, username: "" };
 
   handleSignUp = () => {
-    const { email, password } = this.state;
+    const { email, password, username } = this.state;
+
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
+      .then(docRef => console.log("auth success!", docRef))
+      .catch(error => this.setState({ errorMessage: error.message }));
+
+    const db = firebase.firestore();
+
+    db.collection("users")
+      .add({
+        username: username,
+        email: email,
+        photoURL: "",
+        disabled: false
+      })
       .then(user => this.props.navigation.navigate("Main"))
       .catch(error => this.setState({ errorMessage: error.message }));
   };
@@ -32,12 +47,14 @@ export default class SignUp extends React.Component {
         <FormLabel>Username</FormLabel>
         <FormInput
           style={styles.size}
+          underlineColorAndroid="transparent"
           onChangeText={username => this.setState({ username })}
           value={this.state.username}
         />
         <FormLabel>Email</FormLabel>
         <FormInput
           style={styles.size}
+          underlineColorAndroid="transparent"
           onChangeText={email => this.setState({ email })}
           value={this.state.email}
         />
@@ -46,6 +63,7 @@ export default class SignUp extends React.Component {
         <FormInput
           secureTextEntry
           style={styles.size}
+          underlineColorAndroid="transparent"
           onChangeText={password => this.setState({ password })}
           value={this.state.password}
         />
