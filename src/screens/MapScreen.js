@@ -1,8 +1,14 @@
-import React from 'react';
-import { Platform, View, Text, StyleSheet } from 'react-native';
-import MapView, { PROVIDER_GOOGLE, Marker, AnimatedRegion, Polyline, Callout } from 'react-native-maps';
+import React from "react";
+import { Platform, View, Text, StyleSheet } from "react-native";
+import MapView, {
+  PROVIDER_GOOGLE,
+  Marker,
+  AnimatedRegion,
+  Polyline,
+  Callout
+} from "react-native-maps";
 import MapLayout from "../constants/MapLayout";
-import { getLocationPermission } from '../utils/permissions';
+import { getLocationPermission } from "../utils/permissions";
 
 const DEFAULT_LATITUDE = 35.708647;
 const DEFAULT_LONGITUDE = 139.729769;
@@ -20,7 +26,7 @@ export default class MapScreen extends React.Component {
         latitude: DEFAULT_LATITUDE,
         longitude: DEFAULT_LONGITUDE
       }),
-      markers: [],
+      markers: []
     };
     this.addMarker = this.addMarker.bind(this);
     this.calcDistance = this.calcDistance.bind(this);
@@ -55,7 +61,7 @@ export default class MapScreen extends React.Component {
         this.setState({
           latitude,
           longitude,
-          routeCoordinates: routeCoordinates.concat([newCoordinate]),
+          routeCoordinates: routeCoordinates.concat([newCoordinate])
         });
       },
       error => console.log(error),
@@ -88,9 +94,8 @@ export default class MapScreen extends React.Component {
         {
           coordinate: e.nativeEvent.coordinate
         }
-      ],
-
-    })
+      ]
+    });
   }
   render() {
     return (
@@ -110,10 +115,14 @@ export default class MapScreen extends React.Component {
           }}
           coordinate={this.state.coordinate}
         >
-          <View style={styles.currentLocation}></View>
+          <View style={styles.currentLocation} />
         </Marker.Animated>
-        <MapView.Marker coordinate={{ latitude: 35.658226, longitude: 139.727757 }} >
-          <Callout onPress={() => console.log("This will take you to location page.")} >
+        <MapView.Marker
+          coordinate={{ latitude: 35.658226, longitude: 139.727757 }}
+        >
+          <Callout
+            onPress={() => console.log("This will take you to location page.")}
+          >
             <Text>Sensoji Temple</Text>
           </Callout>
         </MapView.Marker>
@@ -135,18 +144,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff"
   },
   map: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFillObject
   },
   currentLocation: {
     borderRadius: 100,
     backgroundColor: "#339EFF",
     padding: 8,
     borderWidth: 3,
-    borderColor: "#FFF",
+    borderColor: "#FFF"
   },
   marker: {
     backgroundColor: "#550bbc",
     padding: 5,
-    borderRadius: 100,
+    borderRadius: 100
   }
 });

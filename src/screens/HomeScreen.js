@@ -4,11 +4,10 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  FlatList,
   TouchableOpacity,
   View
 } from "react-native";
-import firestore from "../utils/firestore";
+import Main from "../components/Main";
 
 import { MonoText } from "../components/StyledText";
 import "firebase/firestore";
@@ -19,40 +18,8 @@ export default class HomeScreen extends React.Component {
     header: null
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      locations: []
-    };
-  }
-
-  componentDidMount() {
-    newLocation = [];
-    firestore
-      .collection("locations")
-      .get()
-      .then(snapshot => {
-        this.setState({
-          locations: snapshot.docs
-        });
-      })
-      .catch(err => {
-        console.log("Error getting documents", err);
-      });
-  }
-
   render() {
-    // console.log("HomeScreen Rendering!");
-    // console.log(firebase.firestore().collection("locations"));
-    return (
-      <ScrollView style={styles.container}>
-        <Text>We're gonna put lists of stories/locations here.</Text>
-        <FlatList
-          data={this.state.locations}
-          renderItem={({ item }) => <Text>{item.id}</Text>}
-        />
-      </ScrollView>
-    );
+    return <Main />;
   }
 }
 
