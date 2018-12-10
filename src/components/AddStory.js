@@ -27,7 +27,6 @@ export default class AddStory extends React.Component {
       .add({
         location: location,
         story: story,
-        type: type,
         img_url: img_url,
         date: date
       })

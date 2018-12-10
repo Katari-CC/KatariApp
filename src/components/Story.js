@@ -8,7 +8,6 @@ export default class Story extends React.Component {
       <View key={this.props.keyval} style={styles.story}>
         <Text style={styles.storyText}>{this.props.val.date}</Text>
         <Text style={styles.storyText}>{this.props.val.location}</Text>
-        <Text style={styles.storyText}>{this.props.val.type}</Text>
         <Text style={styles.storyText}>{this.props.val.title}</Text>
         <Text style={styles.storyText}>{this.props.val.url}</Text>
         <Text style={styles.storyText}>{this.props.val.story}</Text>

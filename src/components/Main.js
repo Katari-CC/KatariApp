@@ -12,55 +12,30 @@ import {
   View
 } from "react-native";
 import Story from "./Story";
-import firestore from "../utils/firestore";
-import "firebase/firestore";
-import ModalDropdown from "react-native-modal-dropdown";
 
+import ModalDropdown from "react-native-modal-dropdown";
+import firebase from "../utils/firebaseClient";
 export default class Main extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      locations: [],
       storyArray: [],
       selectedLocation: "",
       storyTitle: "",
       storyText: "",
       refreshing: false,
       locationList: [],
-      storyType: "",
       story_img_url: ""
     };
   }
 
-  componentDidMount() {
-    firestore
-      .collection("locations")
-      .get()
-      .then(snapshot => {
-        this.setState({
-          locations: snapshot.docs
-        });
-      })
-      .catch(err => {
-        console.log("Error getting documents", err);
-      });
-
-    this.state.locations.map(obj => this.setState({ locationList: obj.id }));
-  }
-  _onRefresh = () => {
-    this.setState({ refreshing: true });
-    fetchData().then(() => {
-      this.setState({ refreshing: false });
-    });
-  };
-
   addStory = () => {
+    const d = new Date();
+    const date = d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate();
     if (this.state.storyText) {
-      const d = new Date();
       this.state.storyArray.push({
-        date: d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate(),
+        date: date,
         location: this.state.selectedLocation,
-        type: this.state.storyType,
         url: this.state.story_img_url,
         title: this.state.storyTitle,
         story: this.state.storyText
@@ -68,6 +43,17 @@ export default class Main extends React.Component {
       this.setState({ storyArray: this.state.storyArray });
       this.setState({ storyText: this.state.storyArray.story });
     }
+    const db = firebase.firestore();
+    db.collection("stories")
+      .add({
+        created_date: date,
+        location: this.state.selectedLocation,
+        title: this.state.storyTitle,
+        story: this.state.storyText,
+        img_url: this.state.story_img_url
+      })
+      .then(() => console.log("Document successfully written!"))
+      .catch(error => this.setState({ errorMessage: error.message }));
   };
 
   deleteStory = key => {
@@ -93,13 +79,7 @@ export default class Main extends React.Component {
           <Text style={styles.headerText}> - STORIES - </Text>
         </View>
 
-        <ScrollView style={styles.scrollContainer}>
-          <FlatList
-            data={this.state.locations}
-            renderItem={({ item }) => <Text>{item.id}</Text>}
-          />
-          {stories}
-        </ScrollView>
+        <ScrollView style={styles.scrollContainer}>{stories}</ScrollView>
         <View style={styles.footer}>
           <TextInput
             style={styles.textInputTitle}
@@ -119,14 +99,7 @@ export default class Main extends React.Component {
             placeholderTextColor="gray"
             underlineColorAndroid="transparent"
           />
-          <TextInput
-            style={styles.textInputTitle}
-            onChangeText={storyType => this.setState({ storyType })}
-            value={this.state.storyType}
-            placeholder="story category"
-            placeholderTextColor="gray"
-            underlineColorAndroid="transparent"
-          />
+
           <TextInput
             style={styles.textInputTitle}
             onChangeText={story_img_url => this.setState({ story_img_url })}
