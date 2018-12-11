@@ -51,7 +51,7 @@ export default class MapScreen extends React.Component {
 
     this.watchID = navigator.geolocation.watchPosition(
       position => {
-        const { coordinate, routeCoordinates, distanceTravelled } = this.state;
+        const { coordinate } = this.state;
         const { latitude, longitude } = position.coords;
         const newCoordinate = {
           latitude,
@@ -62,7 +62,6 @@ export default class MapScreen extends React.Component {
         this.setState({
           latitude,
           longitude,
-          routeCoordinates: routeCoordinates.concat([newCoordinate]),
         });
       },
       error => console.log(error),
@@ -112,13 +111,15 @@ export default class MapScreen extends React.Component {
         showsPointsOfInterest={false}
         // onPress={this.addMarker}
         provider={PROVIDER_GOOGLE}>
-        {this.state.markers.map((marker, index) => (
-          <MapView.Marker
-            key={index}
-            coordinate={marker.coordinate}
-            title={marker.title}
-            description={marker.description}
-          />))
+        {this.state.markers.map((marker, index) => {
+          return (
+            <MapView.Marker
+              key={index}
+              coordinate={marker.coordinate}
+              title={marker.title}
+              description={marker.description}
+            />)
+        })
         }
       </MapView>
     );
