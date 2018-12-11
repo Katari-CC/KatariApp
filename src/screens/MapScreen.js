@@ -1,9 +1,10 @@
 import React from 'react';
-import { Platform, View, Text, StyleSheet, FlatList } from 'react-native';
+import { Platform, View, Text, StyleSheet, FlatList, Image } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, AnimatedRegion, Polyline, Callout } from 'react-native-maps';
 import MapLayout from "../constants/MapLayout";
 import { getLocationPermission } from '../utils/permissions';
 import firestore from "../utils/firestore";
+import { ScrollView } from 'react-native-gesture-handler';
 
 const DEFAULT_LATITUDE = 35.708647;
 const DEFAULT_LONGITUDE = 139.729769;
@@ -22,6 +23,7 @@ export default class MapScreen extends React.Component {
         longitude: DEFAULT_LONGITUDE
       }),
       markers: [],
+      currentMarker: undefined,
     };
     this.addMarker = this.addMarker.bind(this);
     this.getMapRegion = this.getMapRegion.bind(this);
@@ -104,7 +106,7 @@ export default class MapScreen extends React.Component {
         loadingEnabled={true}
         loadingIndicatorColor="#666666"
         loadingBackgroundColor="#eeeeee"
-        moveOnMarkerPress={false}
+        moveOnMarkerPress
         showsUserLocation
         showsCompass={true}
         customMapStyle={MapLayout}
@@ -116,9 +118,16 @@ export default class MapScreen extends React.Component {
             <MapView.Marker
               key={index}
               coordinate={marker.coordinate}
-              title={marker.title}
-              description={marker.description}
-            />)
+            >
+              <Callout style={styles.callout} onPress={() => console.log(marker.image)}>
+                <View style={styles.container}>
+                  <Text style={styles.title}>{marker.title}</Text>
+                    <Image
+                        source={{uri: marker.image}}/>
+                  <Text style={styles.description}>{marker.description}</Text>
+                </View>
+              </Callout>
+            </MapView.Marker>)
         })
         }
       </MapView>
@@ -129,7 +138,9 @@ export default class MapScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 15,
+    alignItems: 'center',
+    // justifyContent: 'center',
+    flexWrap: 'wrap',
     backgroundColor: "#fff"
   },
   map: {
@@ -146,5 +157,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#550bbc",
     padding: 5,
     borderRadius: 100,
+  },
+  callout: {
+    flex: 1, 
+    position: 'relative', 
+    height: 150,
+    borderRadius: 70,
+  },
+  title: {
+    fontSize: 12,
+  },
+  description: {
+    marginLeft: 3,
+    marginRight: 3,
+    fontSize: 10,
   }
 });
