@@ -12,6 +12,9 @@ export default class ProfileScreen extends React.Component {
     title: "Profile",
     header: null
   };
+  constructor(props) {
+    super(props);
+  }
 
   logout = () => {
     firebase
@@ -32,6 +35,7 @@ export default class ProfileScreen extends React.Component {
     return (
       <ScrollView>
         <View style={styles.container}>
+          <Text>user name</Text>
           <Image
             style={styles.avatar}
             resizeMode="cover"
