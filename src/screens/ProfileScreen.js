@@ -1,13 +1,6 @@
 import React from "react";
-<<<<<<< HEAD
-import { View, Image, StyleSheet, ImagePicker } from "react-native";
-// import PhotoUpload from "react-native-photo-upload";
-=======
-
 import { ScrollView, View, Image, StyleSheet, ImagePicker } from "react-native";
 // import PhotoUpload from "react-native-photo-upload";
-
->>>>>>> dcfe42759d455b3582c924c3dab77b0adc39bd8f
 import firebase from "../utils/firebaseClient";
 import AppNavigator from "../navigation/AppNavigator";
 import { FormLabel, FormInput, Text, Button } from "react-native-elements";

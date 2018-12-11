@@ -30,25 +30,20 @@ export default class MapScreen extends React.Component {
   componentDidMount() {
     getLocationPermission();
     let markers = [];
-    let count = 1;
     firestore
       .collection("locations")
       .get()
       .then(snapshot => {
         snapshot.forEach((doc) => {
-          const marker = {
-            latitude: doc.data().latitude,
-            longitude: doc.data().longitude,
-            title: doc.id,
-            descriptions: doc.data().description,
-            key: count
-          };
-          count++;
-          this.setState({
-            markers: [...this.state.markers, marker]
-          });
+          const marker = doc.data();
+          marker["title"] = doc.id;
+          marker["coordinate"] = { longitude: marker.longitude, latitude: marker.latitude }
+          markers.push(marker);
         })
-
+        this.setState({
+          markers
+        });
+        this.forceUpdate();
       })
       .catch(err => {
         console.log("Error getting documents", err);
@@ -99,45 +94,32 @@ export default class MapScreen extends React.Component {
 
     })
   }
-  render() {
-    // let allMarkers = <View></View>;
-    // if (this.state.markers.length > 0) {
-    //   allMarkers = this.state.markers.map((marker, index) => {
-    //     return <MapView.Marker coordinate={marker.coordinate} key={index} />
-    //   });
-    // }
 
+  render() {
     return (
       <MapView
-        provider={PROVIDER_GOOGLE}
-        customMapStyle={MapLayout}
-        style={styles.map}
-        showUserLocation
-        // followsUserLocation
-        showsMyLocationButton
-
-        loadingEnabled
+        ref={MapView => (this.MapView = MapView)}
         region={this.getMapRegion()}
-      >
-        <MapView.Marker.Animated
-          ref={marker => {
-            this.marker = marker;
-          }}
-          coordinate={this.state.coordinate}
-        >
-          <View style={styles.currentLocation}></View>
-        </MapView.Marker.Animated>
-        <MapView.Marker coordinate={{ latitude: 35.658226, longitude: 139.727757 }} >
-          <Callout onPress={() => console.log(this.state.markers)} >
-            <Text>Sensoji Temple</Text>
-          </Callout>
-        </MapView.Marker>
-        {/* {allMarkers} */}
-        {this.state.markers.map((marker, index) => {
-          this.marker = marker;
-          console.log(this.marker);
-          return <MapView.Marker coordinate={marker.coordinate} key={index} />
-        })}
+        style={styles.map}
+        initialRegion={this.state.region}
+        loadingEnabled={true}
+        loadingIndicatorColor="#666666"
+        loadingBackgroundColor="#eeeeee"
+        moveOnMarkerPress={false}
+        showsUserLocation
+        showsCompass={true}
+        customMapStyle={MapLayout}
+        showsPointsOfInterest={false}
+        // onPress={this.addMarker}
+        provider={PROVIDER_GOOGLE}>
+        {this.state.markers.map((marker, index) => (
+          <MapView.Marker
+            key={index}
+            coordinate={marker.coordinate}
+            title={marker.title}
+            description={marker.description}
+          />))
+        }
       </MapView>
     );
   }

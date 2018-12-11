@@ -86,7 +86,6 @@ export default class HomeScreen extends React.Component {
           </View>
         ) : (
             <View>
-              {console.log(this.state.detail.description)}
               <Button
                 title="Back"
                 style={styles.backButton}
