@@ -274,13 +274,13 @@ class Location  extends React.Component {
               ) : (
                   <View />
                 )}
-              <View>
+              <View style={styles.storyContainer}>
                 {this.state.stories.map((story)=> {return <Card
                         title={story.title}
                         // image={{ uri: review.imageUrl }}
-                        containerStyle={{ padding: 0, width: 160 }}
+                        containerStyle={styles.storyCard}
                       >
-                        <Text style={{ marginBottom: 10 }}>{story.story}</Text>
+                        <Text style={{ marginBottom: 10, textAlign: 'center' }}>{story.story}</Text>
                 </Card>})}
               </View>
             </View>
@@ -342,6 +342,16 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: "#FFF",
   },
+  storyContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+  storyCard: {
+    width: 150,
+    height: 120,
+    borderRadius: 20,
+  },
   marker: {
     backgroundColor: "#550bbc",
     padding: 5,
@@ -352,6 +362,7 @@ const styles = StyleSheet.create({
     position: 'relative', 
     height: 150,
     borderRadius: 100,
+    textAlign: 'center'
   },
   title: {
     fontSize: 12,
