@@ -6,15 +6,18 @@ import {
   Text,
   View,
   Image,
+  TextInput,
   Dimensions
 } from "react-native";
 
-import { ListItem, Button } from "react-native-elements";
+import { ListItem, Button, Card } from "react-native-elements";
 import firestore from "../utils/firestore";
+import firebase from "../utils/firebaseClient";
 
 import { MonoText } from "../components/StyledText";
 import "firebase/firestore";
 import { bold, gray } from "ansi-colors";
+import { FlatList } from "react-native-gesture-handler";
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -27,7 +30,11 @@ export default class HomeScreen extends React.Component {
     this.state = {
       locations: [],
       detail: {},
-      isListVisible: true
+      detailReviews: [],
+      isListVisible: true,
+      isAddStoryFormVisible: false,
+      newStoryTitle: "",
+      newStoryText: ""
     };
   }
 
@@ -52,18 +59,51 @@ export default class HomeScreen extends React.Component {
       });
   }
 
-  handleClick = item => {
+  onItemListClick = item => {
     if (!this.state.isListVisible) {
       this.setState({
-        isListVisible: true
+        isListVisible: true,
+        isAddStoryFormVisible: false
       });
     } else {
       this.setState({
         detail: item,
         isListVisible: false
       });
+      newReviews = [];
+      firestore
+        .collection("stories")
+        .where("location", "==", item.title)
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            newReviews.push(doc.data());
+          });
+        })
+        .then(() => {
+          this.setState({
+            detailReviews: newReviews
+          });
+        });
     }
   };
+
+  saveNewStory() {
+    firestore
+      .collection("stories")
+      .doc()
+      .set({
+        userID: firebase.auth().currentUser.uid,
+        title: this.state.newStoryTitle,
+        story: this.state.newStoryText,
+        location: this.state.detail.title
+      })
+      .then(() => {
+        this.setState({
+          isAddStoryFormVisible: false
+        });
+      });
+  }
 
   render() {
     console.log("Rendering...");
@@ -71,6 +111,7 @@ export default class HomeScreen extends React.Component {
     return (
       <ScrollView style={styles.container}>
         {this.state.isListVisible ? (
+          // DISPLAY LIST OF LOCATIONS
           <View>
             {this.state.locations.map((item, index) => {
               return (
@@ -79,22 +120,24 @@ export default class HomeScreen extends React.Component {
                   title={item.title}
                   subtitle={item.description}
                   avatar={{ uri: item.image }}
-                  onPress={() => this.handleClick(item)}
+                  onPress={() => this.onItemListClick(item)}
                 />
               );
             })}
           </View>
         ) : (
+          // DISPLAY DETAILED LOCATION
           <View>
-            {console.log(this.state.detail.description)}
             <Button
               title="Back"
               style={styles.backButton}
-              onPress={this.handleClick.bind()}
+              onPress={() => {
+                this.onItemListClick();
+              }}
             />
-
             <Text style={styles.detailTitle}>{this.state.detail.title}</Text>
             {this.state.detail.image !== undefined ? (
+              // display image only if exist
               <Image
                 style={styles.detailImage}
                 source={{ uri: this.state.detail.image }}
@@ -105,6 +148,53 @@ export default class HomeScreen extends React.Component {
             <Text style={styles.detailText}>
               {this.state.detail.description}
             </Text>
+            <Button
+              title="Add your story"
+              onPress={() => {
+                this.setState({ isAddStoryFormVisible: true });
+              }}
+            />
+            {this.state.isAddStoryFormVisible ? (
+              // DISPLAY THE NEW STORY FORM
+              <View>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Put a title to your story"
+                  onChangeText={text => this.setState({ newStoryTitle: text })}
+                />
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Type here your story!"
+                  onChangeText={text => this.setState({ newStoryText: text })}
+                />
+                <Button
+                  title="Save your story"
+                  onPress={() => {
+                    this.saveNewStory();
+                  }}
+                />
+              </View>
+            ) : (
+              <View />
+            )}
+            <View>
+              <FlatList
+                horizontal
+                data={this.state.detailReviews}
+                renderItem={({ item: story }) => {
+                  return (
+                    <Card
+                      title={story.title}
+                      // image={{ uri: review.imageUrl }}
+                      containerStyle={{ padding: 0, width: 160 }}
+                    >
+                      <Text style={{ marginBottom: 10 }}>{story.story}</Text>
+                    </Card>
+                  );
+                }}
+                keyExtractor={(item, index) => index}
+              />
+            </View>
           </View>
         )}
       </ScrollView>
@@ -113,17 +203,24 @@ export default class HomeScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  textInput: {
+    width: Dimensions.get("window").width - 50,
+    height: 100
+  },
+
   backButton: {
     width: Dimensions.get("window").width / 5,
     fontSize: 22,
     fontWeight: "bold",
     color: "#0061ff"
   },
+
   detailImage: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height / 3,
     margin: 2
   },
+
   detailTitle: {
     margin: 1,
     fontSize: 25,
@@ -131,6 +228,7 @@ const styles = StyleSheet.create({
     color: "#898989",
     fontWeight: "bold"
   },
+
   detailText: {
     width: Dimensions.get("window").width - 20,
     fontSize: 20,
@@ -141,8 +239,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: 50
+    paddingTop: 50,
+    marginBottom: 30
   },
+
   developmentModeText: {
     marginBottom: 20,
     color: "rgba(0,0,0,0.4)",
