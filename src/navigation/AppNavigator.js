@@ -3,7 +3,6 @@ import { createSwitchNavigator, createAppContainer } from "react-navigation";
 import Loading from "../authScreen/Loading";
 import Login from "../authScreen/Login";
 import SignUp from "../authScreen/SignUp";
-import AddStory from "../components/AddStory";
 import MainTabNavigator from "./MainTabNavigator";
 
 const AppNavigator = createSwitchNavigator(
@@ -13,7 +12,6 @@ const AppNavigator = createSwitchNavigator(
     Loading,
     Login,
     SignUp,
-    AddStory,
     Main: MainTabNavigator
   },
   { initialRouteName: "Loading" }

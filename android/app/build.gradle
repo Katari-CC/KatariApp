@@ -138,6 +138,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-google-signin')
     compile project(':react-native-fetch-blob')
     compile project(':react-native-firebase')
     compile project(':react-native-fcm')
@@ -154,7 +155,12 @@ dependencies {
     implementation "com.google.firebase:firebase-firestore:17.1.2"
     implementation "com.google.firebase:firebase-auth:16.0.5"
     implementation "com.google.firebase:firebase-database:16.0.4"
+    implementation(project(":react-native-google-signin")){
+    exclude group: "com.google.android.gms" // very important
+    }
     implementation project(':react-native-maps')
+    implementation 'com.google.firebase:firebase-auth:16.0.3'
+    implementation 'com.google.android.gms:play-services-auth:16.0.0'
 }
 
 
