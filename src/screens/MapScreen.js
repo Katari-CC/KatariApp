@@ -1,8 +1,10 @@
 import React from 'react';
-import { Platform, View, Text, StyleSheet, FlatList, Image } from 'react-native';
+import { Platform, View, Text, StyleSheet, FlatList } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, AnimatedRegion, Polyline, Callout } from 'react-native-maps';
 import MapLayout from "../constants/MapLayout";
 import { getLocationPermission } from '../utils/permissions';
+import Svg from 'expo';
+const { Image } = Svg;
 import firestore from "../utils/firestore";
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -23,7 +25,12 @@ export default class MapScreen extends React.Component {
         longitude: DEFAULT_LONGITUDE
       }),
       markers: [],
-      currentMarker: undefined,
+      detail: {},
+      detailReviews: [],
+      isListVisible: true,
+      isAddStoryFormVisible: false,
+      newStoryTitle: "",
+      newStoryText: ""
     };
     this.addMarker = this.addMarker.bind(this);
     this.getMapRegion = this.getMapRegion.bind(this);
@@ -50,7 +57,6 @@ export default class MapScreen extends React.Component {
       .catch(err => {
         console.log("Error getting documents", err);
       });
-
     this.watchID = navigator.geolocation.watchPosition(
       position => {
         const { coordinate } = this.state;
@@ -96,9 +102,55 @@ export default class MapScreen extends React.Component {
     })
   }
 
+  onItemListClick = item => {
+    if (!this.state.isListVisible) {
+      this.setState({
+        isListVisible: true,
+        isAddStoryFormVisible: false
+      });
+    } else {
+      this.setState({
+        detail: item,
+        isListVisible: false
+      });
+      newReviews = [];
+      firestore
+        .collection("stories")
+        .where("location", "==", item.title)
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            newReviews.push(doc.data());
+          });
+        })
+        .then(() => {
+          this.setState({
+            detailReviews: newReviews
+          });
+        });
+    }
+  };
+
+  saveNewStory() {
+    firestore
+      .collection("stories")
+      .doc()
+      .set({
+        userID: firebase.auth().currentUser.uid,
+        title: this.state.newStoryTitle,
+        story: this.state.newStoryText,
+        location: this.state.detail.title
+      })
+      .then(() => {
+        this.setState({
+          isAddStoryFormVisible: false
+        });
+      });
+  }
+
   render() {
     return (
-      <MapView
+        <MapView
         ref={MapView => (this.MapView = MapView)}
         region={this.getMapRegion()}
         style={styles.map}
@@ -120,12 +172,15 @@ export default class MapScreen extends React.Component {
               coordinate={marker.coordinate}
             >
               <Callout style={styles.callout} onPress={() => console.log(marker.image)}>
-                <View style={styles.container}>
-                  <Text style={styles.title}>{marker.title}</Text>
+              <View style={styles.container}>
+                <Text style={styles.title}>{marker.title}</Text>
+                {/* <Svg width={50} height={50}>
                     <Image
-                        source={{uri: marker.image}}/>
-                  <Text style={styles.description}>{marker.description}</Text>
-                </View>
+                        href={{uri: marker.image}}
+                        width={50} height={50} />
+                </Svg> */}
+                <Text style={styles.description}>{marker.description}</Text>
+              </View> 
               </Callout>
             </MapView.Marker>)
         })
@@ -137,10 +192,10 @@ export default class MapScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
+    width: 140, height: 60,
+    flexDirection: 'column',
     alignItems: 'center',
-    // justifyContent: 'center',
-    flexWrap: 'wrap',
     backgroundColor: "#fff"
   },
   map: {
@@ -162,7 +217,7 @@ const styles = StyleSheet.create({
     flex: 1, 
     position: 'relative', 
     height: 150,
-    borderRadius: 70,
+    borderRadius: 100,
   },
   title: {
     fontSize: 12,
