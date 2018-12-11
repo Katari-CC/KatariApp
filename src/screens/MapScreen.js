@@ -1,5 +1,5 @@
 import React from "react";
-import { Platform, View, Text, StyleSheet } from "react-native";
+import { Platform, View, Text, StyleSheet, FlatList } from "react-native";
 import MapView, {
   PROVIDER_GOOGLE,
   Marker,
@@ -9,6 +9,7 @@ import MapView, {
 } from "react-native-maps";
 import MapLayout from "../constants/MapLayout";
 import { getLocationPermission } from "../utils/permissions";
+import firestore from "../utils/firestore";
 
 const DEFAULT_LATITUDE = 35.708647;
 const DEFAULT_LONGITUDE = 139.729769;
@@ -29,29 +30,38 @@ export default class MapScreen extends React.Component {
       markers: []
     };
     this.addMarker = this.addMarker.bind(this);
-    this.calcDistance = this.calcDistance.bind(this);
     this.getMapRegion = this.getMapRegion.bind(this);
   }
 
   componentDidMount() {
     getLocationPermission();
-    // firestore
-    //   .collection("locations")
-    //   .get()
-    //   .then(snapshot => {
-    //     this.setState({
-    //       locations: snapshot.docs
-    //     });
-    //   })
-    //   .catch(err => {
-    //     console.log("Error getting documents", err);
-    //   });
+    let markers = [];
+    firestore
+      .collection("locations")
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          const marker = doc.data();
+          marker["title"] = doc.id;
+          marker["coordinate"] = {
+            longitude: marker.longitude,
+            latitude: marker.latitude
+          };
+          markers.push(marker);
+        });
+        this.setState({
+          markers
+        });
+        this.forceUpdate();
+      })
+      .catch(err => {
+        console.log("Error getting documents", err);
+      });
 
     this.watchID = navigator.geolocation.watchPosition(
       position => {
-        const { coordinate, routeCoordinates, distanceTravelled } = this.state;
+        const { coordinate } = this.state;
         const { latitude, longitude } = position.coords;
-        console.log("POSITION", position);
         const newCoordinate = {
           latitude,
           longitude
@@ -81,11 +91,6 @@ export default class MapScreen extends React.Component {
     longitudeDelta: LONGITUDE_DELTA
   });
 
-  calcDistance = newLatLng => {
-    const { prevLatLng } = this.state;
-    return haversine(prevLatLng, newLatLng) || 0;
-  };
-
   //Add Marker function we can use later for adding
   addMarker(e) {
     this.setState({
@@ -97,41 +102,35 @@ export default class MapScreen extends React.Component {
       ]
     });
   }
+
   render() {
     return (
       <MapView
-        provider={PROVIDER_GOOGLE}
-        customMapStyle={MapLayout}
-        style={styles.map}
-        showUserLocation
-        followUserLocation
-        loadingEnabled
+        ref={MapView => (this.MapView = MapView)}
         region={this.getMapRegion()}
+        style={styles.map}
+        initialRegion={this.state.region}
+        loadingEnabled={true}
+        loadingIndicatorColor="#666666"
+        loadingBackgroundColor="#eeeeee"
+        moveOnMarkerPress={false}
+        showsUserLocation
+        showsCompass={true}
+        customMapStyle={MapLayout}
+        showsPointsOfInterest={false}
+        // onPress={this.addMarker}
+        provider={PROVIDER_GOOGLE}
       >
-        <Polyline coordinates={this.state.routeCoordinates} strokeWidth={5} />
-        <Marker.Animated
-          ref={marker => {
-            this.marker = marker;
-          }}
-          coordinate={this.state.coordinate}
-        >
-          <View style={styles.currentLocation} />
-        </Marker.Animated>
-        <MapView.Marker
-          coordinate={{ latitude: 35.658226, longitude: 139.727757 }}
-        >
-          <Callout
-            onPress={() => console.log("This will take you to location page.")}
-          >
-            <Text>Sensoji Temple</Text>
-          </Callout>
-        </MapView.Marker>
-
-        {/* {this.state.markers.map((marker) => {
-            return (
-              <Marker {...marker} />
-            )
-          })} */}
+        {this.state.markers.map((marker, index) => {
+          return (
+            <MapView.Marker
+              key={index}
+              coordinate={marker.coordinate}
+              title={marker.title}
+              description={marker.description}
+            />
+          );
+        })}
       </MapView>
     );
   }

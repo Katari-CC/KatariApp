@@ -1,5 +1,4 @@
 import React from "react";
-
 import { ScrollView, View, Image, StyleSheet, ImagePicker } from "react-native";
 
 import firebase from "../utils/firebaseClient";

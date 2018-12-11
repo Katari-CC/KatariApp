@@ -126,82 +126,81 @@ export default class HomeScreen extends React.Component {
             })}
           </View>
         ) : (
-          // DISPLAY DETAILED LOCATION
-          <View>
-            <Button
-              title="Back"
-              style={styles.backButton}
-              onPress={() => {
-                this.onItemListClick();
-              }}
-            />
-            <Text style={styles.detailTitle}>{this.state.detail.title}</Text>
-            {this.state.detail.image !== undefined ? (
-              // display image only if exist
-              <Image
-                style={styles.detailImage}
-                source={{ uri: this.state.detail.image }}
+            // DISPLAY DETAILED LOCATION
+            <View>
+              <Button
+                title="Back"
+                style={styles.backButton}
+                onPress={() => {
+                  this.onItemListClick();
+                }}
               />
-            ) : (
-              <View />
-            )}
-            <Text style={styles.detailText}>
-              {this.state.detail.description}
-            </Text>
-            <Button
-              title="Add your story"
-              onPress={() => {
-                this.setState({ isAddStoryFormVisible: true });
-              }}
-            />
-            {this.state.isAddStoryFormVisible ? (
-              // DISPLAY THE NEW STORY FORM
+              <Text style={styles.detailTitle}>{this.state.detail.title}</Text>
+              {this.state.detail.image !== undefined ? (
+                // display image only if exist
+                <Image
+                  style={styles.detailImage}
+                  source={{ uri: this.state.detail.image }}
+                />
+              ) : (
+                  <View />
+                )}
+              <Text style={styles.detailText}>
+                {this.state.detail.description}
+              </Text>
+              <Button
+                title="Add your story"
+                onPress={() => {
+                  this.setState({ isAddStoryFormVisible: true });
+                }}
+              />
+              {this.state.isAddStoryFormVisible ? (
+                // DISPLAY THE NEW STORY FORM
+                <View>
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Put a title to your story"
+                    onChangeText={text => this.setState({ newStoryTitle: text })}
+                  />
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Type here your story!"
+                    onChangeText={text => this.setState({ newStoryText: text })}
+                  />
+                  <Button
+                    title="Save your story"
+                    onPress={() => {
+                      this.saveNewStory();
+                    }}
+                  />
+                </View>
+              ) : (
+                  <View />
+                )}
               <View>
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Put a title to your story"
-                  onChangeText={text => this.setState({ newStoryTitle: text })}
-                />
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Type here your story!"
-                  onChangeText={text => this.setState({ newStoryText: text })}
-                />
-                <Button
-                  title="Save your story"
-                  onPress={() => {
-                    this.saveNewStory();
+                <FlatList
+                  horizontal
+                  data={this.state.detailReviews}
+                  renderItem={({ item: story }) => {
+                    return (
+                      <Card
+                        title={story.title}
+                        // image={{ uri: review.imageUrl }}
+                        containerStyle={{ padding: 0, width: 160 }}
+                      >
+                        <Text style={{ marginBottom: 10 }}>{story.story}</Text>
+                      </Card>
+                    );
                   }}
+                  keyExtractor={(item, index) => index}
                 />
               </View>
-            ) : (
-              <View />
-            )}
-            <View>
-              <FlatList
-                horizontal
-                data={this.state.detailReviews}
-                renderItem={({ item: story }) => {
-                  return (
-                    <Card
-                      title={story.title}
-                      // image={{ uri: review.imageUrl }}
-                      containerStyle={{ padding: 0, width: 160 }}
-                    >
-                      <Text style={{ marginBottom: 10 }}>{story.story}</Text>
-                    </Card>
-                  );
-                }}
-                keyExtractor={(item, index) => index}
-              />
             </View>
-          </View>
-        )}
+          )}
       </ScrollView>
     );
   }
 }
-
 const styles = StyleSheet.create({
   textInput: {
     width: Dimensions.get("window").width - 50,
