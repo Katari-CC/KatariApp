@@ -21,10 +21,8 @@ import { FlatList } from "react-native-gesture-handler";
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
-    title: "Home",
     header: null
-  };
-
+  }
   constructor(props) {
     super(props);
     this.state = {
@@ -36,6 +34,7 @@ export default class HomeScreen extends React.Component {
       newStoryTitle: "",
       newStoryText: ""
     };
+    this.saveNewStory = this.saveNewStory.bind(this);
   }
 
   componentDidMount() {
@@ -89,18 +88,20 @@ export default class HomeScreen extends React.Component {
   };
 
   saveNewStory() {
+    const newStory = {
+      userID: firebase.auth().currentUser.uid,
+      title: this.state.newStoryTitle,
+      story: this.state.newStoryText,
+      location: this.state.detail.title
+    };
     firestore
       .collection("stories")
       .doc()
-      .set({
-        userID: firebase.auth().currentUser.uid,
-        title: this.state.newStoryTitle,
-        story: this.state.newStoryText,
-        location: this.state.detail.title
-      })
+      .set(newStory)
       .then(() => {
         this.setState({
-          isAddStoryFormVisible: false
+          isAddStoryFormVisible: false,
+          stories: [...this.state.stories, newStory]
         });
       });
   }
@@ -112,7 +113,7 @@ export default class HomeScreen extends React.Component {
       <ScrollView style={styles.container}>
         {this.state.isListVisible ? (
           // DISPLAY LIST OF LOCATIONS
-          <View>
+          <View style={styles.list}>
             {this.state.locations.map((item, index) => {
               return (
                 <ListItem
@@ -127,7 +128,7 @@ export default class HomeScreen extends React.Component {
           </View>
         ) : (
             // DISPLAY DETAILED LOCATION
-            <View>
+            <View style={styles.location}>
               <Button
                 title="Back"
                 style={styles.backButton}
@@ -178,22 +179,13 @@ export default class HomeScreen extends React.Component {
                   <View />
                 )}
               <View>
-                <FlatList
-                  horizontal
-                  data={this.state.detailReviews}
-                  renderItem={({ item: story }) => {
-                    return (
-                      <Card
+              {this.state.detailReviews.map((story)=> {return <Card
                         title={story.title}
                         // image={{ uri: review.imageUrl }}
                         containerStyle={{ padding: 0, width: 160 }}
                       >
                         <Text style={{ marginBottom: 10 }}>{story.story}</Text>
-                      </Card>
-                    );
-                  }}
-                  keyExtractor={(item, index) => index}
-                />
+                </Card>})}
               </View>
             </View>
           )}
@@ -238,7 +230,13 @@ const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject
   },
-
+  list: {
+    paddingTop: 20,
+  },
+  location: {
+    paddingTop: 30,
+    paddingBottom: 20,
+  },
   developmentModeText: {
     marginBottom: 20,
     color: "rgba(0,0,0,0.4)",
