@@ -3,7 +3,10 @@ import { Platform, View, Text, StyleSheet, FlatList } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, AnimatedRegion, Polyline, Callout } from 'react-native-maps';
 import MapLayout from "../constants/MapLayout";
 import { getLocationPermission } from '../utils/permissions';
+import Svg from 'expo';
+const { Image } = Svg;
 import firestore from "../utils/firestore";
+import { ScrollView } from 'react-native-gesture-handler';
 
 const DEFAULT_LATITUDE = 35.708647;
 const DEFAULT_LONGITUDE = 139.729769;
@@ -22,6 +25,12 @@ export default class MapScreen extends React.Component {
         longitude: DEFAULT_LONGITUDE
       }),
       markers: [],
+      detail: {},
+      detailReviews: [],
+      isListVisible: true,
+      isAddStoryFormVisible: false,
+      newStoryTitle: "",
+      newStoryText: ""
     };
     this.addMarker = this.addMarker.bind(this);
     this.getMapRegion = this.getMapRegion.bind(this);
@@ -48,7 +57,6 @@ export default class MapScreen extends React.Component {
       .catch(err => {
         console.log("Error getting documents", err);
       });
-
     this.watchID = navigator.geolocation.watchPosition(
       position => {
         const { coordinate } = this.state;
@@ -94,9 +102,55 @@ export default class MapScreen extends React.Component {
     })
   }
 
+  onItemListClick = item => {
+    if (!this.state.isListVisible) {
+      this.setState({
+        isListVisible: true,
+        isAddStoryFormVisible: false
+      });
+    } else {
+      this.setState({
+        detail: item,
+        isListVisible: false
+      });
+      newReviews = [];
+      firestore
+        .collection("stories")
+        .where("location", "==", item.title)
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            newReviews.push(doc.data());
+          });
+        })
+        .then(() => {
+          this.setState({
+            detailReviews: newReviews
+          });
+        });
+    }
+  };
+
+  saveNewStory() {
+    firestore
+      .collection("stories")
+      .doc()
+      .set({
+        userID: firebase.auth().currentUser.uid,
+        title: this.state.newStoryTitle,
+        story: this.state.newStoryText,
+        location: this.state.detail.title
+      })
+      .then(() => {
+        this.setState({
+          isAddStoryFormVisible: false
+        });
+      });
+  }
+
   render() {
     return (
-      <MapView
+        <MapView
         ref={MapView => (this.MapView = MapView)}
         region={this.getMapRegion()}
         style={styles.map}
@@ -104,7 +158,7 @@ export default class MapScreen extends React.Component {
         loadingEnabled={true}
         loadingIndicatorColor="#666666"
         loadingBackgroundColor="#eeeeee"
-        moveOnMarkerPress={false}
+        moveOnMarkerPress
         showsUserLocation
         showsCompass={true}
         customMapStyle={MapLayout}
@@ -116,9 +170,19 @@ export default class MapScreen extends React.Component {
             <MapView.Marker
               key={index}
               coordinate={marker.coordinate}
-              title={marker.title}
-              description={marker.description}
-            />)
+            >
+              <Callout style={styles.callout} onPress={() => console.log(marker.image)}>
+              <View style={styles.container}>
+                <Text style={styles.title}>{marker.title}</Text>
+                {/* <Svg width={50} height={50}>
+                    <Image
+                        href={{uri: marker.image}}
+                        width={50} height={50} />
+                </Svg> */}
+                <Text style={styles.description}>{marker.description}</Text>
+              </View> 
+              </Callout>
+            </MapView.Marker>)
         })
         }
       </MapView>
@@ -128,8 +192,10 @@ export default class MapScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingTop: 15,
+    // flex: 1,
+    width: 140, height: 60,
+    flexDirection: 'column',
+    alignItems: 'center',
     backgroundColor: "#fff"
   },
   map: {
@@ -146,5 +212,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#550bbc",
     padding: 5,
     borderRadius: 100,
+  },
+  callout: {
+    flex: 1, 
+    position: 'relative', 
+    height: 150,
+    borderRadius: 100,
+  },
+  title: {
+    fontSize: 12,
+  },
+  description: {
+    marginLeft: 3,
+    marginRight: 3,
+    fontSize: 10,
   }
 });
