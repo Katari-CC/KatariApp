@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, View, Text, StyleSheet, FlatList, Dimensions, TextInput } from 'react-native';
+import { Platform, View, Text, StyleSheet, FlatList, Dimensions, TextInput, Image } from 'react-native';
 import { ListItem, Button, Card } from "react-native-elements";
 import MapView, { PROVIDER_GOOGLE, Marker, AnimatedRegion, Polyline, Callout } from 'react-native-maps';
 import MapLayout from "../constants/MapLayout";
@@ -105,6 +105,8 @@ class Map extends React.Component {
       routeName: 'Location',
       params: {
         title: marker.title,
+        image: marker.image,
+        description: marker.description
       }
   })
   this.props.navigation.dispatch(navigateAction);
