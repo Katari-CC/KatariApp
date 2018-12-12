@@ -1,16 +1,3 @@
-<<<<<<< HEAD
-import React from "react";
-import { Platform, View, Text, StyleSheet, FlatList } from "react-native";
-import MapView, {
-  PROVIDER_GOOGLE,
-  Marker,
-  AnimatedRegion,
-  Polyline,
-  Callout
-} from "react-native-maps";
-import MapLayout from "../constants/MapLayout";
-import { getLocationPermission } from "../utils/permissions";
-=======
 import React from 'react';
 import { Platform, View, Text, StyleSheet, FlatList, Dimensions, TextInput, Image } from 'react-native';
 import { ListItem, Button, Card } from "react-native-elements";
@@ -19,7 +6,6 @@ import MapLayout from "../constants/MapLayout";
 import { getLocationPermission } from '../utils/permissions';
 // import Svg from 'expo';
 // const { Image } = Svg;
->>>>>>> master
 import firestore from "../utils/firestore";
 import firebase from "../utils/firebaseClient";
 import { ScrollView } from 'react-native-gesture-handler';
@@ -152,13 +138,6 @@ class Map extends React.Component {
             <MapView.Marker
               key={index}
               coordinate={marker.coordinate}
-<<<<<<< HEAD
-              title={marker.title}
-              description={marker.description}
-            />
-          );
-        })}
-=======
             >
               <Callout style={styles.callout} onPress={() => this.onMarkerPress(marker)}>
               <View style={styles.container}>
@@ -174,7 +153,6 @@ class Map extends React.Component {
             </MapView.Marker>)
         })
         }
->>>>>>> master
       </MapView>
     );
   }
@@ -381,9 +359,6 @@ const styles = StyleSheet.create({
   marker: {
     backgroundColor: "#550bbc",
     padding: 5,
-<<<<<<< HEAD
-    borderRadius: 100
-=======
     borderRadius: 100,
   },
   callout: {
@@ -399,7 +374,6 @@ const styles = StyleSheet.create({
     marginLeft: 3,
     marginRight: 3,
     fontSize: 10,
->>>>>>> master
   }
 });
 
