@@ -1,3 +1,16 @@
+<<<<<<< HEAD
+import React from "react";
+import { Platform, View, Text, StyleSheet, FlatList } from "react-native";
+import MapView, {
+  PROVIDER_GOOGLE,
+  Marker,
+  AnimatedRegion,
+  Polyline,
+  Callout
+} from "react-native-maps";
+import MapLayout from "../constants/MapLayout";
+import { getLocationPermission } from "../utils/permissions";
+=======
 import React from 'react';
 import { Platform, View, Text, StyleSheet, FlatList, Dimensions, TextInput, Image } from 'react-native';
 import { ListItem, Button, Card } from "react-native-elements";
@@ -6,6 +19,7 @@ import MapLayout from "../constants/MapLayout";
 import { getLocationPermission } from '../utils/permissions';
 // import Svg from 'expo';
 // const { Image } = Svg;
+>>>>>>> master
 import firestore from "../utils/firestore";
 import firebase from "../utils/firebaseClient";
 import { ScrollView } from 'react-native-gesture-handler';
@@ -27,7 +41,7 @@ class Map extends React.Component {
         latitude: DEFAULT_LATITUDE,
         longitude: DEFAULT_LONGITUDE
       }),
-      markers: [],
+      markers: []
     };
     this.addMarker = this.addMarker.bind(this);
     this.getMapRegion = this.getMapRegion.bind(this);
@@ -41,12 +55,15 @@ class Map extends React.Component {
       .collection("locations")
       .get()
       .then(snapshot => {
-        snapshot.forEach((doc) => {
+        snapshot.forEach(doc => {
           const marker = doc.data();
           marker["title"] = doc.id;
-          marker["coordinate"] = { longitude: marker.longitude, latitude: marker.latitude }
+          marker["coordinate"] = {
+            longitude: marker.longitude,
+            latitude: marker.latitude
+          };
           markers.push(marker);
-        })
+        });
         this.setState({
           markers
         });
@@ -68,6 +85,7 @@ class Map extends React.Component {
         this.setState({
           latitude,
           longitude,
+          routeCoordinates: routeCoordinates.concat([newCoordinate])
         });
       },
       error => console.log(error),
@@ -94,9 +112,8 @@ class Map extends React.Component {
         {
           coordinate: e.nativeEvent.coordinate
         }
-      ],
-
-    })
+      ]
+    });
   }
 
   onMarkerPress(marker) {
@@ -128,12 +145,20 @@ class Map extends React.Component {
         customMapStyle={MapLayout}
         showsPointsOfInterest={false}
         // onPress={this.addMarker}
-        provider={PROVIDER_GOOGLE}>
+        provider={PROVIDER_GOOGLE}
+      >
         {this.state.markers.map((marker, index) => {
           return (
             <MapView.Marker
               key={index}
               coordinate={marker.coordinate}
+<<<<<<< HEAD
+              title={marker.title}
+              description={marker.description}
+            />
+          );
+        })}
+=======
             >
               <Callout style={styles.callout} onPress={() => this.onMarkerPress(marker)}>
               <View style={styles.container}>
@@ -149,6 +174,7 @@ class Map extends React.Component {
             </MapView.Marker>)
         })
         }
+>>>>>>> master
       </MapView>
     );
   }
@@ -333,14 +359,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff"
   },
   map: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFillObject
   },
   currentLocation: {
     borderRadius: 100,
     backgroundColor: "#339EFF",
     padding: 8,
     borderWidth: 3,
-    borderColor: "#FFF",
+    borderColor: "#FFF"
   },
   storyContainer: {
     flexDirection: 'row',
@@ -355,6 +381,9 @@ const styles = StyleSheet.create({
   marker: {
     backgroundColor: "#550bbc",
     padding: 5,
+<<<<<<< HEAD
+    borderRadius: 100
+=======
     borderRadius: 100,
   },
   callout: {
@@ -370,6 +399,7 @@ const styles = StyleSheet.create({
     marginLeft: 3,
     marginRight: 3,
     fontSize: 10,
+>>>>>>> master
   }
 });
 

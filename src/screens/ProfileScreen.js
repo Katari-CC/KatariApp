@@ -1,22 +1,19 @@
 import React from "react";
 import { ScrollView, View, Image, StyleSheet, ImagePicker } from "react-native";
-// import PhotoUpload from "react-native-photo-upload";
+
 import firebase from "../utils/firebaseClient";
 import AppNavigator from "../navigation/AppNavigator";
 import { FormLabel, FormInput, Text, Button } from "react-native-elements";
 import "firebase/firestore";
-// import RNFetchBlob from "react-native-fetch-blob";
-
-// const Blob = RNFetchBlob.polyfill.Blob;
-// const fs = RNFetchBlob.fs;
-// window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
-// window.Blob = Blob;
 
 export default class ProfileScreen extends React.Component {
   static navigationOptions = {
     title: "Profile",
     header: null
   };
+  constructor(props) {
+    super(props);
+  }
 
   logout = () => {
     firebase
@@ -30,7 +27,7 @@ export default class ProfileScreen extends React.Component {
       )
       .catch(err => console.log("logout error", err));
   };
-  
+
   _uploadImage = (uri, mime = "image/jpeg", name) => {
     // return new Promise((resolve, reject) => {
     //   let imgUri = uri;
@@ -61,13 +58,15 @@ export default class ProfileScreen extends React.Component {
   };
 
   render() {
+    const db = firebase.firestore();
+    console.log("test");
+    console.log(firebase.auth());
     return (
       <ScrollView>
         <View style={styles.container}>
           <Text style>
-            {"Welcome "+firebase.auth().currentUser.email+"!"}
-        </Text>
-
+            {"Welcome " + firebase.auth().currentUser.email + "!"}
+          </Text>
           <Image
             style={styles.avatar}
             resizeMode="cover"
@@ -76,6 +75,7 @@ export default class ProfileScreen extends React.Component {
                 "https://www.sparklabs.com/forum/styles/comboot/theme/images/default_avatar.jpg"
             }}
           />
+
           <Button
             buttonStyle={styles.size}
             title="Change the profile picture"
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   },
   size: {
     justifyContent: "center",
-    alignItems: 'center',
+    alignItems: "center",
     backgroundColor: "rgba(92, 99,216, 1)",
     // width: "100%",
     // height: 50,
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 10,
     paddingLeft: 50,
-    paddingRight: 50,
+    paddingRight: 50
     // marginBottom: 10
   },
   avatar: {
