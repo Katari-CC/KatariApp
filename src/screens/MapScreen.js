@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, View, Text, StyleSheet, FlatList, Dimensions, TextInput } from 'react-native';
+import { Platform, View, Text, StyleSheet, FlatList, Dimensions, TextInput, Image } from 'react-native';
 import { ListItem, Button, Card } from "react-native-elements";
 import MapView, { PROVIDER_GOOGLE, Marker, AnimatedRegion, Polyline, Callout } from 'react-native-maps';
 import MapLayout from "../constants/MapLayout";
@@ -105,6 +105,8 @@ class Map extends React.Component {
       routeName: 'Location',
       params: {
         title: marker.title,
+        image: marker.image,
+        description: marker.description
       }
   })
   this.props.navigation.dispatch(navigateAction);
@@ -272,13 +274,13 @@ class Location  extends React.Component {
               ) : (
                   <View />
                 )}
-              <View>
+              <View style={styles.storyContainer}>
                 {this.state.stories.map((story)=> {return <Card
                         title={story.title}
                         // image={{ uri: review.imageUrl }}
-                        containerStyle={{ padding: 0, width: 160 }}
+                        containerStyle={styles.storyCard}
                       >
-                        <Text style={{ marginBottom: 10 }}>{story.story}</Text>
+                        <Text style={{ marginBottom: 10, textAlign: 'center' }}>{story.story}</Text>
                 </Card>})}
               </View>
             </View>
@@ -339,6 +341,16 @@ const styles = StyleSheet.create({
     padding: 8,
     borderWidth: 3,
     borderColor: "#FFF",
+  },
+  storyContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+  storyCard: {
+    width: 150,
+    height: 120,
+    borderRadius: 20,
   },
   marker: {
     backgroundColor: "#550bbc",

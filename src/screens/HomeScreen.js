@@ -38,6 +38,7 @@ export default class HomeScreen extends React.Component {
   }
 
   componentDidMount() {
+    console.log(firebase.auth().currentUser)
     newLocation = [];
     firestore
       .collection("locations")
@@ -178,13 +179,13 @@ export default class HomeScreen extends React.Component {
               ) : (
                   <View />
                 )}
-              <View>
+              <View style={styles.storyContainer}>
               {this.state.detailReviews.map((story)=> {return <Card
                         title={story.title}
                         // image={{ uri: review.imageUrl }}
-                        containerStyle={{ padding: 0, width: 160 }}
+                        containerStyle={styles.storyCard}
                       >
-                        <Text style={{ marginBottom: 10 }}>{story.story}</Text>
+                        <Text style={{ marginBottom: 10, textAlign: 'center' }}>{story.story}</Text>
                 </Card>})}
               </View>
             </View>
@@ -226,7 +227,16 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#898989"
   },
-
+  storyContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+  storyCard: {
+    width: 150,
+    height: 120,
+    borderRadius: 20,
+  },
   container: {
     ...StyleSheet.absoluteFillObject
   },
