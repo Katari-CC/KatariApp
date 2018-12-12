@@ -22,7 +22,6 @@ class Map extends React.Component {
     this.state = {
       latitude: DEFAULT_LATITUDE,
       longitude: DEFAULT_LONGITUDE,
-      routeCoordinates: [],
       coordinate: new AnimatedRegion({
         latitude: DEFAULT_LATITUDE,
         longitude: DEFAULT_LONGITUDE
@@ -71,7 +70,6 @@ class Map extends React.Component {
         this.setState({
           latitude,
           longitude,
-          routeCoordinates: routeCoordinates.concat([newCoordinate])
         });
       },
       error => console.log(error),

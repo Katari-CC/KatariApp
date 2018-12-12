@@ -24,7 +24,8 @@ export default class Loading extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    color: "blue",
+    backgroundColor: "#D0D3C5",
+    color: "#08708A",
     fontWeight: "bold",
     fontSize: 30,
     justifyContent: "center",

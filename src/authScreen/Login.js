@@ -30,7 +30,7 @@ export default class Login extends React.Component {
 
         <FormLabel>Email</FormLabel>
         <FormInput
-          style={styles.size}
+          style={styles.formInput}
           underlineColorAndroid="transparent"
           onChangeText={email => this.setState({ email })}
           value={this.state.email}
@@ -39,7 +39,7 @@ export default class Login extends React.Component {
         <FormLabel>Password</FormLabel>
         <FormInput
           secureTextEntry
-          style={styles.size}
+          style={styles.formInput}
           underlineColorAndroid="transparent"
           onChangeText={password => this.setState({ password })}
           value={this.state.password}
@@ -47,7 +47,7 @@ export default class Login extends React.Component {
         <FormValidationMessage>{"required"}</FormValidationMessage>
         <Text style={styles.space} />
         <Button
-          buttonStyle={styles.size}
+          buttonStyle={styles.button}
           title="Login"
           onPress={this.handleLogin}
         />
@@ -65,7 +65,9 @@ export default class Login extends React.Component {
 const styles = StyleSheet.create({
   container: {
     marginTop: 50,
-    justifyContent: "center"
+    justifyContent: "center",
+    backgroundColor: "#d0d3c5",
+    color: "#56b1bf",
   },
   space: {
     marginTop: 10,
@@ -73,7 +75,7 @@ const styles = StyleSheet.create({
   },
   link: {
     marginLeft: 25,
-    color: "grey",
+    color: "#d73a31",
     fontWeight: "bold",
     fontSize: 18,
     textShadowColor: "pink",
@@ -83,8 +85,17 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 50
   },
-  size: {
-    backgroundColor: "rgba(92, 99,216, 1)",
+  formInput: {
+    backgroundColor: "#56b1bf",
+    width: "100%",
+    height: 50,
+    borderWidth: 0,
+    borderRadius: 5,
+    marginTop: 10,
+    marginBottom: 10
+  },
+  button: {
+    backgroundColor: "#56b1bf",
     width: "100%",
     height: 50,
     borderWidth: 0,
