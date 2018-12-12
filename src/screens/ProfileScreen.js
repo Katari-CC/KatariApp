@@ -31,6 +31,9 @@ export default class ProfileScreen extends React.Component {
   _uploadImage = (uri, mime = "image/jpeg", name) => {};
 
   render() {
+    const db = firebase.firestore();
+    console.log("test");
+    console.log(firebase.auth());
     return (
       <ScrollView>
         <View style={styles.container}>
