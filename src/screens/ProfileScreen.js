@@ -30,7 +30,7 @@ export default class ProfileScreen extends React.Component {
       )
       .catch(err => console.log("logout error", err));
   };
-
+  
   _uploadImage = (uri, mime = "image/jpeg", name) => {
     // return new Promise((resolve, reject) => {
     //   let imgUri = uri;
@@ -62,17 +62,26 @@ export default class ProfileScreen extends React.Component {
 
   render() {
     return (
-      <ScrollView >
+      <ScrollView>
         <View style={styles.container}>
-          <Text>
-            A bunch of random text to see if scrolling actually works. A bunch of
-            random text to see if scrolling actually works.
+          <Text style>
+            {"Welcome "+firebase.auth().currentUser.email+"!"}
         </Text>
-          <Text>
-            A bunch of random text to see if scrolling actually works. A bunch of
-            random text to see if scrolling actually works. A bunch of random text
-            to see if scrolling actually works.
-        </Text>
+
+          <Image
+            style={styles.avatar}
+            resizeMode="cover"
+            source={{
+              uri:
+                "https://www.sparklabs.com/forum/styles/comboot/theme/images/default_avatar.jpg"
+            }}
+          />
+          <Button
+            buttonStyle={styles.size}
+            title="Change the profile picture"
+            onPress={this._uploadImage}
+          />
+
           <Button
             buttonStyle={styles.size}
             title="Logout"
@@ -86,18 +95,22 @@ export default class ProfileScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 50,
+    marginTop: 250,
     justifyContent: "center",
     alignItems: "center"
   },
   size: {
+    justifyContent: "center",
+    alignItems: 'center',
     backgroundColor: "rgba(92, 99,216, 1)",
-    width: "100%",
-    height: 50,
+    // width: "100%",
+    // height: 50,
     borderWidth: 0,
     borderRadius: 5,
     marginTop: 10,
-    marginBottom: 10
+    paddingLeft: 50,
+    paddingRight: 50,
+    // marginBottom: 10
   },
   avatar: {
     paddingVertical: 30,

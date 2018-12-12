@@ -59,7 +59,8 @@ ProfileStack.navigationOptions = {
 export default createBottomTabNavigator({
   HomeStack,
   MapStack,
-  ProfileStack
+  ProfileStack,
+  
 },
   {
     initialRouteName: "HomeStack",

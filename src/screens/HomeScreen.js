@@ -38,6 +38,7 @@ export default class HomeScreen extends React.Component {
   }
 
   componentDidMount() {
+    console.log(firebase.auth().currentUser)
     newLocation = [];
     firestore
       .collection("locations")

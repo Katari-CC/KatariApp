@@ -362,7 +362,6 @@ const styles = StyleSheet.create({
     position: 'relative', 
     height: 150,
     borderRadius: 100,
-    textAlign: 'center'
   },
   title: {
     fontSize: 12,
