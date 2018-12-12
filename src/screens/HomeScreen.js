@@ -238,7 +238,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   container: {
-    ...StyleSheet.absoluteFillObject
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "#d0d3c5",
+    color: "#08708a",
   },
   list: {
     paddingTop: 20,

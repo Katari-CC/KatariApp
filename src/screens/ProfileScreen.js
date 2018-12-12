@@ -62,8 +62,7 @@ export default class ProfileScreen extends React.Component {
     console.log("test");
     console.log(firebase.auth());
     return (
-      <ScrollView>
-        <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
           <Text style>
             {"Welcome " + firebase.auth().currentUser.email + "!"}
           </Text>
@@ -78,17 +77,16 @@ export default class ProfileScreen extends React.Component {
           /> */}
 
           <Button
-            buttonStyle={styles.size}
+            buttonStyle={styles.button}
             title="Change the profile picture"
             onPress={this._uploadImage}
           />
 
           <Button
-            buttonStyle={styles.size}
+            buttonStyle={styles.button}
             title="Logout"
             onPress={this.logout}
           />
-        </View>
       </ScrollView>
     );
   }
@@ -96,14 +94,17 @@ export default class ProfileScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 250,
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "#d0d3c5",
+    color: "#56b1bf",
+    paddingTop: 50,
     justifyContent: "center",
     alignItems: "center"
   },
-  size: {
+  button: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(92, 99,216, 1)",
+    backgroundColor: "#56b1bf",
     // width: "100%",
     // height: 50,
     borderWidth: 0,
