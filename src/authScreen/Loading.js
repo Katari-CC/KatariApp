@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, ActivityIndicator, StyleSheet, Image } from "react-native";
 // import firebase from "react-native-firebase";
 
 import firebase from "../utils/firebaseClient";

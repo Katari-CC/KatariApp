@@ -67,14 +67,15 @@ export default class ProfileScreen extends React.Component {
           <Text style>
             {"Welcome " + firebase.auth().currentUser.email + "!"}
           </Text>
-          <Image
+          <Image source={require('../../assets/images/loading.gif')} />
+          {/* <Image
             style={styles.avatar}
             resizeMode="cover"
             source={{
               uri:
                 "https://www.sparklabs.com/forum/styles/comboot/theme/images/default_avatar.jpg"
             }}
-          />
+          /> */}
 
           <Button
             buttonStyle={styles.size}
