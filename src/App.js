@@ -10,12 +10,24 @@ import React, { Component } from "react";
 import { Platform, View, StyleSheet } from "react-native";
 import { AppLoading, Asset, Font, Icon } from "expo";
 import AppNavigator from "./navigation/AppNavigator";
+import { YellowBox } from 'react-native';
+import _ from 'lodash';
+
+// YellowBox.ignoreWarnings(['Setting a timer']);
+// const _console = _.clone(console);
+// console.warn = message => {
+//   if (message.indexOf('Setting a timer') <= -1) {
+//     _console.warn(message);
+//   }
+// };
+
 const instructions = Platform.select({
   ios: "Press Cmd+R to reload,\n" + "Cmd+D or shake for dev menu",
   android:
     "Double tap R on your keyboard to reload,\n" +
     "Shake or press menu button for dev menu"
 });
+
 
 type Props = {};
 export default class App extends Component<Props> {

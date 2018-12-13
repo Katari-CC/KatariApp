@@ -33,16 +33,12 @@ class Main extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      latitude: DEFAULT_LATITUDE,
-      longitude: DEFAULT_LONGITUDE,
-      coordinate: new AnimatedRegion({
-        latitude: DEFAULT_LATITUDE,
-        longitude: DEFAULT_LONGITUDE
-      }),
-      latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA,
+      // coordinate: new AnimatedRegion({
+      //   latitude: DEFAULT_LATITUDE,
+      //   longitude: DEFAULT_LONGITUDE
+      // }),
       markers: [],
-      currentRegion: {
+      region: {
         latitude: DEFAULT_LATITUDE,
         longitude: DEFAULT_LONGITUDE,
         latitudeDelta: LATITUDE_DELTA,
@@ -79,42 +75,61 @@ class Main extends React.Component {
       .catch(err => {
         console.log("Error getting documents", err);
       });
-    this.watchID = navigator.geolocation.watchPosition(
-      position => {
-        const { coordinate } = this.state;
-        const { latitude, longitude } = position.coords;
-        const newCoordinate = {
-          latitude,
-          longitude
-        };
-        coordinate.timing(newCoordinate).start();
 
-        this.setState({
-          latitude,
-          longitude,
-        });
-      },
-      error => console.log(error),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-    );
+      const options = {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 1000
+      };
+      
+      function error(err) { // error callback
+        console.error(err);
+      };
+      
+      navigator.geolocation.getCurrentPosition((position)=> {
+        const {latitude, longitude} = position.coords;
+        const region = {
+          latitude, longitude,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA,
+        }
+        this.setState({region});
+      }, 
+      () => console.error(err), options);
+    // this.watchID = navigator.geolocation.watchPosition(
+    //   position => {
+    //     const { coordinate } = this.state;
+    //     const { latitude, longitude } = position.coords;
+    //     const newCoordinate = {
+    //       latitude,
+    //       longitude
+    //     };
+    //     coordinate.timing(newCoordinate).start();
+
+    //     this.setState({
+    //       latitude,
+    //       longitude,
+    //     });
+    //   },
+    //   error => console.log(error),
+    //   { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+    // );
   }
 
-  static navigationOptions = {
-    header: null
+  getMapRegion(){
+    if (this.props.navigation.state.params) {
+      return this.props.navigation.state.params.region;
+    }
+    else {
+      return this.state.region;
+    }
   };
-
-  getMapRegion = () => ({
-    latitude: this.state.latitude,
-    longitude: this.state.longitude,
-    latitudeDelta: this.state.latitudeDelta,
-    longitudeDelta: this.state.longitudeDelta,
-  });
 
   toAddLocation() {
     const navigateAction = NavigationActions.navigate({
       routeName: 'AddLocation',
       params: {
-        region: this.state.currentRegion
+        region: this.state.region
       }
   })
   this.props.navigation.dispatch(navigateAction);
@@ -133,21 +148,17 @@ class Main extends React.Component {
   this.props.navigation.dispatch(navigateAction);
   }
 
-  onRegionChange(currentRegion) {
-    this.setState({ currentRegion, 
-      latitude: currentRegion.latitude, 
-      longitude: currentRegion.longitude, 
-      latitudeDelta: currentRegion.latitudeDelta,
-      longitudeDelta: currentRegion.longitudeDelta,
-    })
+  onRegionChange(region) {
+    this.setState({ region })
   }
 
   render() {
+    if (this.props.navigation.state.params) this.getMapRegion();
     return (
       <View style={styles.map}>
         <MapView
         ref={MapView => (this.MapView = MapView)}
-        region={this.getMapRegion()}
+        region={this.state.region}
         onRegionChangeComplete={this.onRegionChange}
         style={styles.map}
         loadingEnabled={true}
@@ -194,12 +205,12 @@ class AddLocation extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      latitude: DEFAULT_LATITUDE,
-      longitude: DEFAULT_LONGITUDE,
-      coordinate: new AnimatedRegion({
-        latitude: DEFAULT_LATITUDE,
-        longitude: DEFAULT_LONGITUDE
-      }),
+      region: {
+        latitude: this.props.navigation.state.params.region.latitude,
+        longitude: this.props.navigation.state.params.region.longitude,
+        latitudeDelta: this.props.navigation.state.params.region.latitudeDelta,
+        longitudeDelta: this.props.navigation.state.params.region.longitudeDelta,
+      },
       markers: [],
       modalVisible: false,
       categories: [
@@ -216,8 +227,9 @@ class AddLocation extends React.Component {
       newLocationDescription: undefined,
       newLocationImage: "https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png",
     };
-    this.getMapRegion = this.getMapRegion.bind(this);
+    // this.getMapRegion = this.getMapRegion.bind(this);
     this.onRegionChange = this.onRegionChange.bind(this);
+    this.backToMap = this.backToMap.bind(this);
   }
 
   componentDidMount() {
@@ -243,44 +255,14 @@ class AddLocation extends React.Component {
       .catch(err => {
         console.log("Error getting documents", err);
       });
-
-      this.setState({
-        latitude: this.props.navigation.state.params.region.latitude,
-        longitude: this.props.navigation.state.params.region.longitude,
-        latitudeDelta: this.props.navigation.state.params.region.latitudeDelta,
-        longitudeDelta: this.props.navigation.state.params.region.longitudeDelta,
-      })
-
-    this.watchID = navigator.geolocation.watchPosition(
-      position => {
-        const { coordinate } = this.state;
-        const { latitude, longitude } = position.coords;
-        const newCoordinate = {
-          latitude,
-          longitude
-        };
-        coordinate.timing(newCoordinate).start();
-        this.setState({
-          latitude,
-          longitude,
-        });
-      },
-      error => console.log(error),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-    );
   }
 
-  static navigationOptions = {
-    title: "Add Location",
-    // header: null,
-  };
-
-  getMapRegion = () => ({
-    latitude: this.state.latitude,
-    longitude: this.state.longitude,
-    latitudeDelta: this.state.latitudeDelta,
-    longitudeDelta: this.state.longitudeDelta,
-  });
+  // getMapRegion = () => ({
+  //   latitude: this.state.latitude,
+  //   longitude: this.state.longitude,
+  //   latitudeDelta: this.state.latitudeDelta,
+  //   longitudeDelta: this.state.longitudeDelta,
+  // });
 
   saveNewLocation() {
     if (
@@ -289,45 +271,49 @@ class AddLocation extends React.Component {
       !this.state.newLocationDescription ||
       !this.state.newLocationImage
       ) {
-        Alert.alert(
-          "Missing some field(s)!", 
-          "Please make sure to fill everything out.", 
-          [{text: 'OK', onPress: () => console.log('OK Pressed')},]
-        )
-      } else {
-    const newLocation = {
-      category: this.state.selectedCategory,
-      latitude: this.state.latitude,
-      longitude: this.state.longitude,
-      description: this.state.newLocationDescription,
-      image: this.state.newLocationImage,
-    };
-    firestore
-      .collection("locations")
-      .doc(this.state.newLocationTitle)
-      .set(newLocation)
-      .then(() => {
-        newLocation["coordinate"] = {latitude: this.state.latitude, longitude: this.state.longitude};
-        this.setState({
-          modalVisible: false,
-          markers: [...this.state.markers, newLocation],
-          selectedCategory: undefined,
-          newLocationDescription: undefined,
-          newLocationTitle: undefined,
+      Alert.alert(
+        "Missing some field(s)!", 
+        "Please make sure to fill everything out.", 
+        [{text: 'OK', onPress: () => console.log('OK Pressed')},]
+      )
+    } else {
+      const latitude = this.state.region.latitude;
+      const longitude = this.state.region.longitude;
+      const newLocation = {
+        category: this.state.selectedCategory,
+        latitude,
+        longitude,
+        description: this.state.newLocationDescription,
+       image: this.state.newLocationImage,
+      };
+      firestore
+        .collection("locations")
+        .doc(this.state.newLocationTitle)
+        .set(newLocation)
+        .then(() => {
+          newLocation["coordinate"] = {latitude, longitude};
+          this.setState({
+            modalVisible: false,
+            markers: [...this.state.markers, newLocation],
+            selectedCategory: undefined,
+            newLocationDescription: undefined,
+            newLocationTitle: undefined,
+          });
         });
-      });
-    }
+      }
   }
 
   onRegionChange(region) {
-    this.setState({
-      latitude: region.latitude, 
-      longitude: region.longitude,
-      latitudeDelta: region.latitudeDelta,
-      longitudeDelta: region.longitudeDelta,
-    })
+    this.setState({ region })
   }
   
+  backToMap() {
+    const navigateAction = NavigationActions.navigate({
+      routeName: 'Main',
+      params: { region: this.state.region }
+    })
+  this.props.navigation.dispatch(navigateAction);
+  }
 
   render() {
     return (
@@ -369,8 +355,7 @@ class AddLocation extends React.Component {
 
         <MapView
         ref={MapView => (this.MapView = MapView)}
-        region={this.getMapRegion()}
-        initialRegion={this.props.navigation.state.params.region}
+        region={this.state.region}
         onRegionChangeComplete={this.onRegionChange}
         style={styles.map}
         loadingEnabled={true}
@@ -404,6 +389,7 @@ class AddLocation extends React.Component {
         })
         }
       </MapView>
+
       <View style={styles.addBtnPosition}>
       <TouchableOpacity
           style={styles.addButton}
@@ -412,6 +398,16 @@ class AddLocation extends React.Component {
           <Text style={styles.addBtnText}>✓</Text>
         </TouchableOpacity>
       </View>
+
+      <View style={styles.xBtnPosition}>
+      <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => this.backToMap()} 
+        >
+          <Text style={styles.addBtnText}>x</Text>
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.centerPin} >
       <Icon name="md-pin" 
         type="ionicon"
@@ -453,12 +449,6 @@ class Location  extends React.Component {
         });
       });
   }
-
-  static navigationOptions = {
-    // title: `${this.props.navigation.state.params.title`,
-    header: null,
-    headerMode: 'none'
-  };
 
   saveNewStory() {
     const newStory = {
@@ -563,6 +553,12 @@ const styles = StyleSheet.create({
     bottom: 20, 
     right: 20,
   },
+  xBtnPosition: {
+    zIndex: 3,
+    position: "absolute", 
+    bottom: 20, 
+    left: 20,
+  },
   button: {
     justifyContent: "center",
     alignItems: "center",
@@ -657,17 +653,27 @@ const styles = StyleSheet.create({
   }
 });
 
+// static navigationOptions = {
+//   // title: `${this.props.navigation.state.params.title`,
+//   header: null,
+//   headerMode: 'none',
+//   backBehavior: 'initialRoute'
+// };
+
 const MapScreen = createStackNavigator({
   Main: { screen: Main },
-  Location: { screen: Location },
-  AddLocation: { screen: AddLocation }
+  Location: { screen: Location, navigationOptions: () => ({
+    backBehavior: "initialRoute",
+  }), },
+  AddLocation: { screen: AddLocation, navigationOptions: () => ({
+    backBehavior: "none",
+  }),  }
 }, {
   initialRouteName: 'Main', 
-  defaultNavigationOptions: {
-    header: null,
-  },
   mode: 'modal',
   headerMode: 'none',
-  backBehavior: 'initialRoute'
 });
+MapScreen.navigationOptions = {
+  header: null
+}
 export default MapScreen;
