@@ -4,7 +4,6 @@ import { Card, Button } from "react-native-elements";
 import firestore from "../utils/firestore";
 import firebase from "../utils/firebaseClient";
 import { ScrollView } from "react-native-gesture-handler";
-import uuid from "uuid/v4";
 
 export default class Location extends React.Component {
   constructor(props) {
@@ -30,6 +29,7 @@ export default class Location extends React.Component {
         });
       })
       .then(() => {
+        stories.
         this.setState({
           stories: newReviews
         });
@@ -38,7 +38,6 @@ export default class Location extends React.Component {
 
   saveNewStory() {
     const newStory = {
-      id: uuid(),
       userID: firebase.auth().currentUser.uid,
       title: this.state.newStoryTitle,
       story: this.state.newStoryText,

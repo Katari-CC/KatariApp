@@ -17,6 +17,7 @@ import { Constants, ImagePicker, Permissions } from "expo";
 import { FormLabel, FormInput, Text, Button } from "react-native-elements";
 import firestore from "../utils/firestore";
 import "firebase/firestore";
+import "firebase/storage";
 
 export default class ProfileScreen extends React.Component {
   static navigationOptions = {
@@ -27,13 +28,18 @@ export default class ProfileScreen extends React.Component {
     super(props);
     this.state = {
       image: null,
-      uploading: false
+      uploading: false,
     };
   }
 
   componentDidMount() {
     getCameraPermission();
     getCameraRollPermission();
+    // this.setState({
+    //   user: firebase.auth().currentUser,
+    // });
+
+    firebase.storage.ref();
   }
 
   _share = () => {
@@ -69,11 +75,6 @@ export default class ProfileScreen extends React.Component {
   };
 
   _maybeRenderImage = () => {
-    let { image } = this.state;
-    if (!image) {
-      return;
-    }
-
     return (
       <View
         style={{
@@ -94,7 +95,7 @@ export default class ProfileScreen extends React.Component {
             overflow: "hidden"
           }}
         >
-          <Image source={{ uri: image }} style={{ width: 250, height: 250 }} />
+          {/* <Image source={{ uri: image }} style={{ width: 250, height: 250 }} /> */}
         </View>
 
         <Text
@@ -102,7 +103,7 @@ export default class ProfileScreen extends React.Component {
           onLongPress={this._share}
           style={{ paddingVertical: 10, paddingHorizontal: 10 }}
         >
-          {image}
+          {/* {image} */}
         </Text>
       </View>
     );
@@ -158,49 +159,21 @@ export default class ProfileScreen extends React.Component {
 
 
   render() {
-    let { image } = this.state;
-    const users = [];
-    const currentUser = "";
-    let useremail;
-    const user = firebase.auth().currentUser;
-
-    if (user != null) {
-      useremail = user.email;
-    }
-    const usersRef = firestore.collection("users");
-    usersRef
-      .get()
-      .then(snapshot => {
-        snapshot.forEach(doc => {
-          users.push(doc.data());
-          console.log("users=", users);
-        });
-        users.forEach(obj => {
-          if (firebase.auth().currentUser.email === obj.email) {
-            console.log("email", useremail);
-            currentUser = obj.displayName;
-            console.log("currentUser=", currentUser);
-          }
-        });
-      })
-      .catch(err => {
-        console.log("Error getting documents", err);
-      });
-
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style>
-          {"Welcome " + firebase.auth().currentUser.email + "!"}
+        <Text style={styles.title}>
+          {"Welcome " + firebase.auth().currentUser + "!"}
         </Text>
-        {/* <Image
+        <Image
           style={styles.avatar}
           resizeMode="cover"
-          source={require("../../assets/images/avatar.png")}
-        /> */}
+          // source={{uri: this.state.user.image}}}
+          source={{uri: "https://firebasestorage.googleapis.com/v0/b/storymapapp.appspot.com/o/avatar.png?alt=media&token=1f953209-d7c9-41ae-a46f-787fa25d579c"}}
+        />
         <View
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
-          {image ? null : (
+          {this.state.image ? null : (
             <Text
               style={{
                 fontSize: 20,
@@ -225,8 +198,8 @@ export default class ProfileScreen extends React.Component {
             title="Take a photo"
           />
 
-          {this._maybeRenderImage()}
-          {this._maybeRenderUploadingOverlay()}
+          {/* {this._maybeRenderImage()}
+          {this._maybeRenderUploadingOverlay()} */}
 
           <StatusBar barStyle="default" />
         </View>
@@ -277,6 +250,9 @@ async function uploadImageAsync(uri) {
 }
 
 const styles = StyleSheet.create({
+  title: {
+    fontSize: 20,
+  },
   container: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "#d0d3c5",
