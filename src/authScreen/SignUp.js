@@ -57,7 +57,7 @@ export default class SignUp extends React.Component {
 
     db.collection("users")
       .add({
-        username: username,
+        displayName: username,
         email: email,
         photoURL: "",
         disabled: false

@@ -10,6 +10,7 @@ import {
   StatusBar
 } from "react-native";
 
+import { getCameraPermission, getCameraRollPermission } from "../utils/permissions";
 import firebase from "../utils/firebaseClient";
 import AppNavigator from "../navigation/AppNavigator";
 import { Constants, ImagePicker, Permissions } from "expo";
@@ -30,9 +31,9 @@ export default class ProfileScreen extends React.Component {
     };
   }
 
-  async componentDidMount() {
-    await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    await Permissions.askAsync(Permissions.CAMERA);
+  componentDidMount() {
+    getCameraPermission();
+    getCameraRollPermission();
   }
 
   _share = () => {
@@ -154,6 +155,8 @@ export default class ProfileScreen extends React.Component {
       .catch(err => console.log("logout error", err));
   };
 
+
+
   render() {
     let { image } = this.state;
     const users = [];
@@ -172,10 +175,10 @@ export default class ProfileScreen extends React.Component {
           users.push(doc.data());
           console.log("users=", users);
         });
-        users.map(obj => {
+        users.forEach(obj => {
           if (firebase.auth().currentUser.email === obj.email) {
             console.log("email", useremail);
-            currentUser = obj.username;
+            currentUser = obj.displayName;
             console.log("currentUser=", currentUser);
           }
         });
