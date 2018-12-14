@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "StoryMap",
-    "slug": "StoryMap",
+    "name": "Katari",
+    "slug": "karari",
     "privacy": "public",
     "sdkVersion": "31.0.0",
     "platforms": [
@@ -30,6 +30,8 @@
     },
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "description": "",
+    "githubUrl": "https://github.com/Katari-CC/KatariApp"
   }
 }
