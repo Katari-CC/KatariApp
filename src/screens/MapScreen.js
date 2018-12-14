@@ -44,11 +44,12 @@ class Main extends React.Component {
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
       },
+      backed: false,
     };
-    this.getMapRegion = this.getMapRegion.bind(this);
     this.onMarkerPress = this.onMarkerPress.bind(this);
     this.toAddLocation = this.toAddLocation.bind(this);
     this.onRegionChange = this.onRegionChange.bind(this);
+    this.handleOnNavigateBack = this.handleOnNavigateBack.bind(this);
   }
 
   componentDidMount() {
@@ -96,6 +97,8 @@ class Main extends React.Component {
         this.setState({region});
       }, 
       () => console.error(err), options);
+
+      //KEEP THE CODE BELOW WE MIGHT NEED IT
     // this.watchID = navigator.geolocation.watchPosition(
     //   position => {
     //     const { coordinate } = this.state;
@@ -116,20 +119,13 @@ class Main extends React.Component {
     // );
   }
 
-  getMapRegion(){
-    if (this.props.navigation.state.params) {
-      return this.props.navigation.state.params.region;
-    }
-    else {
-      return this.state.region;
-    }
-  };
-
   toAddLocation() {
+    this.setState({ backed: true });
     const navigateAction = NavigationActions.navigate({
       routeName: 'AddLocation',
       params: {
-        region: this.state.region
+        region: this.state.region,
+        onNavigateBack: this.handleOnNavigateBack
       }
   })
   this.props.navigation.dispatch(navigateAction);
@@ -152,8 +148,13 @@ class Main extends React.Component {
     this.setState({ region })
   }
 
+  handleOnNavigateBack (region) {
+    this.setState({ region })
+  }
+
+// componnetDidReceiveprops something like that 
+//consider consider deleting this component after leaving this page
   render() {
-    if (this.props.navigation.state.params) this.getMapRegion();
     return (
       <View style={styles.map}>
         <MapView
@@ -227,7 +228,6 @@ class AddLocation extends React.Component {
       newLocationDescription: undefined,
       newLocationImage: "https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png",
     };
-    // this.getMapRegion = this.getMapRegion.bind(this);
     this.onRegionChange = this.onRegionChange.bind(this);
     this.backToMap = this.backToMap.bind(this);
   }
@@ -256,13 +256,6 @@ class AddLocation extends React.Component {
         console.log("Error getting documents", err);
       });
   }
-
-  // getMapRegion = () => ({
-  //   latitude: this.state.latitude,
-  //   longitude: this.state.longitude,
-  //   latitudeDelta: this.state.latitudeDelta,
-  //   longitudeDelta: this.state.longitudeDelta,
-  // });
 
   saveNewLocation() {
     if (
@@ -308,9 +301,9 @@ class AddLocation extends React.Component {
   }
   
   backToMap() {
+    this.props.navigation.state.params.onNavigateBack(this.state.region);
     const navigateAction = NavigationActions.navigate({
       routeName: 'Main',
-      params: { region: this.state.region }
     })
   this.props.navigation.dispatch(navigateAction);
   }
