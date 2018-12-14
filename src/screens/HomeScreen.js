@@ -7,10 +7,14 @@ import {
   View,
   Image,
   TextInput,
-  Dimensions
+  Dimensions,
+  Alert,
+  TouchableOpacity,
 } from "react-native";
 
-import { ListItem, Button, Card } from "react-native-elements";
+import { ListItem, Button, Card, Icon } from "react-native-elements";
+import Panel from "../components/Panel";
+
 import firestore from "../utils/firestore";
 import firebase from "../utils/firebaseClient";
 
@@ -21,8 +25,8 @@ import { FlatList } from "react-native-gesture-handler";
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
-    header: null
-  }
+    header: null,
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -32,60 +36,50 @@ export default class HomeScreen extends React.Component {
       isListVisible: true,
       isAddStoryFormVisible: false,
       newStoryTitle: "",
-      newStoryText: ""
+      newStoryText: "",
     };
     this.saveNewStory = this.saveNewStory.bind(this);
   }
 
   componentDidMount() {
-    console.log(firebase.auth().currentUser)
     newLocation = [];
     firestore
       .collection("locations")
       // .where("image", ">=", "")
       .get()
-      .then(snapshot => {
-        snapshot.forEach(doc => {
-          newDoc = doc.data();
-          newDoc["title"] = doc.id;
-          newLocation.push(newDoc);
+      .then((snapshot) => {
+        snapshot.forEach((doc) => {
+          newLocation.push(doc.data());
         });
         this.setState({
-          locations: newLocation
+          locations: newLocation,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log("Error getting documents", err);
       });
   }
 
-  onItemListClick = item => {
-    if (!this.state.isListVisible) {
-      this.setState({
-        isListVisible: true,
-        isAddStoryFormVisible: false
-      });
-    } else {
-      this.setState({
-        detail: item,
-        isListVisible: false
-      });
-      newReviews = [];
-      firestore
-        .collection("stories")
-        .where("location", "==", item.title)
-        .get()
-        .then(snapshot => {
-          snapshot.forEach(doc => {
-            newReviews.push(doc.data());
-          });
-        })
-        .then(() => {
-          this.setState({
-            detailReviews: newReviews
-          });
+  onItemListClick = (item) => {
+    this.setState({
+      detail: item,
+      isAddStoryFormVisible: false,
+    });
+    newReviews = [];
+    firestore
+      .collection("stories")
+      .where("location", "==", item.title)
+      .get()
+      .then((snapshot) => {
+        snapshot.forEach((doc) => {
+          newReviews.push(doc.data());
         });
-    }
+      })
+      .then(() => {
+        this.setState({
+          detailReviews: newReviews,
+        });
+      });
   };
 
   saveNewStory() {
@@ -93,7 +87,7 @@ export default class HomeScreen extends React.Component {
       userID: firebase.auth().currentUser.uid,
       title: this.state.newStoryTitle,
       story: this.state.newStoryText,
-      location: this.state.detail.title
+      location: this.state.detail.title,
     };
     firestore
       .collection("stories")
@@ -102,7 +96,7 @@ export default class HomeScreen extends React.Component {
       .then(() => {
         this.setState({
           isAddStoryFormVisible: false,
-          stories: [...this.state.stories, newStory]
+          stories: [...this.state.stories, newStory],
         });
       });
   }
@@ -112,179 +106,176 @@ export default class HomeScreen extends React.Component {
 
     return (
       <ScrollView style={styles.container}>
-        {this.state.isListVisible ? (
-          // DISPLAY LIST OF LOCATIONS
-          <View style={styles.list}>
-            {this.state.locations.map((item, index) => {
+        <View style={styles.locationList}>
+          <FlatList
+            horizontal={true}
+            data={this.state.locations}
+            keyExtractor={this._keyExtractor}
+            renderItem={({ item, index }) => {
               return (
-                <ListItem
-                  key={index}
-                  title={item.title}
-                  subtitle={item.description}
-                  avatar={{ uri: item.image }}
-                  onPress={() => this.onItemListClick(item)}
-                />
+                <TouchableOpacity
+                  style={styles.locationItem}
+                  onPress={() => {
+                    this.onItemListClick(item);
+                  }}
+                >
+                  <Image style={styles.imgList} source={{ uri: item.image }} />
+                  <Text style={styles.textList}>{item.title}</Text>
+                </TouchableOpacity>
               );
-            })}
-          </View>
-        ) : (
-            // DISPLAY DETAILED LOCATION
-            <View style={styles.location}>
+            }}
+          />
+        </View>
+        <View style={styles.locationDetail}>
+          {this.state.isAddStoryFormVisible ? (
+            // DISPLAY THE NEW STORY FORM
+            <View>
+              <TextInput
+                style={styles.textInput}
+                placeholder="Put a title to your story"
+                onChangeText={(text) => this.setState({ newStoryTitle: text })}
+              />
+              <TextInput
+                style={styles.textInput}
+                placeholder="Type here your story!"
+                onChangeText={(text) => this.setState({ newStoryText: text })}
+              />
               <Button
-                title="Back"
-                style={styles.backButton}
+                title="Save your story"
                 onPress={() => {
-                  this.onItemListClick();
+                  this.saveNewStory();
                 }}
               />
-              <Text style={styles.detailTitle}>{this.state.detail.title}</Text>
-              {this.state.detail.image !== undefined ? (
-                // display image only if exist
-                <Image
-                  style={styles.detailImage}
-                  source={{ uri: this.state.detail.image }}
-                />
-              ) : (
-                  <View />
-                )}
-              <Text style={styles.detailText}>
-                {this.state.detail.description}
-              </Text>
-              <Button
-                title="Add your story"
-                onPress={() => {
-                  this.setState({ isAddStoryFormVisible: true });
-                }}
-              />
-              {this.state.isAddStoryFormVisible ? (
-                // DISPLAY THE NEW STORY FORM
-                <View>
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="Put a title to your story"
-                    onChangeText={text => this.setState({ newStoryTitle: text })}
-                  />
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="Type here your story!"
-                    onChangeText={text => this.setState({ newStoryText: text })}
-                  />
-                  <Button
-                    title="Save your story"
-                    onPress={() => {
-                      this.saveNewStory();
-                    }}
-                  />
-                </View>
-              ) : (
-                  <View />
-                )}
-              <View style={styles.storyContainer}>
-              {this.state.detailReviews.map((story)=> {return <Card
-                        title={story.title}
-                        // image={{ uri: review.imageUrl }}
-                        containerStyle={styles.storyCard}
-                      >
-                        <Text style={{ marginBottom: 10, textAlign: 'center' }}>{story.story}</Text>
-                </Card>})}
-              </View>
+            </View>
+          ) : (
+            <View style={styles.storyContainer}>
+              <Panel title={this.state.detail.title}>
+                <Text style={styles.detailText}>
+                  {this.state.detail.description}
+                </Text>
+              </Panel>
+
+              {this.state.detailReviews.map((story) => {
+                return (
+                  <Card
+                    title={story.title}
+                    // image={{ uri: review.imageUrl }}
+                    containerStyle={styles.storyCard}
+                  >
+                    <Text style={styles.description}>{story.story}</Text>
+                  </Card>
+                );
+              })}
             </View>
           )}
+        </View>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => this.setState({ isAddStoryFormVisible: true })}
+        >
+          <Text style={styles.addButtonText}>+</Text>
+        </TouchableOpacity>
       </ScrollView>
     );
   }
 }
 const styles = StyleSheet.create({
-  textInput: {
-    width: Dimensions.get("window").width - 50,
-    height: 100
+  // main Container (ScrollView)
+  container: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "#032B2F",
+    color: "#08708a",
   },
 
-  backButton: {
-    width: Dimensions.get("window").width / 5,
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#0061ff"
+  // Horizonthal locations list
+  locationList: {
+    paddingTop: 30,
   },
 
-  detailImage: {
-    width: Dimensions.get("window").width,
+  locationItem: {
+    padding: 6,
+  },
+
+  imgList: {
     height: Dimensions.get("window").height / 3,
-    margin: 2
+    width: Dimensions.get("window").width / 1.7,
+    borderRadius: 10,
+    margin: 2,
   },
 
-  detailTitle: {
-    margin: 1,
-    fontSize: 25,
+  textList: {
+    fontWeight: "bold",
+    fontSize: 20,
+    color: "white",
     textAlign: "center",
-    color: "#898989",
-    fontWeight: "bold"
+  },
+
+  // location Description
+  description: {
+    marginBottom: 10,
+    textAlign: "center",
+  },
+
+  // Add Story button
+  addButton: {
+    bottom: 0,
+    right: 20,
+    height: 50,
+    width: 50,
+    position: "absolute",
+    borderRadius: 25,
+    alignItems: "center",
+    backgroundColor: "#D73A31",
+  },
+  addButtonText: {
+    fontSize: 30,
+    fontWeight: "bold",
+    color: "white",
+    padding: 3,
+    height: 40,
+    width: 40,
+    textAlign: "center",
+  },
+
+  //New Story Form
+  textInput: {
+    width: Dimensions.get("window").width - 40,
+    marginTop: 10,
+    marginLeft: 20,
+    marginRight: 20,
+    height: 50,
+    backgroundColor: "#08708A",
+    color: "white",
+    paddingLeft: 8,
+    borderRadius: 5,
+    fontSize: 18,
   },
 
   detailText: {
-    width: Dimensions.get("window").width - 20,
     fontSize: 20,
     textAlign: "center",
-    color: "#898989"
+    color: "#898989",
+    padding: 5,
   },
+
+  // Stories list
   storyContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
   },
   storyCard: {
     width: 150,
     height: 120,
     borderRadius: 20,
   },
-  container: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "#d0d3c5",
-    color: "#08708a",
-  },
-  list: {
-    paddingTop: 20,
-  },
-  location: {
+
+  locationDetail: {
     paddingTop: 30,
     paddingBottom: 20,
+    minHeight: Dimensions.get("screen").height / 2 - 20,
   },
-  developmentModeText: {
-    marginBottom: 20,
-    color: "rgba(0,0,0,0.4)",
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: "center"
-  },
-  contentContainer: {
-    paddingTop: 30
-  },
-  welcomeContainer: {
-    alignItems: "center",
-    marginTop: 10,
-    marginBottom: 20
-  },
-  getStartedContainer: {
-    alignItems: "center",
-    marginHorizontal: 50
-  },
-  homeScreenFilename: {
-    marginVertical: 7
-  },
-  codeHighlightText: {
-    color: "rgba(96,100,109, 0.8)"
-  },
-  codeHighlightContainer: {
-    backgroundColor: "rgba(0,0,0,0.05)",
-    borderRadius: 3,
-    paddingHorizontal: 4
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: "rgba(96,100,109, 1)",
-    lineHeight: 24,
-    textAlign: "center"
-  },
+
   tabBarInfoContainer: {
     position: "absolute",
     bottom: 0,
@@ -295,33 +286,14 @@ const styles = StyleSheet.create({
         shadowColor: "black",
         shadowOffset: { height: -3 },
         shadowOpacity: 0.1,
-        shadowRadius: 3
+        shadowRadius: 3,
       },
       android: {
-        elevation: 20
-      }
+        elevation: 20,
+      },
     }),
     alignItems: "center",
     backgroundColor: "#fbfbfb",
-    paddingVertical: 20
+    paddingVertical: 20,
   },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: "rgba(96,100,109, 1)",
-    textAlign: "center"
-  },
-  navigationFilename: {
-    marginTop: 5
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: "center"
-  },
-  helpLink: {
-    paddingVertical: 15
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: "#2e78b7"
-  }
 });
