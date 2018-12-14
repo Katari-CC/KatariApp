@@ -46,10 +46,18 @@
   "devDependencies": {
     "babel-jest": "23.6.0",
     "babel-preset-expo": "^5.0.0",
+    "husky": "^1.2.1",
     "jest": "23.6.0",
     "jest-expo": "^31.0.0",
     "metro-react-native-babel-preset": "0.50.0",
+    "prettier": "^1.15.3",
+    "pretty-quick": "^1.8.0",
     "react-test-renderer": "16.6.1"
   },
-  "private": true
+  "private": true,
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  }
 }
