@@ -1,13 +1,6 @@
 import React from "react";
 import { StyleSheet, TextInput, View } from "react-native";
-import {
-  Input,
-  Text,
-  FormLabel,
-  FormInput,
-  FormValidationMessage,
-  Button
-} from "react-native-elements";
+import { Input, Text, FormLabel, FormInput, FormValidationMessage, Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import firebase from "../utils/firebaseClient";
 // import {
@@ -44,34 +37,30 @@ export default class SignUp extends React.Component {
     }
   };
 
-  handleSignUp = () => {
+  handleSignUp = async () => {
     const { email, password, username } = this.state;
+    try {
+      const docRef = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      console.log("authenticated", docRef);
 
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(docRef => console.log("auth success!", docRef))
-      .catch(error => this.setState({ errorMessage: error.message }));
+      const db = firebase.firestore();
 
-    const db = firebase.firestore();
-
-    db.collection("users")
-      .add({
+      const user = await db.collection("users").add({
         displayName: username,
         email: email,
         photoURL: "",
         disabled: false
-      })
-      .then(user => this.props.navigation.navigate("Main"))
-      .catch(error => this.setState({ errorMessage: error.message }));
+      });
+      this.props.navigation.navigate("Main");
+    } catch (error) {
+      this.setState({ errorMessage: error.message });
+    }
   };
 
   render() {
     return (
       <View style={styles.container}>
-        {this.state.errorMessage && (
-          <Text style={{ color: "red" }}>{this.state.errorMessage}</Text>
-        )}
+        {this.state.errorMessage && <Text style={{ color: "red" }}>{this.state.errorMessage}</Text>}
         {/* <GoogleSigninButton
           style={{ width: 48, height: 48 }}
           size={GoogleSigninButton.Size.Icon}
@@ -104,15 +93,8 @@ export default class SignUp extends React.Component {
         />
         <FormValidationMessage>{"required"}</FormValidationMessage>
         <Text style={styles.space} />
-        <Button
-          buttonStyle={styles.button}
-          title="Sign Up"
-          onPress={this.handleSignUp}
-        />
-        <Text
-          style={styles.link}
-          onPress={() => this.props.navigation.navigate("Login")}
-        >
+        <Button buttonStyle={styles.button} title="Sign Up" onPress={this.handleSignUp} />
+        <Text style={styles.link} onPress={() => this.props.navigation.navigate("Login")}>
           Already have an account? Login here!
         </Text>
       </View>
@@ -125,7 +107,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
     justifyContent: "center",
     backgroundColor: "#d0d3c5",
-    color: "#08708a",
+    color: "#08708a"
   },
   gmailbutton: {
     flex: 1,
