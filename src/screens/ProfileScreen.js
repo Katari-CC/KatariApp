@@ -7,22 +7,24 @@ import {
   Share,
   Image,
   StyleSheet,
-  StatusBar
+  StatusBar,
 } from "react-native";
 
-import { getCameraPermission, getCameraRollPermission } from "../utils/permissions";
+import {
+  getCameraPermission,
+  getCameraRollPermission,
+} from "../utils/permissions";
 import firebase from "../utils/firebaseClient";
 import AppNavigator from "../navigation/AppNavigator";
 import { Constants, ImagePicker, Permissions } from "expo";
 import { FormLabel, FormInput, Text, Button } from "react-native-elements";
 import firestore from "../utils/firestore";
 import "firebase/firestore";
-import "firebase/storage";
 
 export default class ProfileScreen extends React.Component {
   static navigationOptions = {
     title: "Profile",
-    header: null
+    header: null,
   };
   constructor(props) {
     super(props);
@@ -35,18 +37,13 @@ export default class ProfileScreen extends React.Component {
   componentDidMount() {
     getCameraPermission();
     getCameraRollPermission();
-    // this.setState({
-    //   user: firebase.auth().currentUser,
-    // });
-
-    firebase.storage.ref();
   }
 
   _share = () => {
     Share.share({
       message: this.state.image,
       title: "Check out this photo",
-      url: this.state.image
+      url: this.state.image,
     });
   };
 
@@ -64,8 +61,8 @@ export default class ProfileScreen extends React.Component {
             {
               backgroundColor: "rgba(0,0,0,0.4)",
               alignItems: "center",
-              justifyContent: "center"
-            }
+              justifyContent: "center",
+            },
           ]}
         >
           <ActivityIndicator color="#fff" animating size="large" />
@@ -81,7 +78,7 @@ export default class ProfileScreen extends React.Component {
           marginTop: 30,
           width: 250,
           borderRadius: 3,
-          elevation: 2
+          elevation: 2,
         }}
       >
         <View
@@ -92,7 +89,7 @@ export default class ProfileScreen extends React.Component {
             shadowOpacity: 0.2,
             shadowOffset: { width: 4, height: 4 },
             shadowRadius: 5,
-            overflow: "hidden"
+            overflow: "hidden",
           }}
         >
           {/* <Image source={{ uri: image }} style={{ width: 250, height: 250 }} /> */}
@@ -112,7 +109,7 @@ export default class ProfileScreen extends React.Component {
   _pickImage = async () => {
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      aspect: [4, 3]
+      aspect: [4, 3],
     });
 
     this._handleImagePicked(pickerResult);
@@ -121,13 +118,13 @@ export default class ProfileScreen extends React.Component {
   _takePhoto = async () => {
     let pickerResult = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
-      aspect: [4, 3]
+      aspect: [4, 3],
     });
 
     this._handleImagePicked(pickerResult);
   };
 
-  _handleImagePicked = async pickerResult => {
+  _handleImagePicked = async (pickerResult) => {
     try {
       this.setState({ uploading: true });
 
@@ -153,10 +150,8 @@ export default class ProfileScreen extends React.Component {
           0
         )
       )
-      .catch(err => console.log("logout error", err));
+      .catch((err) => console.log("logout error", err));
   };
-
-
 
   render() {
     return (
@@ -168,7 +163,10 @@ export default class ProfileScreen extends React.Component {
           style={styles.avatar}
           resizeMode="cover"
           // source={{uri: this.state.user.image}}}
-          source={{uri: "https://firebasestorage.googleapis.com/v0/b/storymapapp.appspot.com/o/avatar.png?alt=media&token=1f953209-d7c9-41ae-a46f-787fa25d579c"}}
+          source={{
+            uri:
+              "https://firebasestorage.googleapis.com/v0/b/storymapapp.appspot.com/o/avatar.png?alt=media&token=1f953209-d7c9-41ae-a46f-787fa25d579c",
+          }}
         />
         <View
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
@@ -179,7 +177,7 @@ export default class ProfileScreen extends React.Component {
                 fontSize: 20,
                 marginBottom: 20,
                 textAlign: "center",
-                marginHorizontal: 15
+                marginHorizontal: 15,
               }}
             >
               Example: Upload ImagePicker result
@@ -259,7 +257,7 @@ const styles = StyleSheet.create({
     color: "#56b1bf",
     paddingTop: 50,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   button: {
     justifyContent: "center",
@@ -271,7 +269,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 10,
     paddingLeft: 50,
-    paddingRight: 50
+    paddingRight: 50,
     // marginBottom: 10
   },
   avatar: {
@@ -280,6 +278,6 @@ const styles = StyleSheet.create({
     height: 150,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 75
-  }
+    borderRadius: 75,
+  },
 });
