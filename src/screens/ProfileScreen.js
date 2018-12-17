@@ -7,9 +7,13 @@ import {
   Share,
   Image,
   StyleSheet,
-  StatusBar
+  StatusBar,
 } from "react-native";
 
+import {
+  getCameraPermission,
+  getCameraRollPermission,
+} from "../utils/permissions";
 import firebase from "../utils/firebaseClient";
 import AppNavigator from "../navigation/AppNavigator";
 import { Constants, ImagePicker, Permissions } from "expo";
@@ -20,26 +24,26 @@ import "firebase/firestore";
 export default class ProfileScreen extends React.Component {
   static navigationOptions = {
     title: "Profile",
-    header: null
+    header: null,
   };
   constructor(props) {
     super(props);
     this.state = {
       image: null,
-      uploading: false
+      uploading: false,
     };
   }
 
-  async componentDidMount() {
-    await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    await Permissions.askAsync(Permissions.CAMERA);
+  componentDidMount() {
+    getCameraPermission();
+    getCameraRollPermission();
   }
 
   _share = () => {
     Share.share({
       message: this.state.image,
       title: "Check out this photo",
-      url: this.state.image
+      url: this.state.image,
     });
   };
 
@@ -57,8 +61,8 @@ export default class ProfileScreen extends React.Component {
             {
               backgroundColor: "rgba(0,0,0,0.4)",
               alignItems: "center",
-              justifyContent: "center"
-            }
+              justifyContent: "center",
+            },
           ]}
         >
           <ActivityIndicator color="#fff" animating size="large" />
@@ -68,18 +72,13 @@ export default class ProfileScreen extends React.Component {
   };
 
   _maybeRenderImage = () => {
-    let { image } = this.state;
-    if (!image) {
-      return;
-    }
-
     return (
       <View
         style={{
           marginTop: 30,
           width: 250,
           borderRadius: 3,
-          elevation: 2
+          elevation: 2,
         }}
       >
         <View
@@ -90,10 +89,10 @@ export default class ProfileScreen extends React.Component {
             shadowOpacity: 0.2,
             shadowOffset: { width: 4, height: 4 },
             shadowRadius: 5,
-            overflow: "hidden"
+            overflow: "hidden",
           }}
         >
-          <Image source={{ uri: image }} style={{ width: 250, height: 250 }} />
+          {/* <Image source={{ uri: image }} style={{ width: 250, height: 250 }} /> */}
         </View>
 
         <Text
@@ -101,7 +100,7 @@ export default class ProfileScreen extends React.Component {
           onLongPress={this._share}
           style={{ paddingVertical: 10, paddingHorizontal: 10 }}
         >
-          {image}
+          {/* {image} */}
         </Text>
       </View>
     );
@@ -110,7 +109,7 @@ export default class ProfileScreen extends React.Component {
   _pickImage = async () => {
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      aspect: [4, 3]
+      aspect: [4, 3],
     });
 
     this._handleImagePicked(pickerResult);
@@ -119,13 +118,13 @@ export default class ProfileScreen extends React.Component {
   _takePhoto = async () => {
     let pickerResult = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
-      aspect: [4, 3]
+      aspect: [4, 3],
     });
 
     this._handleImagePicked(pickerResult);
   };
 
-  _handleImagePicked = async pickerResult => {
+  _handleImagePicked = async (pickerResult) => {
     try {
       this.setState({ uploading: true });
 
@@ -151,59 +150,34 @@ export default class ProfileScreen extends React.Component {
           0
         )
       )
-      .catch(err => console.log("logout error", err));
+      .catch((err) => console.log("logout error", err));
   };
 
   render() {
-    let { image } = this.state;
-    const users = [];
-    const currentUser = "";
-    let useremail;
-    const user = firebase.auth().currentUser;
-
-    if (user != null) {
-      useremail = user.email;
-    }
-    const usersRef = firestore.collection("users");
-    usersRef
-      .get()
-      .then(snapshot => {
-        snapshot.forEach(doc => {
-          users.push(doc.data());
-          console.log("users=", users);
-        });
-        users.map(obj => {
-          if (firebase.auth().currentUser.email === obj.email) {
-            console.log("email", useremail);
-            currentUser = obj.username;
-            console.log("currentUser=", currentUser);
-          }
-        });
-      })
-      .catch(err => {
-        console.log("Error getting documents", err);
-      });
-
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style>
-          {"Welcome " + firebase.auth().currentUser.email + "!"}
+        <Text style={styles.title}>
+          {"Welcome " + firebase.auth().currentUser + "!"}
         </Text>
-        {/* <Image
+        <Image
           style={styles.avatar}
           resizeMode="cover"
-          source={require("../../assets/images/avatar.png")}
-        /> */}
+          // source={{uri: this.state.user.image}}}
+          source={{
+            uri:
+              "https://firebasestorage.googleapis.com/v0/b/storymapapp.appspot.com/o/avatar.png?alt=media&token=1f953209-d7c9-41ae-a46f-787fa25d579c",
+          }}
+        />
         <View
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
-          {image ? null : (
+          {this.state.image ? null : (
             <Text
               style={{
                 fontSize: 20,
                 marginBottom: 20,
                 textAlign: "center",
-                marginHorizontal: 15
+                marginHorizontal: 15,
               }}
             >
               Example: Upload ImagePicker result
@@ -222,8 +196,8 @@ export default class ProfileScreen extends React.Component {
             title="Take a photo"
           />
 
-          {this._maybeRenderImage()}
-          {this._maybeRenderUploadingOverlay()}
+          {/* {this._maybeRenderImage()}
+          {this._maybeRenderUploadingOverlay()} */}
 
           <StatusBar barStyle="default" />
         </View>
@@ -274,13 +248,16 @@ async function uploadImageAsync(uri) {
 }
 
 const styles = StyleSheet.create({
+  title: {
+    fontSize: 20,
+  },
   container: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "#d0d3c5",
     color: "#56b1bf",
     paddingTop: 50,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   button: {
     justifyContent: "center",
@@ -292,7 +269,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 10,
     paddingLeft: 50,
-    paddingRight: 50
+    paddingRight: 50,
     // marginBottom: 10
   },
   avatar: {
@@ -301,6 +278,6 @@ const styles = StyleSheet.create({
     height: 150,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 75
-  }
+    borderRadius: 75,
+  },
 });
