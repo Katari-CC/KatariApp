@@ -11,6 +11,10 @@ import {
   Alert,
   TouchableOpacity,
 } from "react-native";
+const TEXT_COLOR = "#898989";
+
+import Story from "./Story";
+import { createStackNavigator, NavigationActions } from "react-navigation";
 
 import { ListItem, Button, Card, Icon } from "react-native-elements";
 import Panel from "../components/Panel";
@@ -23,7 +27,7 @@ import { MonoText } from "../components/StyledText";
 import "firebase/firestore";
 import { bold, gray } from "ansi-colors";
 
-export default class HomeScreen extends React.Component {
+class Home extends React.Component {
   static navigationOptions = {
     header: null,
   };
@@ -40,6 +44,7 @@ export default class HomeScreen extends React.Component {
       isSelected: false,
     };
     this.saveNewStory = this.saveNewStory.bind(this);
+    this.onStoryPress = this.onStoryPress.bind(this);
   }
 
   componentDidMount() {
@@ -83,6 +88,20 @@ export default class HomeScreen extends React.Component {
         });
       });
   };
+
+  onStoryPress(story) {
+    const navigateAction = NavigationActions.navigate({
+      routeName: "Story",
+      params: {
+        title: story.title,
+        story: story.story,
+        username: "",
+        profPic: "",
+        image: story.image,
+      },
+    });
+    this.props.navigation.dispatch(navigateAction);
+  }
 
   saveNewStory() {
     const newStory = {
@@ -157,27 +176,42 @@ export default class HomeScreen extends React.Component {
               // DISPLAY THE NEW STORY FORM
               <View>
                 <Card containerStyle={styles.inputCard}>
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="Put a title to your story"
-                    onChangeText={(text) =>
-                      this.setState({ newStoryTitle: text })
-                    }
-                  />
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="Type here your story!"
-                    onChangeText={(text) =>
-                      this.setState({ newStoryText: text })
-                    }
-                  />
-                  <Button
-                    title="Save your story"
-                    buttonStyle={styles.button}
-                    onPress={() => {
-                      this.saveNewStory();
-                    }}
-                  />
+                  <View style={styles.inputCard}>
+                    <Text style={styles.formTitle}>Tell your story</Text>
+                    <TextInput
+                      style={styles.textInput}
+                      placeholder="Give your story a title"
+                      onChangeText={(text) =>
+                        this.setState({ newStoryTitle: text })
+                      }
+                    />
+                    <TextInput
+                      style={styles.textInput}
+                      multiline={true}
+                      placeholder="Give us your best story"
+                      onChangeText={(text) =>
+                        this.setState({ newStoryText: text })
+                      }
+                    />
+                    <Button
+                      title="Save your story"
+                      buttonStyle={styles.button}
+                      onPress={() => {
+                        this.saveNewStory();
+                      }}
+                    />
+                    <View style={styles.backBtn}>
+                      <Icon
+                        name="md-arrow-back"
+                        onPress={() =>
+                          this.setState({ isAddStoryFormVisible: false })
+                        }
+                        type="ionicon"
+                        size={30}
+                        color={TEXT_COLOR}
+                      />
+                    </View>
+                  </View>
                 </Card>
               </View>
             ) : (
@@ -208,23 +242,23 @@ export default class HomeScreen extends React.Component {
                     return (
                       <Card
                         key={index}
-                        title={story.title}
+                        title={story.username}
                         // image={{ uri: review.imageUrl }}
                         containerStyle={styles.storyCard}
                       >
                         <TouchableOpacity
                           style={styles.storyCard}
-                          // onPress={() => this.setState({ isAddStoryFormVisible: true })}
+                          onPress={() => this.onStoryPress(story)}
                         >
-                          <Text style={styles.description}>{story.story}</Text>
+                          <Text style={styles.description}>{story.title}</Text>
                         </TouchableOpacity>
                       </Card>
                     );
                   })}
 
-                  <Card containerStyle={styles.storyCard}>
+                  <Card containerStyle={styles.addCard}>
                     <TouchableOpacity
-                      style={styles.storyCard}
+                      style={styles.addCard}
                       onPress={() =>
                         this.setState({ isAddStoryFormVisible: true })
                       }
@@ -237,14 +271,6 @@ export default class HomeScreen extends React.Component {
             )}
           </View>
         </ScrollView>
-        {/* <View style={styles.addBtnPosition}>
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={() => this.setState({ isAddStoryFormVisible: true })}
-          >
-            <Text style={styles.addBtnText}>+</Text>
-          </TouchableOpacity>
-        </View> */}
       </View>
     );
   }
@@ -283,10 +309,7 @@ const styles = StyleSheet.create({
   },
 
   // location Description
-  description: {
-    marginBottom: 10,
-    textAlign: "center",
-  },
+  description: {},
   // Add Story button
   addButton: {
     justifyContent: "center",
@@ -308,7 +331,7 @@ const styles = StyleSheet.create({
 
   //New Story Form
   textInput: {
-    // width: Dimensions.get("window").width - 40,
+    width: Dimensions.get("window").width - 40,
     marginTop: 10,
     paddingTop: 10,
     paddingBottom: 10,
@@ -324,7 +347,7 @@ const styles = StyleSheet.create({
   detailText: {
     fontSize: 16,
     textAlign: "center",
-    color: "#898989",
+    color: TEXT_COLOR,
     padding: 5,
   },
   // Stories list
@@ -334,8 +357,6 @@ const styles = StyleSheet.create({
     // flexWrap: "wrap",
   },
   storyCard: {
-    justifyContent: "center",
-    alignItems: "center",
     width: 150,
     height: 120,
     borderRadius: 20,
@@ -346,6 +367,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     // width: Dimensions.get("screen").width - 20,
     borderRadius: 10,
+  },
+  addCard: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 150,
+    height: 120,
+    borderRadius: 20,
   },
   locationDetail: {
     paddingTop: 10,
@@ -386,4 +414,30 @@ const styles = StyleSheet.create({
     paddingRight: 50,
     // marginBottom: 10
   },
+  backBtn: {
+    position: "absolute",
+    top: 0,
+    left: 20,
+    marginBottom: 8,
+  },
 });
+
+const HomeScreen = createStackNavigator(
+  {
+    Home: { screen: Home },
+    Story: {
+      screen: Story,
+      navigationOptions: () => ({
+        backBehavior: "initialRoute",
+      }),
+    },
+  },
+  {
+    initialRouteName: "Home",
+    headerMode: "none",
+  }
+);
+HomeScreen.navigationOptions = {
+  header: null,
+};
+export default HomeScreen;
