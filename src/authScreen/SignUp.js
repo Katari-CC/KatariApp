@@ -1,6 +1,13 @@
 import React from "react";
 import { StyleSheet, TextInput, View } from "react-native";
-import { Input, Text, FormLabel, FormInput, FormValidationMessage, Button } from "react-native-elements";
+import {
+  Input,
+  Text,
+  FormLabel,
+  FormInput,
+  FormValidationMessage,
+  Button,
+} from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import firebase from "../utils/firebaseClient";
 // import {
@@ -9,6 +16,9 @@ import firebase from "../utils/firebaseClient";
 //   statusCodes
 // } from "react-native-google-signin";
 
+let AVATAR_URL =
+  "https://firebasestorage.googleapis.com/v0/b/storymapapp.appspot.com/o/avatar.png?alt=media&token=1f953209-d7c9-41ae-a46f-787fa25d579c";
+
 export default class SignUp extends React.Component {
   state = {
     email: "",
@@ -16,7 +26,7 @@ export default class SignUp extends React.Component {
     errorMessage: null,
     username: "",
     userInfo: null,
-    isSigninInProgress: null
+    isSigninInProgress: null,
   };
 
   _gsignIn = async () => {
@@ -39,8 +49,25 @@ export default class SignUp extends React.Component {
 
   handleSignUp = async () => {
     const { email, password, username } = this.state;
+    console.log;
     try {
-      const docRef = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      const docRef = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(function(user) {
+          user
+            .updateProfile({
+              displayName: username,
+            })
+            .then(
+              function() {
+                // Update successful.
+              },
+              function(error) {
+                // An error happened.
+              }
+            );
+        });
       console.log("authenticated", docRef);
 
       const db = firebase.firestore();
@@ -49,7 +76,7 @@ export default class SignUp extends React.Component {
         username: username,
         email: email,
         photoURL: "",
-        disabled: false
+        disabled: false,
       });
       this.props.navigation.navigate("Main");
     } catch (error) {
@@ -60,7 +87,9 @@ export default class SignUp extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        {this.state.errorMessage && <Text style={{ color: "red" }}>{this.state.errorMessage}</Text>}
+        {this.state.errorMessage && (
+          <Text style={{ color: "red" }}>{this.state.errorMessage}</Text>
+        )}
         {/* <GoogleSigninButton
           style={{ width: 48, height: 48 }}
           size={GoogleSigninButton.Size.Icon}
@@ -72,14 +101,14 @@ export default class SignUp extends React.Component {
         <FormInput
           style={styles.formInput}
           underlineColorAndroid="transparent"
-          onChangeText={username => this.setState({ username })}
+          onChangeText={(username) => this.setState({ username })}
           value={this.state.username}
         />
         <FormLabel>Email</FormLabel>
         <FormInput
           style={styles.formInput}
           underlineColorAndroid="transparent"
-          onChangeText={email => this.setState({ email })}
+          onChangeText={(email) => this.setState({ email })}
           value={this.state.email}
         />
         <FormValidationMessage>{"required"}</FormValidationMessage>
@@ -88,13 +117,20 @@ export default class SignUp extends React.Component {
           secureTextEntry
           style={styles.formInput}
           underlineColorAndroid="transparent"
-          onChangeText={password => this.setState({ password })}
+          onChangeText={(password) => this.setState({ password })}
           value={this.state.password}
         />
         <FormValidationMessage>{"required"}</FormValidationMessage>
         <Text style={styles.space} />
-        <Button buttonStyle={styles.button} title="Sign Up" onPress={this.handleSignUp} />
-        <Text style={styles.link} onPress={() => this.props.navigation.navigate("Login")}>
+        <Button
+          buttonStyle={styles.button}
+          title="Sign Up"
+          onPress={this.handleSignUp}
+        />
+        <Text
+          style={styles.link}
+          onPress={() => this.props.navigation.navigate("Login")}
+        >
           Already have an account? Login here!
         </Text>
       </View>
@@ -107,17 +143,17 @@ const styles = StyleSheet.create({
     marginTop: 50,
     justifyContent: "center",
     backgroundColor: "#d0d3c5",
-    color: "#08708a"
+    color: "#08708a",
   },
   gmailbutton: {
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   space: {
     marginTop: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
   link: {
     marginLeft: 25,
@@ -129,7 +165,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     width: "100%",
-    height: 50
+    height: 50,
   },
   formInput: {
     backgroundColor: "white",
@@ -138,7 +174,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderRadius: 5,
     marginTop: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
   button: {
     backgroundColor: "#56b1bf",
@@ -147,6 +183,6 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderRadius: 5,
     marginTop: 10,
-    marginBottom: 10
-  }
+    marginBottom: 10,
+  },
 });
