@@ -10,6 +10,7 @@ import {
 } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import firebase from "../utils/firebaseClient";
+import firestore from "../utils/firestore";
 // import {
 //   GoogleSignin,
 //   GoogleSigninButton,
@@ -49,36 +50,48 @@ export default class SignUp extends React.Component {
 
   handleSignUp = async () => {
     const { email, password, username } = this.state;
-    console.log;
+    console.log("username:", username);
     try {
+      // Create a new user with email & password
       const docRef = await firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
-        .then(function(user) {
-          user
+        .then((user) => {
+          // Once Signup is successful
+          console.log("Signup Successfull");
+          // Get the current user object
+          const currentUser = firebase.auth().currentUser;
+          // then update the displayName
+          currentUser
             .updateProfile({
               displayName: username,
             })
             .then(
-              function() {
-                // Update successful.
+              (user) => {
+                // Once the user "displayName" is updated
+                console.log("displayName:", username);
+                // Create a new entry in the "users" table of the database
+                firestore
+                  .collection("users")
+                  .doc()
+                  .set({
+                    displayName: username,
+                    email: email,
+                    uid: currentUser.uid,
+                    photoURL: "",
+                    disabled: false,
+                  });
+
+                // Go to the homescreen of the app
+                this.props.navigation.navigate("Main");
               },
               function(error) {
                 // An error happened.
+                console.log(error);
               }
             );
         });
       console.log("authenticated", docRef);
-
-      const db = firebase.firestore();
-
-      const user = await db.collection("users").add({
-        displayName: username,
-        email: email,
-        photoURL: "",
-        disabled: false,
-      });
-      this.props.navigation.navigate("Main");
     } catch (error) {
       this.setState({ errorMessage: error.message });
     }
