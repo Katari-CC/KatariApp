@@ -14,6 +14,7 @@ import {
 
 import { ListItem, Button, Card, Icon } from "react-native-elements";
 import Panel from "../components/Panel";
+import { FlatList } from "react-native-gesture-handler";
 
 import firestore from "../utils/firestore";
 import firebase from "../utils/firebaseClient";
@@ -21,7 +22,6 @@ import firebase from "../utils/firebaseClient";
 import { MonoText } from "../components/StyledText";
 import "firebase/firestore";
 import { bold, gray } from "ansi-colors";
-import { FlatList } from "react-native-gesture-handler";
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -37,6 +37,7 @@ export default class HomeScreen extends React.Component {
       isAddStoryFormVisible: false,
       newStoryTitle: "",
       newStoryText: "",
+      isSelected: false,
     };
     this.saveNewStory = this.saveNewStory.bind(this);
   }
@@ -77,6 +78,7 @@ export default class HomeScreen extends React.Component {
       })
       .then(() => {
         this.setState({
+          isSelected: true,
           detailReviews: newReviews,
         });
       });
@@ -105,77 +107,145 @@ export default class HomeScreen extends React.Component {
     console.log("Rendering...");
 
     return (
-      <ScrollView style={styles.container}>
-        <View style={styles.locationList}>
+      <View style={styles.container}>
+        <ScrollView style={styles.container}>
           <FlatList
+            style={styles.locationList}
             horizontal={true}
             data={this.state.locations}
             keyExtractor={this._keyExtractor}
             renderItem={({ item, index }) => {
               return (
                 <TouchableOpacity
+                  key={index}
                   style={styles.locationItem}
                   onPress={() => {
                     this.onItemListClick(item);
                   }}
                 >
                   <Image style={styles.imgList} source={{ uri: item.image }} />
-                  <Text style={styles.textList}>{item.title}</Text>
+                  <Text adjustsFontSizeToFit style={styles.textList}>
+                    {item.title}
+                  </Text>
                 </TouchableOpacity>
               );
             }}
           />
-        </View>
-        <View style={styles.locationDetail}>
-          {this.state.isAddStoryFormVisible ? (
-            // DISPLAY THE NEW STORY FORM
-            <View>
-              <TextInput
-                style={styles.textInput}
-                placeholder="Put a title to your story"
-                onChangeText={(text) => this.setState({ newStoryTitle: text })}
-              />
-              <TextInput
-                style={styles.textInput}
-                placeholder="Type here your story!"
-                onChangeText={(text) => this.setState({ newStoryText: text })}
-              />
-              <Button
-                title="Save your story"
+          {/* <ScrollView
+            style={styles.locationList}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            removeClippedSubviews
+            bounce={true}
+            overScrollMode="always"
+            centerContent={true}
+          >
+            {this.state.locations.map((item) => (
+              <TouchableOpacity
+                style={styles.locationItem}
                 onPress={() => {
-                  this.saveNewStory();
+                  this.onItemListClick(item);
                 }}
-              />
-            </View>
-          ) : (
-            <View style={styles.storyContainer}>
-              <Panel title={this.state.detail.title}>
-                <Text style={styles.detailText}>
-                  {this.state.detail.description}
-                </Text>
-              </Panel>
+              >
+                <Image style={styles.imgList} source={{ uri: item.image }} />
+                <Text adjustsFontSizeToFit style={styles.textList}>{item.title}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView> */}
+          <View style={styles.locationDetail}>
+            {this.state.isAddStoryFormVisible ? (
+              // DISPLAY THE NEW STORY FORM
+              <View>
+                <Card containerStyle={styles.inputCard}>
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Put a title to your story"
+                    onChangeText={(text) =>
+                      this.setState({ newStoryTitle: text })
+                    }
+                  />
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Type here your story!"
+                    onChangeText={(text) =>
+                      this.setState({ newStoryText: text })
+                    }
+                  />
+                  <Button
+                    title="Save your story"
+                    buttonStyle={styles.button}
+                    onPress={() => {
+                      this.saveNewStory();
+                    }}
+                  />
+                </Card>
+              </View>
+            ) : (
+              <View style={styles.storyContainer}>
+                <Panel style={styles.storyList} title={this.state.detail.title}>
+                  <Text style={styles.detailText}>
+                    {this.state.detail.description}
+                  </Text>
+                </Panel>
+                <ScrollView
+                  style={styles.storyList}
+                  horizontal={true}
+                  showsHorizontalScrollIndicator={false}
+                  removeClippedSubviews
+                  bounce={true}
+                  overScrollMode="always"
+                  centerContent={true}
+                >
+                  {this.state.detailReviews.length == 0 ? (
+                    <Card
+                      title={"No stories yet. Add one!"}
+                      containerStyle={styles.storyCard}
+                    />
+                  ) : (
+                    <View />
+                  )}
+                  {this.state.detailReviews.map((story, index) => {
+                    return (
+                      <Card
+                        key={index}
+                        title={story.title}
+                        // image={{ uri: review.imageUrl }}
+                        containerStyle={styles.storyCard}
+                      >
+                        <TouchableOpacity
+                          style={styles.storyCard}
+                          // onPress={() => this.setState({ isAddStoryFormVisible: true })}
+                        >
+                          <Text style={styles.description}>{story.story}</Text>
+                        </TouchableOpacity>
+                      </Card>
+                    );
+                  })}
 
-              {this.state.detailReviews.map((story) => {
-                return (
-                  <Card
-                    title={story.title}
-                    // image={{ uri: review.imageUrl }}
-                    containerStyle={styles.storyCard}
-                  >
-                    <Text style={styles.description}>{story.story}</Text>
+                  <Card containerStyle={styles.storyCard}>
+                    <TouchableOpacity
+                      style={styles.storyCard}
+                      onPress={() =>
+                        this.setState({ isAddStoryFormVisible: true })
+                      }
+                    >
+                      <Text style={styles.addBtnText}>+</Text>
+                    </TouchableOpacity>
                   </Card>
-                );
-              })}
-            </View>
-          )}
-        </View>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => this.setState({ isAddStoryFormVisible: true })}
-        >
-          <Text style={styles.addButtonText}>+</Text>
-        </TouchableOpacity>
-      </ScrollView>
+                </ScrollView>
+              </View>
+            )}
+          </View>
+        </ScrollView>
+        {/* <View style={styles.addBtnPosition}>
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => this.setState({ isAddStoryFormVisible: true })}
+          >
+            <Text style={styles.addBtnText}>+</Text>
+          </TouchableOpacity>
+        </View> */}
+      </View>
     );
   }
 }
@@ -183,15 +253,18 @@ const styles = StyleSheet.create({
   // main Container (ScrollView)
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "#032B2F",
-    color: "#08708a",
+    backgroundColor: "#08708a",
+    // backgroundColor: "white",
+    color: "#032B2F",
+    flexDirection: "column",
   },
-
   // Horizonthal locations list
   locationList: {
-    paddingTop: 30,
+    paddingTop: 40,
   },
-
+  storyList: {
+    paddingTop: 20,
+  },
   locationItem: {
     padding: 6,
   },
@@ -205,7 +278,6 @@ const styles = StyleSheet.create({
 
   textList: {
     fontWeight: "bold",
-    fontSize: 20,
     color: "white",
     textAlign: "center",
   },
@@ -215,63 +287,68 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: "center",
   },
-
   // Add Story button
   addButton: {
-    bottom: 0,
-    right: 20,
-    height: 50,
-    width: 50,
-    position: "absolute",
-    borderRadius: 25,
+    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#D73A31",
+    backgroundColor: "#d73a31",
+    borderRadius: 100,
+    width: 65,
+    height: 65,
   },
-  addButtonText: {
-    fontSize: 30,
-    fontWeight: "bold",
-    color: "white",
-    padding: 3,
-    height: 40,
-    width: 40,
-    textAlign: "center",
+  addBtnPosition: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+  },
+  addBtnText: {
+    fontSize: 25,
+    color: "black",
   },
 
   //New Story Form
   textInput: {
-    width: Dimensions.get("window").width - 40,
+    // width: Dimensions.get("window").width - 40,
     marginTop: 10,
-    marginLeft: 20,
-    marginRight: 20,
-    height: 50,
-    backgroundColor: "#08708A",
-    color: "white",
+    paddingTop: 10,
+    paddingBottom: 10,
+    // height: 50,
+    // backgroundColor: "#08708A",
+    // color: "white",
+    borderWidth: 1.5,
     paddingLeft: 8,
-    borderRadius: 5,
-    fontSize: 18,
+    borderRadius: 8,
+    fontSize: 14,
   },
 
   detailText: {
-    fontSize: 20,
+    fontSize: 16,
     textAlign: "center",
     color: "#898989",
     padding: 5,
   },
-
   // Stories list
   storyContainer: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
-    flexWrap: "wrap",
+    // flexWrap: "wrap",
   },
   storyCard: {
+    justifyContent: "center",
+    alignItems: "center",
     width: 150,
     height: 120,
     borderRadius: 20,
   },
-
+  inputCard: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    // width: Dimensions.get("screen").width - 20,
+    borderRadius: 10,
+  },
   locationDetail: {
-    paddingTop: 30,
+    paddingTop: 10,
     paddingBottom: 20,
     minHeight: Dimensions.get("screen").height / 2 - 20,
   },
@@ -295,5 +372,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fbfbfb",
     paddingVertical: 20,
+  },
+  button: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#56b1bf",
+    // width: "100%",
+    // height: 50,
+    borderWidth: 0,
+    borderRadius: 5,
+    marginTop: 10,
+    paddingLeft: 50,
+    paddingRight: 50,
+    // marginBottom: 10
   },
 });

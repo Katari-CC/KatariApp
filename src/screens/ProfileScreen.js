@@ -10,6 +10,10 @@ import {
   StatusBar,
 } from "react-native";
 
+import {
+  getCameraPermission,
+  getCameraRollPermission,
+} from "../utils/permissions";
 import firebase from "../utils/firebaseClient";
 import AppNavigator from "../navigation/AppNavigator";
 import { Constants, ImagePicker, Permissions } from "expo";
@@ -71,11 +75,6 @@ export default class ProfileScreen extends React.Component {
   };
 
   _maybeRenderImage = () => {
-    let { image } = this.state;
-    if (!image) {
-      return;
-    }
-
     return (
       <View
         style={{
@@ -96,7 +95,7 @@ export default class ProfileScreen extends React.Component {
             overflow: "hidden",
           }}
         >
-          <Image source={{ uri: image }} style={{ width: 250, height: 250 }} />
+          {/* <Image source={{ uri: image }} style={{ width: 250, height: 250 }} /> */}
         </View>
 
         <Text
@@ -104,7 +103,7 @@ export default class ProfileScreen extends React.Component {
           onLongPress={this._share}
           style={{ paddingVertical: 10, paddingHorizontal: 10 }}
         >
-          {image}
+          {/* {image} */}
         </Text>
       </View>
     );
@@ -271,8 +270,8 @@ export default class ProfileScreen extends React.Component {
             title="Take a photo"
           />
 
-          {this._maybeRenderImage()}
-          {this._maybeRenderUploadingOverlay()}
+          {/* {this._maybeRenderImage()}
+          {this._maybeRenderUploadingOverlay()} */}
 
           <StatusBar barStyle="default" />
         </View>
@@ -402,6 +401,9 @@ async function uploadImageAsync(uri) {
 })(typeof self !== "undefined" ? self : this);
 
 const styles = StyleSheet.create({
+  title: {
+    fontSize: 20,
+  },
   container: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "#d0d3c5",

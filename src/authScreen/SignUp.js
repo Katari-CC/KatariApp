@@ -73,7 +73,7 @@ export default class SignUp extends React.Component {
       const db = firebase.firestore();
 
       const user = await db.collection("users").add({
-        username: username,
+        displayName: username,
         email: email,
         photoURL: "",
         disabled: false,
