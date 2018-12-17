@@ -1,13 +1,24 @@
 import React from "react";
 import { StyleSheet, TextInput, View } from "react-native";
-import { Input, Text, FormLabel, FormInput, FormValidationMessage, Button } from "react-native-elements";
+import {
+  Input,
+  Text,
+  FormLabel,
+  FormInput,
+  FormValidationMessage,
+  Button,
+} from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import firebase from "../utils/firebaseClient";
+import firestore from "../utils/firestore";
 // import {
 //   GoogleSignin,
 //   GoogleSigninButton,
 //   statusCodes
 // } from "react-native-google-signin";
+
+let AVATAR_URL =
+  "https://firebasestorage.googleapis.com/v0/b/storymapapp.appspot.com/o/avatar.png?alt=media&token=1f953209-d7c9-41ae-a46f-787fa25d579c";
 
 export default class SignUp extends React.Component {
   state = {
@@ -16,7 +27,7 @@ export default class SignUp extends React.Component {
     errorMessage: null,
     username: "",
     userInfo: null,
-    isSigninInProgress: null
+    isSigninInProgress: null,
   };
 
   _gsignIn = async () => {
@@ -39,19 +50,48 @@ export default class SignUp extends React.Component {
 
   handleSignUp = async () => {
     const { email, password, username } = this.state;
+    console.log("username:", username);
     try {
-      const docRef = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      // Create a new user with email & password
+      const docRef = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then((user) => {
+          // Once Signup is successful
+          console.log("Signup Successfull");
+          // Get the current user object
+          const currentUser = firebase.auth().currentUser;
+          // then update the displayName
+          currentUser
+            .updateProfile({
+              displayName: username,
+            })
+            .then(
+              (user) => {
+                // Once the user "displayName" is updated
+                console.log("displayName:", username);
+                // Create a new entry in the "users" table of the database
+                firestore
+                  .collection("users")
+                  .doc()
+                  .set({
+                    displayName: username,
+                    email: email,
+                    uid: currentUser.uid,
+                    photoURL: "",
+                    disabled: false,
+                  });
+
+                // Go to the homescreen of the app
+                this.props.navigation.navigate("Main");
+              },
+              function(error) {
+                // An error happened.
+                console.log(error);
+              }
+            );
+        });
       console.log("authenticated", docRef);
-
-      const db = firebase.firestore();
-
-      const user = await db.collection("users").add({
-        displayName: username,
-        email: email,
-        photoURL: "",
-        disabled: false
-      });
-      this.props.navigation.navigate("Main");
     } catch (error) {
       this.setState({ errorMessage: error.message });
     }
@@ -60,7 +100,9 @@ export default class SignUp extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        {this.state.errorMessage && <Text style={{ color: "red" }}>{this.state.errorMessage}</Text>}
+        {this.state.errorMessage && (
+          <Text style={{ color: "red" }}>{this.state.errorMessage}</Text>
+        )}
         {/* <GoogleSigninButton
           style={{ width: 48, height: 48 }}
           size={GoogleSigninButton.Size.Icon}
@@ -72,14 +114,14 @@ export default class SignUp extends React.Component {
         <FormInput
           style={styles.formInput}
           underlineColorAndroid="transparent"
-          onChangeText={username => this.setState({ username })}
+          onChangeText={(username) => this.setState({ username })}
           value={this.state.username}
         />
         <FormLabel>Email</FormLabel>
         <FormInput
           style={styles.formInput}
           underlineColorAndroid="transparent"
-          onChangeText={email => this.setState({ email })}
+          onChangeText={(email) => this.setState({ email })}
           value={this.state.email}
         />
         <FormValidationMessage>{"required"}</FormValidationMessage>
@@ -88,13 +130,20 @@ export default class SignUp extends React.Component {
           secureTextEntry
           style={styles.formInput}
           underlineColorAndroid="transparent"
-          onChangeText={password => this.setState({ password })}
+          onChangeText={(password) => this.setState({ password })}
           value={this.state.password}
         />
         <FormValidationMessage>{"required"}</FormValidationMessage>
         <Text style={styles.space} />
-        <Button buttonStyle={styles.button} title="Sign Up" onPress={this.handleSignUp} />
-        <Text style={styles.link} onPress={() => this.props.navigation.navigate("Login")}>
+        <Button
+          buttonStyle={styles.button}
+          title="Sign Up"
+          onPress={this.handleSignUp}
+        />
+        <Text
+          style={styles.link}
+          onPress={() => this.props.navigation.navigate("Login")}
+        >
           Already have an account? Login here!
         </Text>
       </View>
@@ -107,17 +156,17 @@ const styles = StyleSheet.create({
     marginTop: 50,
     justifyContent: "center",
     backgroundColor: "#d0d3c5",
-    color: "#08708a"
+    color: "#08708a",
   },
   gmailbutton: {
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   space: {
     marginTop: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
   link: {
     marginLeft: 25,
@@ -129,7 +178,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     width: "100%",
-    height: 50
+    height: 50,
   },
   formInput: {
     backgroundColor: "white",
@@ -138,7 +187,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderRadius: 5,
     marginTop: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
   button: {
     backgroundColor: "#56b1bf",
@@ -147,6 +196,6 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderRadius: 5,
     marginTop: 10,
-    marginBottom: 10
-  }
+    marginBottom: 10,
+  },
 });

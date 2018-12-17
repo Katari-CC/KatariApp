@@ -10,6 +10,9 @@ import {
   StatusBar,
 } from "react-native";
 
+// File to import to allow upload of the picure on the firebase storage
+import { self } from "../utils/quick_fix.js";
+
 import {
   getCameraPermission,
   getCameraRollPermission,
@@ -29,118 +32,110 @@ export default class ProfileScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      image: null,
-      uploading: false,
+      currentUserEmail: "Not available",
+      currentUserUID: "",
+      currentUserImageURL: null,
+      currentUserName: "Not available",
     };
   }
 
-  componentDidMount() {
-    getCameraPermission();
-    getCameraRollPermission();
+  async componentDidMount() {
+    let currentUser = firebase.auth().currentUser;
+    this.setState({
+      currentUserEmail: currentUser.email,
+      currentUserUID: currentUser.uid,
+      currentUserName: currentUser.displayName,
+      currentUserImageURL: currentUser.photoURL,
+    });
+    console.log("user currently logged: ", this.state.currentUserEmail);
+    console.log("uuid: ", this.state.currentUserUID);
+    console.log("displayName: ", this.state.currentUserName);
+    console.log("photoURL: ", currentUser.photoURL);
+    console.log("Full User Info: ", currentUser);
   }
 
-  _share = () => {
-    Share.share({
-      message: this.state.image,
-      title: "Check out this photo",
-      url: this.state.image,
-    });
+  uploadImage = async (uri) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    var ref = firebase
+      .storage()
+      .ref()
+      .child("profile_img/" + this.state.currentUserUID + ".jpg");
+    return ref.put(blob);
   };
 
-  _copyToClipboard = () => {
-    Clipboard.setString(this.state.image);
-    alert("Copied image URL to clipboard");
-  };
-
-  _maybeRenderUploadingOverlay = () => {
-    if (this.state.uploading) {
-      return (
-        <View
-          style={[
-            StyleSheet.absoluteFill,
-            {
-              backgroundColor: "rgba(0,0,0,0.4)",
-              alignItems: "center",
-              justifyContent: "center",
-            },
-          ]}
-        >
-          <ActivityIndicator color="#fff" animating size="large" />
-        </View>
-      );
-    }
-  };
-
-  _maybeRenderImage = () => {
-    return (
-      <View
-        style={{
-          marginTop: 30,
-          width: 250,
-          borderRadius: 3,
-          elevation: 2,
-        }}
-      >
-        <View
-          style={{
-            borderTopRightRadius: 3,
-            borderTopLeftRadius: 3,
-            shadowColor: "rgba(0,0,0,1)",
-            shadowOpacity: 0.2,
-            shadowOffset: { width: 4, height: 4 },
-            shadowRadius: 5,
-            overflow: "hidden",
-          }}
-        >
-          {/* <Image source={{ uri: image }} style={{ width: 250, height: 250 }} /> */}
-        </View>
-
-        <Text
-          onPress={this._copyToClipboard}
-          onLongPress={this._share}
-          style={{ paddingVertical: 10, paddingHorizontal: 10 }}
-        >
-          {/* {image} */}
-        </Text>
-      </View>
-    );
-  };
+  updateProfileImage(url) {
+    firebase
+      .auth()
+      .currentUser.updateProfile({
+        photoURL: url,
+      })
+      .then(() => {
+        console.log("Profile Picture updated");
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  }
 
   _pickImage = async () => {
+    // Request Gallery Permissions
+    await Permissions.askAsync(Permissions.CAMERA_ROLL);
+
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [4, 3],
     });
-
-    this._handleImagePicked(pickerResult);
+    if (!pickerResult.cancelled) {
+      console.log("Here is your link", pickerResult.uri);
+      this.uploadImage(pickerResult.uri)
+        .then((snapshot) => {
+          console.log("Image correctly uploaded");
+          snapshot.ref.getDownloadURL().then((downloadURL) => {
+            console.log("Image available at", downloadURL);
+            this.setState({
+              currentUserImageURL: downloadURL,
+            });
+            this.updateProfileImage(downloadURL);
+          });
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      // this._handleImagePicked(pickerResult);
+    }
   };
 
   _takePhoto = async () => {
+    // Request Camera  Permissions
+    await Permissions.askAsync(Permissions.CAMERA);
+
     let pickerResult = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [4, 3],
     });
 
-    this._handleImagePicked(pickerResult);
-  };
-
-  _handleImagePicked = async (pickerResult) => {
-    try {
-      this.setState({ uploading: true });
-
-      if (!pickerResult.cancelled) {
-        uploadUrl = await uploadImageAsync(pickerResult.uri);
-        this.setState({ image: uploadUrl });
-      }
-    } catch (e) {
-      console.log(e);
-      alert("Upload failed, sorry :(");
-    } finally {
-      this.setState({ uploading: false });
+    if (!pickerResult.cancelled) {
+      console.log("Local path to the picture:", pickerResult.uri);
+      this.uploadImage(pickerResult.uri)
+        .then((snapshot) => {
+          console.log("Image correctly uploaded");
+          snapshot.ref.getDownloadURL().then((downloadURL) => {
+            console.log("Image available at", downloadURL);
+            this.setState({
+              currentUserImageURL: downloadURL,
+            });
+            this.updateProfileImage(downloadURL);
+          });
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     }
   };
 
   logout = () => {
+    console.log("logout current user");
     firebase
       .auth()
       .signOut()
@@ -156,34 +151,26 @@ export default class ProfileScreen extends React.Component {
   render() {
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>
-          {"Welcome " + firebase.auth().currentUser + "!"}
-        </Text>
-        <Image
-          style={styles.avatar}
-          resizeMode="cover"
-          // source={{uri: this.state.user.image}}}
-          source={{
-            uri:
-              "https://firebasestorage.googleapis.com/v0/b/storymapapp.appspot.com/o/avatar.png?alt=media&token=1f953209-d7c9-41ae-a46f-787fa25d579c",
-          }}
-        />
+        <Text style>{"Welcome " + this.state.currentUserEmail + "!"}</Text>
+        {this.state.currentUserImageURL ? (
+          <Image
+            style={styles.avatar}
+            resizeMode="cover"
+            source={{
+              uri: this.state.currentUserImageURL,
+            }}
+          />
+        ) : (
+          <Image
+            style={styles.avatar}
+            resizeMode="cover"
+            source={require("../../assets/images/avatar.png")}
+          />
+        )}
+
         <View
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
-          {this.state.image ? null : (
-            <Text
-              style={{
-                fontSize: 20,
-                marginBottom: 20,
-                textAlign: "center",
-                marginHorizontal: 15,
-              }}
-            >
-              Example: Upload ImagePicker result
-            </Text>
-          )}
-
           <Button
             buttonStyle={styles.button}
             onPress={this._pickImage}
@@ -195,9 +182,6 @@ export default class ProfileScreen extends React.Component {
             onPress={this._takePhoto}
             title="Take a photo"
           />
-
-          {/* {this._maybeRenderImage()}
-          {this._maybeRenderUploadingOverlay()} */}
 
           <StatusBar barStyle="default" />
         </View>
@@ -216,35 +200,6 @@ export default class ProfileScreen extends React.Component {
       </ScrollView>
     );
   }
-}
-
-async function uploadImageAsync(uri) {
-  // Why are we using XMLHttpRequest? See:
-  // https://github.com/expo/expo/issues/2402#issuecomment-443726662
-  const blob = await new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.onload = function() {
-      resolve(xhr.response);
-    };
-    xhr.onerror = function(e) {
-      console.log(e);
-      reject(new TypeError("Network request failed"));
-    };
-    xhr.responseType = "blob";
-    xhr.open("GET", uri, true);
-    xhr.send(null);
-  });
-
-  const ref = firebase
-    .storage()
-    .ref()
-    .child(uuid.v4());
-  const snapshot = await ref.put(blob);
-
-  // We're done with the blob, close and release it
-  blob.close();
-
-  return await snapshot.ref.getDownloadURL();
 }
 
 const styles = StyleSheet.create({

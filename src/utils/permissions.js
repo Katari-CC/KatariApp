@@ -1,4 +1,4 @@
-import { Permissions, Location } from 'expo';
+import { Permissions, Location } from "expo";
 
 export const getLocationPermission = async () => {
   let { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -16,7 +16,7 @@ export const getCameraPermission = async () => {
   } else {
     console.log("Permission to access camera was granted");
   }
-}
+};
 
 export const getCameraRollPermission = async () => {
   let { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -25,4 +25,4 @@ export const getCameraRollPermission = async () => {
   } else {
     console.log("Permission to access camera was granted");
   }
-}
+};
