@@ -6,26 +6,22 @@ import {
   Text,
   View,
   Image,
-  TextInput,
   Dimensions,
-  Alert,
   TouchableOpacity,
+  FlatList,
 } from "react-native";
-const TEXT_COLOR = "#898989";
+import { Card } from "react-native-elements";
 
-import Story from "./Story";
+import { TEXT_COLOR } from "../constants/Colors";
+
 import { createStackNavigator, NavigationActions } from "react-navigation";
 
-import { ListItem, Button, Card, Icon } from "react-native-elements";
 import Panel from "../components/Panel";
-import { FlatList } from "react-native-gesture-handler";
+import Story from "./Story";
+import StoryForm from "../components/StoryForm";
 
 import firestore from "../utils/firestore";
 import firebase from "../utils/firebaseClient";
-
-import { MonoText } from "../components/StyledText";
-import "firebase/firestore";
-import { bold, gray } from "ansi-colors";
 
 class Home extends React.Component {
   static navigationOptions = {
@@ -39,11 +35,8 @@ class Home extends React.Component {
       detailReviews: [],
       isListVisible: true,
       isAddStoryFormVisible: false,
-      newStoryTitle: "",
-      newStoryText: "",
       isSelected: false,
     };
-    this.saveNewStory = this.saveNewStory.bind(this);
     this.onStoryPress = this.onStoryPress.bind(this);
   }
 
@@ -103,24 +96,19 @@ class Home extends React.Component {
     this.props.navigation.dispatch(navigateAction);
   }
 
-  saveNewStory() {
-    const newStory = {
-      userID: firebase.auth().currentUser.uid,
-      title: this.state.newStoryTitle,
-      story: this.state.newStoryText,
-      location: this.state.detail.title,
-    };
-    firestore
-      .collection("stories")
-      .doc()
-      .set(newStory)
-      .then(() => {
-        this.setState({
-          isAddStoryFormVisible: false,
-          stories: [...this.state.stories, newStory],
-        });
-      });
-  }
+  uploadImage = async (uri, path, name) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    var ref = firebase
+      .storage()
+      .ref()
+      .child(path + name + ".jpg");
+    return ref.put(blob);
+  };
+
+  toggleFormDisplay = () => {
+    this.setState({ isAddStoryFormVisible: !this.state.isAddStoryFormVisible });
+  };
 
   render() {
     console.log("Rendering...");
@@ -150,70 +138,13 @@ class Home extends React.Component {
               );
             }}
           />
-          {/* <ScrollView
-            style={styles.locationList}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            removeClippedSubviews
-            bounce={true}
-            overScrollMode="always"
-            centerContent={true}
-          >
-            {this.state.locations.map((item) => (
-              <TouchableOpacity
-                style={styles.locationItem}
-                onPress={() => {
-                  this.onItemListClick(item);
-                }}
-              >
-                <Image style={styles.imgList} source={{ uri: item.image }} />
-                <Text adjustsFontSizeToFit style={styles.textList}>{item.title}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView> */}
           <View style={styles.locationDetail}>
             {this.state.isAddStoryFormVisible ? (
               // DISPLAY THE NEW STORY FORM
-              <View>
-                <Card containerStyle={styles.inputCard}>
-                  <View style={styles.inputCard}>
-                    <Text style={styles.formTitle}>Tell your story</Text>
-                    <TextInput
-                      style={styles.textInput}
-                      placeholder="Give your story a title"
-                      onChangeText={(text) =>
-                        this.setState({ newStoryTitle: text })
-                      }
-                    />
-                    <TextInput
-                      style={styles.textInput}
-                      multiline={true}
-                      placeholder="Give us your best story"
-                      onChangeText={(text) =>
-                        this.setState({ newStoryText: text })
-                      }
-                    />
-                    <Button
-                      title="Save your story"
-                      buttonStyle={styles.button}
-                      onPress={() => {
-                        this.saveNewStory();
-                      }}
-                    />
-                    <View style={styles.backBtn}>
-                      <Icon
-                        name="md-arrow-back"
-                        onPress={() =>
-                          this.setState({ isAddStoryFormVisible: false })
-                        }
-                        type="ionicon"
-                        size={30}
-                        color={TEXT_COLOR}
-                      />
-                    </View>
-                  </View>
-                </Card>
-              </View>
+              <StoryForm
+                locationID={this.state.detail.id}
+                toggleDisplayForm={this.toggleFormDisplay}
+              />
             ) : (
               <View style={styles.storyContainer}>
                 <Panel style={styles.storyList} title={this.state.detail.title}>
@@ -284,6 +215,7 @@ const styles = StyleSheet.create({
     color: "#032B2F",
     flexDirection: "column",
   },
+
   // Horizonthal locations list
   locationList: {
     paddingTop: 40,
@@ -298,7 +230,7 @@ const styles = StyleSheet.create({
   imgList: {
     height: Dimensions.get("window").height / 3,
     width: Dimensions.get("window").width / 1.7,
-    borderRadius: 10,
+    borderRadius: 5,
     margin: 2,
   },
 
@@ -309,39 +241,9 @@ const styles = StyleSheet.create({
   },
 
   // location Description
-  description: {},
-  // Add Story button
-  addButton: {
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#d73a31",
-    borderRadius: 100,
-    width: 65,
-    height: 65,
-  },
-  addBtnPosition: {
-    position: "absolute",
-    bottom: 20,
-    right: 20,
-  },
   addBtnText: {
     fontSize: 25,
     color: "black",
-  },
-
-  //New Story Form
-  textInput: {
-    width: Dimensions.get("window").width - 40,
-    marginTop: 10,
-    paddingTop: 10,
-    paddingBottom: 10,
-    // height: 50,
-    // backgroundColor: "#08708A",
-    // color: "white",
-    borderWidth: 1.5,
-    paddingLeft: 8,
-    borderRadius: 8,
-    fontSize: 14,
   },
 
   detailText: {
@@ -350,6 +252,7 @@ const styles = StyleSheet.create({
     color: TEXT_COLOR,
     padding: 5,
   },
+
   // Stories list
   storyContainer: {
     flexDirection: "column",
@@ -360,13 +263,6 @@ const styles = StyleSheet.create({
     width: 150,
     height: 120,
     borderRadius: 20,
-  },
-  inputCard: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    // width: Dimensions.get("screen").width - 20,
-    borderRadius: 10,
   },
   addCard: {
     justifyContent: "center",
@@ -400,25 +296,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fbfbfb",
     paddingVertical: 20,
-  },
-  button: {
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#56b1bf",
-    // width: "100%",
-    // height: 50,
-    borderWidth: 0,
-    borderRadius: 5,
-    marginTop: 10,
-    paddingLeft: 50,
-    paddingRight: 50,
-    // marginBottom: 10
-  },
-  backBtn: {
-    position: "absolute",
-    top: 0,
-    left: 20,
-    marginBottom: 8,
   },
 });
 
