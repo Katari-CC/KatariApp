@@ -19,7 +19,6 @@ export default class ImageUploadModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      //   modalVisible: true,
       currentUserEmail: "Not available",
       currentUserUID: "",
       currentUserImageURL: null,
@@ -34,10 +33,6 @@ export default class ImageUploadModal extends Component {
       currentUserName: currentUser.displayName,
       currentUserImageURL: currentUser.photoURL,
     });
-  }
-
-  setModalVisible(visible) {
-    this.setState({ modalVisible: visible });
   }
 
   _pickImage = async () => {
@@ -145,7 +140,7 @@ export default class ImageUploadModal extends Component {
 
               <TouchableHighlight
                 onPress={() => {
-                  this.setModalVisible(!this.state.modalVisible);
+                  this.props.goback();
                 }}
               >
                 <Text style={styles.textList}>x Close</Text>

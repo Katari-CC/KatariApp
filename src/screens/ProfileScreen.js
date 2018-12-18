@@ -74,10 +74,9 @@ export default class ProfileScreen extends React.Component {
     });
   }
 
-  setModalVisible(visible) {
-    console.log("modalVisible=", this.state.modalVisible);
-    this.setState({ modalVisible: visible });
-  }
+  toggleModal = () => {
+    this.setState({ modalVisible: !this.state.modalVisible });
+  };
 
   logout = () => {
     console.log("logout current user");
@@ -95,7 +94,7 @@ export default class ProfileScreen extends React.Component {
 
   render() {
     if (this.state.modalVisible) {
-      return <ImageUploadModal props={this.state.modalVisible} />;
+      return <ImageUploadModal goback={this.toggleModal} />;
     }
     return (
       <ScrollView contentContainerStyle={styles.container}>
@@ -156,7 +155,7 @@ export default class ProfileScreen extends React.Component {
             buttonStyle={styles.button}
             title="Change the profile picture"
             onPress={() => {
-              this.setModalVisible(true);
+              this.toggleModal();
             }}
           />
 
