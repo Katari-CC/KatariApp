@@ -104,6 +104,7 @@ export default class ProfileScreen extends React.Component {
           <Text style={styles.username}>
             {"Welcome " + this.state.currentUserName + "!"}
           </Text>
+
           {this.state.currentUserImageURL ? (
             <Image
               style={styles.avatar}
@@ -119,7 +120,6 @@ export default class ProfileScreen extends React.Component {
               source={require("../../assets/images/avatar.png")}
             />
           )}
-
           <FlatList
             data={this.state.stories}
             renderItem={({ item, index }) => {
