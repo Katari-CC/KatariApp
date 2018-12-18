@@ -16,7 +16,14 @@ const TEXT_COLOR = "#898989";
 import Story from "./Story";
 import { createStackNavigator, NavigationActions } from "react-navigation";
 
-import { ListItem, Button, Card, Icon } from "react-native-elements";
+import {
+  ListItem,
+  Button,
+  Card,
+  Icon,
+  Avatar,
+  Divider,
+} from "react-native-elements";
 import Panel from "../components/Panel";
 import { FlatList } from "react-native-gesture-handler";
 
@@ -36,7 +43,7 @@ class Home extends React.Component {
     this.state = {
       locations: [],
       detail: {},
-      detailReviews: [],
+      stories: [],
       isListVisible: true,
       isAddStoryFormVisible: false,
       newStoryTitle: "",
@@ -84,18 +91,27 @@ class Home extends React.Component {
       .then(() => {
         this.setState({
           isSelected: true,
-          detailReviews: newReviews,
+          stories: newReviews,
         });
       });
+    //     let newStories = this.state.stories.forEach(story => {
+    //     firebase.storage().ref().child("profile_img/" + story.userID + ".jpg")
+    //     .getDownloadURL()
+    //     .then((url) => {
+    //       story.avatar = url;
+    //   })
+    //   this.setState({stories: newStories})
+    // });
   };
 
   onStoryPress(story) {
+    // console.log(this.state.stories);
     const navigateAction = NavigationActions.navigate({
       routeName: "Story",
       params: {
         title: story.title,
         story: story.story,
-        username: "",
+        username: firebase,
         profPic: "",
         image: story.image,
       },
@@ -109,6 +125,7 @@ class Home extends React.Component {
       title: this.state.newStoryTitle,
       story: this.state.newStoryText,
       location: this.state.detail.title,
+      username: firebase.auth().currentUser.displayName,
     };
     firestore
       .collection("stories")
@@ -124,7 +141,6 @@ class Home extends React.Component {
 
   render() {
     console.log("Rendering...");
-
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container}>
@@ -230,7 +246,7 @@ class Home extends React.Component {
                   overScrollMode="always"
                   centerContent={true}
                 >
-                  {this.state.detailReviews.length == 0 ? (
+                  {this.state.stories.length == 0 ? (
                     <Card
                       title={"No stories yet. Add one!"}
                       containerStyle={styles.storyCard}
@@ -238,19 +254,37 @@ class Home extends React.Component {
                   ) : (
                     <View />
                   )}
-                  {this.state.detailReviews.map((story, index) => {
+                  {this.state.stories.map((story, index) => {
                     return (
-                      <Card
-                        key={index}
-                        title={story.username}
-                        // image={{ uri: review.imageUrl }}
-                        containerStyle={styles.storyCard}
-                      >
+                      <Card key={index} containerStyle={styles.storyCard}>
                         <TouchableOpacity
                           style={styles.storyCard}
                           onPress={() => this.onStoryPress(story)}
                         >
-                          <Text style={styles.description}>{story.title}</Text>
+                          <View style={styles.userTitle}>
+                            <Avatar
+                              rounded
+                              key={index}
+                              style={styles.avatar}
+                              source={{ uri: story.avatar }}
+                            />
+                            <Text adjustsFontSizeToFit style={styles.username}>
+                              {story.username}
+                            </Text>
+                          </View>
+                          <View>
+                            <Divider
+                              style={{ marginTop: 0, backgroundColor: "black" }}
+                            />
+                          </View>
+                          <View>
+                            <Text
+                              adjustsFontSizeToFit
+                              style={styles.description}
+                            >
+                              {story.title}
+                            </Text>
+                          </View>
                         </TouchableOpacity>
                       </Card>
                     );
@@ -309,7 +343,10 @@ const styles = StyleSheet.create({
   },
 
   // location Description
-  description: {},
+  description: {
+    textAlign: "center",
+    marginTop: 10,
+  },
   // Add Story button
   addButton: {
     justifyContent: "center",
@@ -328,7 +365,12 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: "black",
   },
-
+  avatar: {
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 100,
+    marginRight: 5,
+  },
   //New Story Form
   textInput: {
     width: Dimensions.get("window").width - 40,
@@ -357,9 +399,23 @@ const styles = StyleSheet.create({
     // flexWrap: "wrap",
   },
   storyCard: {
+    flexDirection: "column",
     width: 150,
     height: 120,
     borderRadius: 20,
+    justifyContent: "space-evenly",
+    alignItems: "center",
+  },
+  username: {
+    marginLeft: 5,
+    textAlign: "center",
+    marginTop: 5,
+  },
+  userTitle: {
+    height: "20%",
+    // marginLeft: 15,
+    flexDirection: "row",
+    flexWrap: "nowrap",
   },
   inputCard: {
     flexDirection: "column",

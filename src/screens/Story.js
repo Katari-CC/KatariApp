@@ -13,6 +13,9 @@ import firestore from "../utils/firestore";
 import firebase from "../utils/firebaseClient";
 import { ScrollView } from "react-native-gesture-handler";
 
+// const TEXT_COLOR = "#898989";
+const TEXT_COLOR = "white";
+
 export default class Location extends React.Component {
   constructor(props) {
     super(props);
@@ -20,8 +23,9 @@ export default class Location extends React.Component {
       username: this.props.navigation.state.params.username,
       profPic: this.props.navigation.state.params.profPic,
       title: this.props.navigation.state.params.title,
-      story: this.props.navigation.state.params.storyContainer,
+      story: this.props.navigation.state.params.story,
       image: this.props.navigation.state.params.image,
+      // color: this.props.navigation.state.params.color,
     };
   }
 
@@ -30,7 +34,7 @@ export default class Location extends React.Component {
   render() {
     return (
       <View styles={styles.container}>
-        <Card containerStyle={styles.cardShape}>
+        <Card containerStyle={styles.cardContainer}>
           <ScrollView contentContainerStyle={styles.cardContent}>
             <Text adjustsFontSizeToFit style={styles.detailTitle}>
               {this.props.navigation.state.params.title}
@@ -56,10 +60,7 @@ export default class Location extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#d0d3c5",
+    backgroundColor: "red",
   },
   location: {
     paddingTop: 30,
@@ -86,15 +87,16 @@ const styles = StyleSheet.create({
     margin: 1,
     // fontSize: 25,
     textAlign: "center",
-    color: "#898989",
+    color: TEXT_COLOR,
     fontWeight: "bold",
   },
 
   detailText: {
-    width: Dimensions.get("window").width - 20,
+    // width: Dimensions.get("window").width - 20,
     // fontSize: 20,
     textAlign: "center",
-    color: "#898989",
+
+    color: TEXT_COLOR,
   },
   storyContainer: {
     flexDirection: "row",
@@ -106,11 +108,13 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 20,
   },
-  cardShape: {
+  cardContainer: {
     borderRadius: 20,
     height: Dimensions.get("screen").height - 130,
     // width: Dimensions.get("screen").width - 30,
     marginTop: 30,
+    backgroundColor: "#56b1bf",
+    // backgroundColor: "white"
   },
   cardContent: {
     justifyContent: "center",

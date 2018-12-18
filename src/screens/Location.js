@@ -67,6 +67,7 @@ class LocationScreen extends React.Component {
       title: this.state.newStoryTitle,
       story: this.state.newStoryText,
       location: this.props.navigation.state.params.title,
+      username: firebase.auth().currentUser.displayName,
     };
     firestore
       .collection("stories")
