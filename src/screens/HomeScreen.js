@@ -19,6 +19,7 @@ import { createStackNavigator, NavigationActions } from "react-navigation";
 import Panel from "../components/Panel";
 import Story from "./Story";
 import StoryForm from "../components/StoryForm";
+import StoryCard from "../components/StoryCard";
 
 import firestore from "../utils/firestore";
 import firebase from "../utils/firebaseClient";
@@ -32,12 +33,9 @@ class Home extends React.Component {
     this.state = {
       locations: [],
       detail: {},
-      detailReviews: [],
-      isListVisible: true,
+      stories: [],
       isAddStoryFormVisible: false,
-      isSelected: false,
     };
-    this.onStoryPress = this.onStoryPress.bind(this);
   }
 
   componentDidMount() {
@@ -64,37 +62,24 @@ class Home extends React.Component {
       detail: item,
       isAddStoryFormVisible: false,
     });
-    newReviews = [];
-    firestore
+
+    // let avatar;
+    const p1 = firestore
       .collection("stories")
       .where("location", "==", item.title)
       .get()
       .then((snapshot) => {
+        stories = [];
         snapshot.forEach((doc) => {
-          newReviews.push(doc.data());
+          tempStory = doc.data();
+          stories.push(tempStory);
         });
+        return stories;
       })
-      .then(() => {
-        this.setState({
-          isSelected: true,
-          detailReviews: newReviews,
-        });
+      .then((stories) => {
+        this.setState({ stories });
       });
   };
-
-  onStoryPress(story) {
-    const navigateAction = NavigationActions.navigate({
-      routeName: "Story",
-      params: {
-        title: story.title,
-        story: story.story,
-        username: "",
-        profPic: "",
-        image: story.image,
-      },
-    });
-    this.props.navigation.dispatch(navigateAction);
-  }
 
   uploadImage = async (uri, path, name) => {
     const response = await fetch(uri);
@@ -108,6 +93,14 @@ class Home extends React.Component {
 
   toggleFormDisplay = () => {
     this.setState({ isAddStoryFormVisible: !this.state.isAddStoryFormVisible });
+  };
+
+  addStory = (newStory) => {
+    const tempStoryList = this.state.stories;
+    tempStoryList.push(newStory);
+    this.setState({
+      stories: tempStoryList,
+    });
   };
 
   render() {
@@ -142,10 +135,12 @@ class Home extends React.Component {
             {this.state.isAddStoryFormVisible ? (
               // DISPLAY THE NEW STORY FORM
               <StoryForm
-                locationID={this.state.detail.id}
+                location={this.state.detail.title}
                 toggleDisplayForm={this.toggleFormDisplay}
+                addStory={this.addStory}
               />
             ) : (
+              // DISPLAY THE DESCRIPTION TEXT
               <View style={styles.storyContainer}>
                 <Panel style={styles.storyList} title={this.state.detail.title}>
                   <Text style={styles.detailText}>
@@ -161,7 +156,7 @@ class Home extends React.Component {
                   overScrollMode="always"
                   centerContent={true}
                 >
-                  {this.state.detailReviews.length == 0 ? (
+                  {this.state.stories.length == 0 ? (
                     <Card
                       title={"No stories yet. Add one!"}
                       containerStyle={styles.storyCard}
@@ -169,21 +164,13 @@ class Home extends React.Component {
                   ) : (
                     <View />
                   )}
-                  {this.state.detailReviews.map((story, index) => {
+                  {this.state.stories.map((story, index) => {
                     return (
-                      <Card
+                      <StoryCard
                         key={index}
-                        title={story.username}
-                        // image={{ uri: review.imageUrl }}
-                        containerStyle={styles.storyCard}
-                      >
-                        <TouchableOpacity
-                          style={styles.storyCard}
-                          onPress={() => this.onStoryPress(story)}
-                        >
-                          <Text style={styles.description}>{story.title}</Text>
-                        </TouchableOpacity>
-                      </Card>
+                        story={story}
+                        navigation={this.props.navigation}
+                      />
                     );
                   })}
 
@@ -260,15 +247,29 @@ const styles = StyleSheet.create({
     // flexWrap: "wrap",
   },
   storyCard: {
+    // flexDirection: "column",
     width: 150,
-    height: 120,
+    height: 130,
     borderRadius: 20,
+    alignItems: "center",
+  },
+  username: {
+    marginLeft: 5,
+    textAlign: "center",
+    marginBottom: 25,
+    fontWeight: "bold",
+  },
+  userTitle: {
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    flexWrap: "nowrap",
   },
   addCard: {
     justifyContent: "center",
     alignItems: "center",
     width: 150,
-    height: 120,
+    height: 130,
     borderRadius: 20,
   },
   locationDetail: {

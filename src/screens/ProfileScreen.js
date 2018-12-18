@@ -151,26 +151,26 @@ export default class ProfileScreen extends React.Component {
   render() {
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style>{"Welcome " + this.state.currentUserEmail + "!"}</Text>
-        {this.state.currentUserImageURL ? (
-          <Image
-            style={styles.avatar}
-            resizeMode="cover"
-            source={{
-              uri: this.state.currentUserImageURL,
-            }}
-          />
-        ) : (
-          <Image
-            style={styles.avatar}
-            resizeMode="cover"
-            source={require("../../assets/images/avatar.png")}
-          />
-        )}
-
         <View
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
+          <Text style>{"Welcome " + this.state.currentUserEmail + "!"}</Text>
+          {this.state.currentUserImageURL ? (
+            <Image
+              style={styles.avatar}
+              resizeMode="cover"
+              source={{
+                uri: this.state.currentUserImageURL,
+              }}
+            />
+          ) : (
+            <Image
+              style={styles.avatar}
+              resizeMode="cover"
+              source={require("../../assets/images/avatar.png")}
+            />
+          )}
+
           <Button
             buttonStyle={styles.button}
             onPress={this._pickImage}
@@ -184,19 +184,19 @@ export default class ProfileScreen extends React.Component {
           />
 
           <StatusBar barStyle="default" />
-        </View>
 
-        <Button
+          {/* <Button
           buttonStyle={styles.button}
           title="Change the profile picture"
           onPress={this._uploadImage}
-        />
+        /> */}
 
-        <Button
-          buttonStyle={styles.button}
-          title="Logout"
-          onPress={this.logout}
-        />
+          <Button
+            buttonStyle={styles.button}
+            title="Logout"
+            onPress={this.logout}
+          />
+        </View>
       </ScrollView>
     );
   }

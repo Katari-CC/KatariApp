@@ -21,8 +21,10 @@ class StoryForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      locationID: props.location,
+      location: props.location,
       toggleDisplayForm: props.toggleDisplayForm,
+      addStory: props.addStory,
+      currentUserID: null,
       newStoryTitle: null,
       newStoryText: null,
       newStoryImageURL: null,
@@ -30,12 +32,18 @@ class StoryForm extends React.Component {
     };
   }
 
+  componentWillMount() {
+    this.setState({
+      currentUserID: firebase.auth().currentUser.uid,
+    });
+  }
+
   saveNewStory() {
     const newStory = {
-      userID: firebase.auth().currentUser.uid,
+      userID: this.state.currentUserID,
       title: this.state.newStoryTitle,
       story: this.state.newStoryText,
-      location: this.state.detail.title,
+      location: this.state.location,
     };
     firestore
       .collection("stories")
@@ -56,10 +64,8 @@ class StoryForm extends React.Component {
               return null;
             });
         }
-        this.setState({
-          isAddStoryFormVisible: false,
-          stories: [...this.state.stories, newStory],
-        });
+        this.props.addStory(newStory);
+        this.props.toggleDisplayForm();
       });
   }
   imageDialog = (path, imgName) => {
@@ -85,10 +91,7 @@ class StoryForm extends React.Component {
   };
 
   render() {
-    if (this.state.expanded) {
-      icon = this.icons["up"];
-    }
-
+    console.log("Rendering StoryForm...");
     return (
       <View>
         <Card containerStyle={styles.inputCard}>

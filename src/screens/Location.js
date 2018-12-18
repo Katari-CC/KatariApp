@@ -8,7 +8,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { Card, Button, Icon } from "react-native-elements";
+import { Card, Button, Icon, Avatar, Divider } from "react-native-elements";
 import firestore from "../utils/firestore";
 import firebase from "../utils/firebaseClient";
 import { ScrollView } from "react-native-gesture-handler";
@@ -30,20 +30,37 @@ class LocationScreen extends React.Component {
   }
 
   componentDidMount() {
-    newReviews = [];
-    firestore
+    stories = [];
+    // let avatar;
+    const p1 = firestore
       .collection("stories")
       .where("location", "==", this.props.navigation.state.params.title)
       .get()
       .then((snapshot) => {
         snapshot.forEach((doc) => {
-          newReviews.push(doc.data());
+          stories.push(doc.data());
         });
       })
       .then(() => {
-        this.setState({
-          stories: newReviews,
-        });
+        const p2 = stories.map((story) =>
+          firebase
+            .storage()
+            .ref()
+            .child("profile_img/" + story.userID + ".jpg")
+            .getDownloadURL()
+        );
+        Promise.all(p2)
+          .then((urls) => {
+            urls.forEach((url, index) => {
+              stories[index].avatar = url;
+            });
+          })
+          .then(() => {
+            this.setState({
+              isSelected: true,
+              stories,
+            });
+          });
       });
   }
 
@@ -53,8 +70,8 @@ class LocationScreen extends React.Component {
       params: {
         title: story.title,
         story: story.story,
-        username: "",
-        profPic: "",
+        username: story.username,
+        avatar: story.avatar,
         image: story.image,
       },
     });
@@ -67,6 +84,7 @@ class LocationScreen extends React.Component {
       title: this.state.newStoryTitle,
       story: this.state.newStoryText,
       location: this.props.navigation.state.params.title,
+      username: firebase.auth().currentUser.displayName,
     };
     firestore
       .collection("stories")
@@ -99,13 +117,6 @@ class LocationScreen extends React.Component {
           <Text style={styles.detailText}>
             {this.props.navigation.state.params.description}
           </Text>
-          {/* <Button
-            buttonStyle={styles.button}
-            title="Add your story"
-            onPress={() => {
-              this.setState({ isAddStoryFormVisible: true });
-            }}
-          /> */}
           {this.state.isAddStoryFormVisible ? (
             // DISPLAY THE NEW STORY FORM
             <View>
@@ -160,21 +171,41 @@ class LocationScreen extends React.Component {
               )}
               {this.state.stories.map((story, index) => {
                 return (
-                  <Card
-                    key={index}
-                    title={story.username}
-                    // image={{ uri: review.imageUrl }}
-                    containerStyle={styles.storyCard}
-                  >
+                  <Card key={index} containerStyle={styles.storyCard}>
                     <TouchableOpacity
                       style={styles.storyCard}
                       onPress={() => this.onStoryPress(story)}
                     >
-                      <Text style={styles.description}>{story.title}</Text>
+                      <View style={styles.userTitle}>
+                        <Avatar
+                          rounded
+                          key={index}
+                          containerStyle={styles.avatar}
+                          source={{ uri: story.avatar }}
+                        />
+                        <Text adjustsFontSizeToFit style={styles.username}>
+                          {story.username}
+                        </Text>
+                      </View>
+                      <View>
+                        <Divider
+                          style={{
+                            position: "absolute",
+                            top: "50%",
+                            zIndex: 3,
+                          }}
+                        />
+                      </View>
+                      <View>
+                        <Text adjustsFontSizeToFit style={styles.description}>
+                          {story.title}
+                        </Text>
+                      </View>
                     </TouchableOpacity>
                   </Card>
                 );
               })}
+
               <Card containerStyle={styles.addCard}>
                 <TouchableOpacity
                   style={styles.addCard}
@@ -255,9 +286,30 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   storyCard: {
+    // flexDirection: "column",
     width: 150,
-    height: 120,
+    height: 130,
     borderRadius: 20,
+    alignItems: "center",
+  },
+  username: {
+    marginLeft: 5,
+    textAlign: "center",
+    marginBottom: 25,
+    fontWeight: "bold",
+  },
+  userTitle: {
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    flexWrap: "nowrap",
+  },
+  avatar: {
+    // borderWidth: 1,
+    // borderColor: "black",
+    // borderRadius: 100,
+    // marginRight: 5,
+    marginBottom: 20,
   },
   inputCard: {
     flexDirection: "column",
@@ -270,7 +322,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: 150,
-    height: 120,
+    height: 130,
     borderRadius: 20,
   },
   addBtnText: {
