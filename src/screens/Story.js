@@ -8,7 +8,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { Card, Button } from "react-native-elements";
+import { Card, Button, Avatar } from "react-native-elements";
 import firestore from "../utils/firestore";
 import firebase from "../utils/firebaseClient";
 import { ScrollView } from "react-native-gesture-handler";
@@ -21,7 +21,7 @@ export default class Location extends React.Component {
     super(props);
     this.state = {
       username: this.props.navigation.state.params.username,
-      profPic: this.props.navigation.state.params.profPic,
+      avatar: this.props.navigation.state.params.avatar,
       title: this.props.navigation.state.params.title,
       story: this.props.navigation.state.params.story,
       image: this.props.navigation.state.params.image,
@@ -36,6 +36,15 @@ export default class Location extends React.Component {
       <View styles={styles.container}>
         <Card containerStyle={styles.cardContainer}>
           <ScrollView contentContainerStyle={styles.cardContent}>
+            <Avatar
+              size="large"
+              rounded
+              containerStyle={styles.avatar}
+              source={{ uri: this.props.navigation.state.params.avatar }}
+            />
+            <Text adjustsFontSizeToFit style={styles.username}>
+              {this.props.navigation.state.params.username}
+            </Text>
             <Text adjustsFontSizeToFit style={styles.detailTitle}>
               {this.props.navigation.state.params.title}
             </Text>
@@ -121,4 +130,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "column",
   },
+  username: {
+    color: TEXT_COLOR,
+  },
+  avatar: {},
 });

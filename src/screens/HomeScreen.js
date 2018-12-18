@@ -78,30 +78,38 @@ class Home extends React.Component {
       detail: item,
       isAddStoryFormVisible: false,
     });
-    newReviews = [];
-    firestore
+    stories = [];
+    // let avatar;
+    const p1 = firestore
       .collection("stories")
       .where("location", "==", item.title)
       .get()
       .then((snapshot) => {
         snapshot.forEach((doc) => {
-          newReviews.push(doc.data());
+          stories.push(doc.data());
         });
       })
       .then(() => {
-        this.setState({
-          isSelected: true,
-          stories: newReviews,
-        });
+        const p2 = stories.map((story) =>
+          firebase
+            .storage()
+            .ref()
+            .child("profile_img/" + story.userID + ".jpg")
+            .getDownloadURL()
+        );
+        Promise.all(p2)
+          .then((urls) => {
+            urls.forEach((url, index) => {
+              stories[index].avatar = url;
+            });
+          })
+          .then(() => {
+            this.setState({
+              isSelected: true,
+              stories,
+            });
+          });
       });
-    //     let newStories = this.state.stories.forEach(story => {
-    //     firebase.storage().ref().child("profile_img/" + story.userID + ".jpg")
-    //     .getDownloadURL()
-    //     .then((url) => {
-    //       story.avatar = url;
-    //   })
-    //   this.setState({stories: newStories})
-    // });
   };
 
   onStoryPress(story) {
@@ -111,8 +119,8 @@ class Home extends React.Component {
       params: {
         title: story.title,
         story: story.story,
-        username: firebase,
-        profPic: "",
+        username: story.username,
+        avatar: story.avatar,
         image: story.image,
       },
     });
@@ -265,7 +273,7 @@ class Home extends React.Component {
                             <Avatar
                               rounded
                               key={index}
-                              style={styles.avatar}
+                              containerStyle={styles.avatar}
                               source={{ uri: story.avatar }}
                             />
                             <Text adjustsFontSizeToFit style={styles.username}>
@@ -274,7 +282,11 @@ class Home extends React.Component {
                           </View>
                           <View>
                             <Divider
-                              style={{ marginTop: 0, backgroundColor: "black" }}
+                              style={{
+                                position: "absolute",
+                                top: "50%",
+                                zIndex: 3,
+                              }}
                             />
                           </View>
                           <View>
@@ -366,10 +378,11 @@ const styles = StyleSheet.create({
     color: "black",
   },
   avatar: {
-    borderWidth: 1,
-    borderColor: "black",
-    borderRadius: 100,
-    marginRight: 5,
+    // borderWidth: 1,
+    // borderColor: "black",
+    // borderRadius: 100,
+    // marginRight: 5,
+    marginBottom: 20,
   },
   //New Story Form
   textInput: {
@@ -399,21 +412,21 @@ const styles = StyleSheet.create({
     // flexWrap: "wrap",
   },
   storyCard: {
-    flexDirection: "column",
+    // flexDirection: "column",
     width: 150,
-    height: 120,
+    height: 130,
     borderRadius: 20,
-    justifyContent: "space-evenly",
     alignItems: "center",
   },
   username: {
     marginLeft: 5,
     textAlign: "center",
-    marginTop: 5,
+    marginBottom: 25,
+    fontWeight: "bold",
   },
   userTitle: {
-    height: "20%",
-    // marginLeft: 15,
+    alignItems: "center",
+    justifyContent: "center",
     flexDirection: "row",
     flexWrap: "nowrap",
   },
