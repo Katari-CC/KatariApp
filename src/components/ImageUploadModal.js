@@ -53,6 +53,7 @@ export default class ImageUploadModal extends Component {
             this.setState({
               currentUserImageURL: downloadURL,
             });
+            this.props.goback();
             this.updateProfileImage(downloadURL);
           });
         })
@@ -82,6 +83,7 @@ export default class ImageUploadModal extends Component {
               currentUserImageURL: downloadURL,
             });
             this.updateProfileImage(downloadURL);
+            this.props.goback();
           });
         })
         .catch((e) => {

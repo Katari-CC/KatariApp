@@ -63,7 +63,7 @@ export default createBottomTabNavigator(
     ProfileStack,
   },
   {
-    initialRouteName: "ProfileStack",
+    initialRouteName: "MapStack",
     backBehavior: "initialRoute",
     defaultNavigationOptions: {
       header: null,
