@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: 150,
-    height: 120,
+    height: 130,
     borderRadius: 20,
   },
   locationDetail: {
