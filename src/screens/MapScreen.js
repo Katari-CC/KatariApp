@@ -148,8 +148,8 @@ class Main extends React.Component {
     this.setState({ region });
   }
 
-  handleOnNavigateBack(region) {
-    this.setState({ region });
+  handleOnNavigateBack(region, markers) {
+    this.setState({ region, markers });
   }
 
   render() {
