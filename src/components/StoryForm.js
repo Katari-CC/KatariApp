@@ -29,6 +29,7 @@ class StoryForm extends React.Component {
       newStoryText: null,
       newStoryImageURL: null,
       newStoryImageURI: null,
+      newStoryID: null,
     };
   }
 
@@ -39,35 +40,60 @@ class StoryForm extends React.Component {
   }
 
   saveNewStory() {
-    const newStory = {
-      userID: this.state.currentUserID,
-      title: this.state.newStoryTitle,
-      story: this.state.newStoryText,
-      location: this.state.location,
-    };
+    if (
+      // Check if title and text is not empty
+      this.state.newStoryTitle &&
+      this.state.newStoryText
+    ) {
+      const newStory = {
+        userID: this.state.currentUserID,
+        title: this.state.newStoryTitle,
+        story: this.state.newStoryText,
+        location: this.state.location,
+      };
+      firestore
+        .collection("stories")
+        .add(newStory)
+        .then((docRef) => {
+          if (this.state.newStoryImageURI) {
+            console.log("Story Created successfully, ID=>", docRef.id);
+            uploadImage(this.state.newStoryImageURI, "/stories/", docRef.id)
+              .then((snapshot) => {
+                console.log("Image Uploaded Succesfully");
+                snapshot.ref.getDownloadURL().then((downloadURL) => {
+                  console.log("Image Available at: ", downloadURL);
+                  this.addURL(downloadURL, docRef.id);
+                });
+              })
+              .catch((e) => {
+                console.log(e);
+                return null;
+              });
+          }
+          this.props.addStory(newStory);
+          this.props.toggleDisplayForm();
+        });
+    } else {
+      Alert.alert("Empty Field", "Please provide title and text", [
+        { text: "OK", onPress: null },
+      ]);
+    }
+  }
+
+  addURL = (url, storyID) => {
+    console.log("Update the url of the picture on the story document");
     firestore
       .collection("stories")
-      .doc()
-      .set(newStory)
-      .then((docRef) => {
-        if (this.state.newStoryImageURI) {
-          uploadImage(this.state.newStoryImageURI, "/stories/", docRef.id)
-            .then((snapshot) => {
-              snapshot.ref.getDownloadURL().then((downloadURL) => {
-                this.setState({
-                  newStoryImageURL: downloadURL,
-                });
-              });
-            })
-            .catch((e) => {
-              console.log(e);
-              return null;
-            });
-        }
-        this.props.addStory(newStory);
-        this.props.toggleDisplayForm();
+      .doc(storyID)
+      .update({ photoURL: url })
+      .then(() => {
+        console.log("Update Successful");
+      })
+      .catch((e) => {
+        console.log(e);
       });
-  }
+  };
+
   imageDialog = (path, imgName) => {
     Alert.alert(
       "Upload an Image with your story",
@@ -76,13 +102,37 @@ class StoryForm extends React.Component {
         {
           text: "Select from Gallery",
           onPress: () => {
-            pickImage();
+            pickImage()
+              .then((picker) => {
+                if (!picker.cancelled) {
+                  console.log("Here is your URI:", picker.uri);
+                  this.setState({
+                    newStoryImageURI: picker.uri,
+                  });
+                }
+              })
+              .catch((e) => {
+                console.log(e);
+                return null;
+              });
           },
         },
         {
           text: "Take a picture",
           onPress: () => {
-            this.takePhoto().then(() => {});
+            takePhoto()
+              .then((picker) => {
+                if (!picker.cancelled) {
+                  console.log("Here is your URI:", picker.uri);
+                  this.setState({
+                    newStoryImageURI: picker.uri,
+                  });
+                }
+              })
+              .catch((e) => {
+                console.log(e);
+                return null;
+              });
           },
         },
       ],
@@ -92,6 +142,8 @@ class StoryForm extends React.Component {
 
   render() {
     console.log("Rendering StoryForm...");
+    console.log("Current URI:", this.state.newStoryImageURI);
+
     return (
       <View>
         <Card containerStyle={styles.inputCard}>
@@ -105,13 +157,13 @@ class StoryForm extends React.Component {
               }}
             />
 
-            {this.state.newStoryImage ? (
+            {this.state.newStoryImageURI ? (
               <Image
                 style={styles.imgStory}
                 source={{ uri: this.state.newStoryImageURI }}
               />
             ) : (
-              <View />
+              <Text>No imge</Text>
             )}
             <TextInput
               style={styles.textInput}
@@ -168,7 +220,10 @@ var styles = StyleSheet.create({
     paddingRight: 50,
     // marginBottom: 10
   },
-  imgStory: {},
+  imgStory: {
+    width: 200,
+    height: 150,
+  },
   textInput: {
     width: Dimensions.get("window").width - 40,
     marginTop: 10,
