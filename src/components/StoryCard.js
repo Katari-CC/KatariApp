@@ -31,7 +31,7 @@ class StoryCard extends React.Component {
       .where("uid", "==", this.state.story.userID)
       .get()
       .then((snapshot) => {
-        snapshot.forEach((doc) => {
+        (snapshot || []).forEach((doc) => {
           this.setState({
             user: doc.data(),
           });

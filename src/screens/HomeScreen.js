@@ -45,7 +45,7 @@ class Home extends React.Component {
       // .where("image", ">=", "")
       .get()
       .then((snapshot) => {
-        snapshot.forEach((doc) => {
+        (snapshot || []).forEach((doc) => {
           newLocation.push(doc.data());
         });
         this.setState({
@@ -70,7 +70,7 @@ class Home extends React.Component {
       .get()
       .then((snapshot) => {
         stories = [];
-        snapshot.forEach((doc) => {
+        (snapshot || []).forEach((doc) => {
           tempStory = doc.data();
           stories.push(tempStory);
         });

@@ -49,7 +49,7 @@ export default class ProfileScreen extends React.Component {
       .where("userID", "==", this.state.currentUserUID)
       .get()
       .then((snapshot) => {
-        snapshot.forEach((doc) => {
+        (snapshot || []).forEach((doc) => {
           newReviews.push(doc.data());
         });
       })

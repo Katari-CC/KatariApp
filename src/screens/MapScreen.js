@@ -55,7 +55,7 @@ class Main extends React.Component {
       .collection("locations")
       .get()
       .then((snapshot) => {
-        snapshot.forEach((doc) => {
+        (snapshot || []).forEach((doc) => {
           const marker = doc.data();
           marker["coordinate"] = {
             longitude: marker.longitude,
