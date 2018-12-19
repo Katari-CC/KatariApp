@@ -13,6 +13,8 @@ import firestore from "../utils/firestore";
 import firebase from "../utils/firebaseClient";
 import { ScrollView } from "react-native-gesture-handler";
 import Story from "./Story";
+import StoryCard from "../components/StoryCard";
+import StoryForm from "../components/StoryForm";
 import { createStackNavigator, NavigationActions } from "react-navigation";
 const TEXT_COLOR = "#898989";
 
@@ -25,8 +27,10 @@ class LocationScreen extends React.Component {
       newStoryTitle: "",
       newStoryText: "",
     };
-    this.saveNewStory = this.saveNewStory.bind(this);
+    // this.saveNewStory = this.saveNewStory.bind(this);
     this.onStoryPress = this.onStoryPress.bind(this);
+    this.toggleFormDisplay = this.toggleFormDisplay.bind(this);
+    this.addStory = this.addStory.bind(this);
   }
 
   componentDidMount() {
@@ -78,25 +82,37 @@ class LocationScreen extends React.Component {
     this.props.navigation.dispatch(navigateAction);
   }
 
-  saveNewStory() {
-    const newStory = {
-      userID: firebase.auth().currentUser.uid,
-      title: this.state.newStoryTitle,
-      story: this.state.newStoryText,
-      location: this.props.navigation.state.params.title,
-      username: firebase.auth().currentUser.displayName,
-    };
-    firestore
-      .collection("stories")
-      .doc()
-      .set(newStory)
-      .then(() => {
-        this.setState({
-          isAddStoryFormVisible: false,
-          stories: [...this.state.stories, newStory],
-        });
-      });
-  }
+  toggleFormDisplay = () => {
+    this.setState({ isAddStoryFormVisible: !this.state.isAddStoryFormVisible });
+  };
+
+  addStory = (newStory) => {
+    const tempStoryList = this.state.stories;
+    tempStoryList.push(newStory);
+    this.setState({
+      stories: tempStoryList,
+    });
+  };
+
+  // saveNewStory() {
+  //   const newStory = {
+  //     userID: firebase.auth().currentUser.uid,
+  //     title: this.state.newStoryTitle,
+  //     story: this.state.newStoryText,
+  //     location: this.props.navigation.state.params.title,
+  //     username: firebase.auth().currentUser.displayName,
+  //   };
+  //   firestore
+  //     .collection("stories")
+  //     .doc()
+  //     .set(newStory)
+  //     .then(() => {
+  //       this.setState({
+  //         isAddStoryFormVisible: false,
+  //         stories: [...this.state.stories, newStory],
+  //       });
+  //     });
+  // }
 
   render() {
     return (
@@ -119,46 +135,11 @@ class LocationScreen extends React.Component {
           </Text>
           {this.state.isAddStoryFormVisible ? (
             // DISPLAY THE NEW STORY FORM
-            <View>
-              <Card containerStyle={styles.inputCard}>
-                <View style={styles.inputCard}>
-                  <Text style={styles.formTitle}>Tell your story</Text>
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="Give your story a title"
-                    onChangeText={(text) =>
-                      this.setState({ newStoryTitle: text })
-                    }
-                  />
-                  <TextInput
-                    style={styles.textInput}
-                    multiline={true}
-                    placeholder="Give us your best story"
-                    onChangeText={(text) =>
-                      this.setState({ newStoryText: text })
-                    }
-                  />
-                  <Button
-                    title="Save your story"
-                    buttonStyle={styles.button}
-                    onPress={() => {
-                      this.saveNewStory();
-                    }}
-                  />
-                  <View style={styles.backBtn}>
-                    <Icon
-                      name="md-arrow-back"
-                      onPress={() =>
-                        this.setState({ isAddStoryFormVisible: false })
-                      }
-                      type="ionicon"
-                      size={30}
-                      color={TEXT_COLOR}
-                    />
-                  </View>
-                </View>
-              </Card>
-            </View>
+            <StoryForm
+              location={this.props.navigation.state.params.title}
+              toggleDisplayForm={this.toggleFormDisplay}
+              addStory={this.addStory}
+            />
           ) : (
             <View style={styles.storyContainer}>
               {this.state.stories.length == 0 ? (
@@ -171,38 +152,11 @@ class LocationScreen extends React.Component {
               )}
               {this.state.stories.map((story, index) => {
                 return (
-                  <Card key={index} containerStyle={styles.storyCard}>
-                    <TouchableOpacity
-                      style={styles.storyCard}
-                      onPress={() => this.onStoryPress(story)}
-                    >
-                      <View style={styles.userTitle}>
-                        <Avatar
-                          rounded
-                          key={index}
-                          containerStyle={styles.avatar}
-                          source={{ uri: story.avatar }}
-                        />
-                        <Text adjustsFontSizeToFit style={styles.username}>
-                          {story.username}
-                        </Text>
-                      </View>
-                      <View>
-                        <Divider
-                          style={{
-                            position: "absolute",
-                            top: "50%",
-                            zIndex: 3,
-                          }}
-                        />
-                      </View>
-                      <View>
-                        <Text adjustsFontSizeToFit style={styles.description}>
-                          {story.title}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </Card>
+                  <StoryCard
+                    key={index}
+                    story={story}
+                    navigation={this.props.navigation}
+                  />
                 );
               })}
 

@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "#d0d3c5",
     color: "#56b1bf",
-    paddingTop: 50,
+    // paddingTop: 50,
     justifyContent: "center",
     alignItems: "center",
   },

@@ -3,22 +3,21 @@ import {
   View,
   Text,
   StyleSheet,
-  FlatList,
   Dimensions,
   Image,
   TouchableOpacity,
 } from "react-native";
-import { ListItem } from "react-native-elements";
+import { Avatar } from "react-native-elements";
 import MapView, { PROVIDER_GOOGLE, Marker, Callout } from "react-native-maps";
 import { DEFAULT_MAP } from "../constants/MapLayout";
 import { getLocationPermission } from "../utils/permissions";
 // import Svg from 'expo';
-// const { Image } = Svg;
 import AddLocation from "./AddLocation";
 import Location from "./Location";
 import firestore from "../utils/firestore";
 import firebase from "../utils/firebaseClient";
 import { createStackNavigator, NavigationActions } from "react-navigation";
+import CustomMarker from "../components/CustomMarker.js";
 
 const DEFAULT_LATITUDE = 30.822279;
 const DEFAULT_LONGITUDE = 163.016783;
@@ -170,22 +169,42 @@ class Main extends React.Component {
           showsPointsOfInterest={false}
           provider={PROVIDER_GOOGLE}
         >
-          {this.state.markers.map((marker, index) => {
-            return (
-              <MapView.Marker key={index} coordinate={marker.coordinate}>
-                <Callout
-                  style={styles.callout}
-                  onPress={() => this.onMarkerPress(marker)}
+          {this.state.markers &&
+            this.state.markers.map((marker, index) => {
+              // <CustomMarker
+              //   key={index}
+              //   coordinate={marker.coordinate}
+              //   image={marker.image}
+              //   isZoomed={}
+              // />
+              return (
+                <MapView.Marker
+                  key={index}
+                  flat={true}
+                  coordinate={marker.coordinate}
+                  // onPress={() => this.onMarkerPress(marker)}
                 >
-                  <View style={styles.container}>
-                    <Text style={styles.title}>{marker.title}</Text>
+                  <Callout
+                    containerStyle={styles.callout}
+                    onPress={() => this.onMarkerPress(marker)}
+                  >
+                    <View style={styles.container}>
+                      <Text adjustsFontSizeToFit style={styles.title}>
+                        {marker.title}
+                      </Text>
+                      <Image
+                        style={styles.locationImage}
+                        source={{ uri: marker.image }}
+                      />
 
-                    <Text style={styles.description}>{marker.description}</Text>
-                  </View>
-                </Callout>
-              </MapView.Marker>
-            );
-          })}
+                      <Text style={styles.description}>
+                        {marker.description}
+                      </Text>
+                    </View>
+                  </Callout>
+                </MapView.Marker>
+              );
+            })}
         </MapView>
         <View style={styles.addBtnPosition}>
           <TouchableOpacity
@@ -226,7 +245,8 @@ const styles = StyleSheet.create({
   container: {
     // flex: 1,
     width: 140,
-    height: 60,
+    height: 200,
+
     flexDirection: "column",
     alignItems: "center",
     backgroundColor: "#fff",
@@ -235,18 +255,23 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   marker: {
-    backgroundColor: "#550bbc",
-    padding: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "30%",
+    paddingLeft: 0,
+    paddingBottom: 5,
+    paddingTop: 5,
+    backgroundColor: "white",
     borderRadius: 100,
   },
+  // locationImage: {
+  //   resizeImage: "contain",
+  // },
   callout: {
     flex: 1,
     position: "relative",
     height: 150,
     borderRadius: 100,
-  },
-  title: {
-    fontSize: 12,
   },
   addBtnText: {
     fontSize: 25,
