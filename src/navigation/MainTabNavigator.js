@@ -2,7 +2,7 @@ import React from "react";
 import { Platform } from "react-native";
 import {
   createStackNavigator,
-  createBottomTabNavigator
+  createBottomTabNavigator,
 } from "react-navigation";
 
 import TabBarIcon from "../components/TabBarIcon";
@@ -11,7 +11,7 @@ import MapScreen from "../screens/MapScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 
 const HomeStack = createStackNavigator({
-  Home: HomeScreen
+  Home: HomeScreen,
 });
 
 HomeStack.navigationOptions = {
@@ -25,11 +25,11 @@ HomeStack.navigationOptions = {
           : "md-home"
       }
     />
-  )
+  ),
 };
 
 const MapStack = createStackNavigator({
-  Map: MapScreen
+  Map: MapScreen,
 });
 
 MapStack.navigationOptions = {
@@ -39,11 +39,11 @@ MapStack.navigationOptions = {
       focused={focused}
       name={Platform.OS === "ios" ? "ios-navigate" : "md-navigate"}
     />
-  )
+  ),
 };
 
 const ProfileStack = createStackNavigator({
-  Profile: ProfileScreen
+  Profile: ProfileScreen,
 });
 
 ProfileStack.navigationOptions = {
@@ -53,19 +53,20 @@ ProfileStack.navigationOptions = {
       focused={focused}
       name={Platform.OS === "ios" ? "ios-person" : "md-person"}
     />
-  )
+  ),
 };
 
-export default createBottomTabNavigator({
-  HomeStack,
-  MapStack,
-  ProfileStack,
-
-},
+export default createBottomTabNavigator(
+  {
+    HomeStack,
+    MapStack,
+    ProfileStack,
+  },
   {
     initialRouteName: "MapStack",
     backBehavior: "initialRoute",
     defaultNavigationOptions: {
       header: null,
-    }
-  });
+    },
+  }
+);

@@ -8,19 +8,17 @@ import {
   Image,
   StyleSheet,
   StatusBar,
+  FlatList,
 } from "react-native";
+import ImageUploadModal from "../components/ImageUploadModal";
 
 // File to import to allow upload of the picure on the firebase storage
 import { self } from "../utils/quick_fix.js";
 
-import {
-  getCameraPermission,
-  getCameraRollPermission,
-} from "../utils/permissions";
 import firebase from "../utils/firebaseClient";
 import AppNavigator from "../navigation/AppNavigator";
-import { Constants, ImagePicker, Permissions } from "expo";
-import { FormLabel, FormInput, Text, Button } from "react-native-elements";
+
+import { Text, Button } from "react-native-elements";
 import firestore from "../utils/firestore";
 import "firebase/firestore";
 
@@ -32,14 +30,41 @@ export default class ProfileScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      modalVisible: false,
       currentUserEmail: "Not available",
       currentUserUID: "",
       currentUserImageURL: null,
       currentUserName: "Not available",
+      stories: [{ title: "loading stories..." }],
+      isAddStoryFormVisible: false,
+      newStoryTitle: "",
+      newStoryText: "",
     };
   }
+  componentDidMount() {
+    newReviews = [];
 
-  async componentDidMount() {
+    firestore
+      .collection("stories")
+      .where("userID", "==", this.state.currentUserUID)
+      .get()
+      .then((snapshot) => {
+        snapshot.forEach((doc) => {
+          newReviews.push(doc.data());
+        });
+      })
+      .then(() => {
+        this.setState({
+          stories: newReviews,
+        });
+        console.log("stories=", this.state.stories);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  UNSAFE_componentWillMount() {
     let currentUser = firebase.auth().currentUser;
     this.setState({
       currentUserEmail: currentUser.email,
@@ -47,91 +72,16 @@ export default class ProfileScreen extends React.Component {
       currentUserName: currentUser.displayName,
       currentUserImageURL: currentUser.photoURL,
     });
-    console.log("user currently logged: ", this.state.currentUserEmail);
-    console.log("uuid: ", this.state.currentUserUID);
-    console.log("displayName: ", this.state.currentUserName);
-    console.log("photoURL: ", currentUser.photoURL);
-    console.log("Full User Info: ", currentUser);
   }
 
-  uploadImage = async (uri) => {
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    var ref = firebase
-      .storage()
-      .ref()
-      .child("profile_img/" + this.state.currentUserUID + ".jpg");
-    return ref.put(blob);
+  toggleModal = () => {
+    this.setState({ modalVisible: !this.state.modalVisible });
   };
 
-  updateProfileImage(url) {
-    firebase
-      .auth()
-      .currentUser.updateProfile({
-        photoURL: url,
-      })
-      .then(() => {
-        console.log("Profile Picture updated");
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
-  }
-
-  _pickImage = async () => {
-    // Request Gallery Permissions
-    await Permissions.askAsync(Permissions.CAMERA_ROLL);
-
-    let pickerResult = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
+  updateProfileImage = (newProfileURL) => {
+    this.setState({
+      currentUserImageURL: newProfileURL,
     });
-    if (!pickerResult.cancelled) {
-      console.log("Here is your link", pickerResult.uri);
-      this.uploadImage(pickerResult.uri)
-        .then((snapshot) => {
-          console.log("Image correctly uploaded");
-          snapshot.ref.getDownloadURL().then((downloadURL) => {
-            console.log("Image available at", downloadURL);
-            this.setState({
-              currentUserImageURL: downloadURL,
-            });
-            this.updateProfileImage(downloadURL);
-          });
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-      // this._handleImagePicked(pickerResult);
-    }
-  };
-
-  _takePhoto = async () => {
-    // Request Camera  Permissions
-    await Permissions.askAsync(Permissions.CAMERA);
-
-    let pickerResult = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-    });
-
-    if (!pickerResult.cancelled) {
-      console.log("Local path to the picture:", pickerResult.uri);
-      this.uploadImage(pickerResult.uri)
-        .then((snapshot) => {
-          console.log("Image correctly uploaded");
-          snapshot.ref.getDownloadURL().then((downloadURL) => {
-            console.log("Image available at", downloadURL);
-            this.setState({
-              currentUserImageURL: downloadURL,
-            });
-            this.updateProfileImage(downloadURL);
-          });
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
   };
 
   logout = () => {
@@ -149,12 +99,23 @@ export default class ProfileScreen extends React.Component {
   };
 
   render() {
+    if (this.state.modalVisible) {
+      return (
+        <ImageUploadModal
+          goback={this.toggleModal}
+          updateProfileImage={this.updateProfileImage}
+        />
+      );
+    }
     return (
       <ScrollView contentContainerStyle={styles.container}>
         <View
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
-          <Text style>{"Welcome " + this.state.currentUserEmail + "!"}</Text>
+          <Text style={styles.username}>
+            {"Welcome " + this.state.currentUserName + "!"}
+          </Text>
+
           {this.state.currentUserImageURL ? (
             <Image
               style={styles.avatar}
@@ -170,26 +131,44 @@ export default class ProfileScreen extends React.Component {
               source={require("../../assets/images/avatar.png")}
             />
           )}
+          <FlatList
+            data={this.state.stories}
+            renderItem={({ item, index }) => {
+              return (
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text adjustsFontSizeToFit style={styles.textList}>
+                    {item.title}
+                  </Text>
+                  <Text adjustsFontSizeToFit style={styles.textList}>
+                    {item.location}
+                  </Text>
+                  <Text adjustsFontSizeToFit style={styles.textList}>
+                    {item.story}
+                  </Text>
+                </View>
+              );
+            }}
+          />
+
+          <View
+            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+          >
+            <StatusBar barStyle="default" />
+          </View>
 
           <Button
             buttonStyle={styles.button}
-            onPress={this._pickImage}
-            title="Pick an image from camera roll"
+            title="Change the profile picture"
+            onPress={() => {
+              this.toggleModal();
+            }}
           />
-
-          <Button
-            buttonStyle={styles.button}
-            onPress={this._takePhoto}
-            title="Take a photo"
-          />
-
-          <StatusBar barStyle="default" />
-
-          {/* <Button
-          buttonStyle={styles.button}
-          title="Change the profile picture"
-          onPress={this._uploadImage}
-        /> */}
 
           <Button
             buttonStyle={styles.button}
@@ -203,6 +182,14 @@ export default class ProfileScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  username: {
+    fontWeight: "bold",
+    marginTop: 50,
+    justifyContent: "center",
+    backgroundColor: "#d0d3c5",
+    color: "#56b1bf",
+    fontSize: 20,
+  },
   title: {
     fontSize: 20,
   },
@@ -225,9 +212,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingLeft: 50,
     paddingRight: 50,
-    // marginBottom: 10
+    marginBottom: 10,
+  },
+  textList: {
+    fontWeight: "bold",
+    color: "white",
+    textAlign: "center",
   },
   avatar: {
+    marginTop: 10,
     paddingVertical: 30,
     width: 150,
     height: 150,
