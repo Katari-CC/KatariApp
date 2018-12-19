@@ -16,6 +16,7 @@ uploadImage = async (uri, path, name) => {
     .storage()
     .ref()
     .child(path + name + ".jpg");
+
   return ref.put(blob);
 };
 
@@ -27,11 +28,7 @@ pickImage = async (path, name, state) => {
     allowsEditing: true,
     aspect: [4, 3],
   });
-  if (!pickerResult.cancelled) {
-    console.log("Here is your URI:", pickerResult.uri);
-    return pickerResult.uri;
-  }
-  return null;
+  return pickerResult;
 };
 
 takePhoto = async () => {
@@ -42,22 +39,7 @@ takePhoto = async () => {
     allowsEditing: true,
     aspect: [16, 9],
   });
-
-  if (!pickerResult.cancelled) {
-    console.log("Local path to the picture:", pickerResult.uri);
-    this.uploadImage(pickerResult.uri, path, name)
-      .then((snapshot) => {
-        console.log("Image correctly uploaded");
-        snapshot.ref.getDownloadURL().then((downloadURL) => {
-          console.log("Image available at", downloadURL);
-          return downloadURL;
-        });
-      })
-      .catch((e) => {
-        console.log(e);
-        return null;
-      });
-  }
+  return pickerResult;
 };
 
 imageDialog = (path, imgName) => {
