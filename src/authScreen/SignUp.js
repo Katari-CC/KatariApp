@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, View, Image, Alert } from "react-native";
 import {
   Input,
   Text,
@@ -17,8 +17,6 @@ import firestore from "../utils/firestore";
 //   statusCodes
 // } from "react-native-google-signin";
 
-let AVATAR_URL =
-  "https://firebasestorage.googleapis.com/v0/b/storymapapp.appspot.com/o/avatar.png?alt=media&token=1f953209-d7c9-41ae-a46f-787fa25d579c";
 export default class SignUp extends React.Component {
   state = {
     email: "",
@@ -99,9 +97,18 @@ export default class SignUp extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        {this.state.errorMessage && (
-          <Text style={{ color: "red" }}>{this.state.errorMessage}</Text>
-        )}
+        {this.state.errorMessage &&
+          //   <Text style={{ color: "red", textAlign: "center" }}>{this.state.errorMessage}</Text>
+          Alert.alert("Error filling out form.", this.state.errorMessage, [
+            { text: "OK", onPress: () => console.log("OK Pressed") },
+          ])}
+        <View style={styles.imageContainer}>
+          <Image
+            style={styles.avatar}
+            resizeMode="center"
+            source={require("../../assets/images/icon_white.png")}
+          />
+        </View>
         {/* <GoogleSigninButton
           style={{ width: 48, height: 48 }}
           size={GoogleSigninButton.Size.Icon}
@@ -111,29 +118,39 @@ export default class SignUp extends React.Component {
         /> */}
         <FormLabel>Username</FormLabel>
         <FormInput
-          style={styles.formInput}
+          containerStyle={styles.formInput}
           underlineColorAndroid="transparent"
           onChangeText={(username) => this.setState({ username })}
           value={this.state.username}
         />
+        <FormValidationMessage style={{ marginBottom: 0, marginTop: 0 }}>
+          {"required"}
+        </FormValidationMessage>
+
         <FormLabel>Email</FormLabel>
         <FormInput
-          style={styles.formInput}
+          containerStyle={styles.formInput}
+          inputStyle={styles.inputContainer}
           underlineColorAndroid="transparent"
           onChangeText={(email) => this.setState({ email })}
           value={this.state.email}
         />
-        <FormValidationMessage>{"required"}</FormValidationMessage>
+        <FormValidationMessage style={{ marginBottom: 0, marginTop: 0 }}>
+          {"required"}
+        </FormValidationMessage>
         <FormLabel>Password</FormLabel>
         <FormInput
           secureTextEntry
-          style={styles.formInput}
+          containerStyle={styles.formInput}
+          inputStyle={styles.inputContainer}
           underlineColorAndroid="transparent"
           onChangeText={(password) => this.setState({ password })}
           value={this.state.password}
         />
-        <FormValidationMessage>{"required"}</FormValidationMessage>
-        <Text style={styles.space} />
+        <FormValidationMessage style={{ marginBottom: 0 }}>
+          {"required"}
+        </FormValidationMessage>
+        {/* <Text style={styles.space} /> */}
         <Button
           buttonStyle={styles.button}
           title="Sign Up"
@@ -143,7 +160,7 @@ export default class SignUp extends React.Component {
           style={styles.link}
           onPress={() => this.props.navigation.navigate("Login")}
         >
-          Already have an account? Login here!
+          Already have an account? Log in here!
         </Text>
       </View>
     );
@@ -152,23 +169,22 @@ export default class SignUp extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 50,
+    ...StyleSheet.absoluteFillObject,
+    // paddingTop: 20,
     justifyContent: "center",
-    backgroundColor: "#d0d3c5",
-    color: "#08708a",
+    // backgroundColor: "#df5e27",
+    backgroundColor: "white",
+    color: "#56b1bf",
   },
-  gmailbutton: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+  avatar: {
+    marginTop: 35,
   },
   space: {
-    marginTop: 10,
-    marginBottom: 10,
+    // marginTop: 10,
+    // marginBottom: 10
   },
   link: {
-    marginLeft: 25,
+    textAlign: "center",
     color: "#d73a31",
     fontWeight: "bold",
     fontSize: 18,
@@ -181,20 +197,29 @@ const styles = StyleSheet.create({
   },
   formInput: {
     backgroundColor: "white",
-    width: "100%",
-    height: 50,
-    borderWidth: 0,
+    borderColor: "#242124",
+    borderWidth: 5,
     borderRadius: 5,
-    marginTop: 10,
-    marginBottom: 10,
+    // marginTop: 10,
+  },
+  inputContainer: {
+    marginLeft: 15,
+    color: "#242124",
   },
   button: {
-    backgroundColor: "#56b1bf",
+    // backgroundColor: "#df5e27",
+    backgroundColor: "#242124",
     width: "100%",
     height: 50,
     borderWidth: 0,
     borderRadius: 5,
-    marginTop: 10,
+    // marginTop: 10,
     marginBottom: 10,
+  },
+  imageContainer: {
+    marginTop: 10,
+    height: "25%",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

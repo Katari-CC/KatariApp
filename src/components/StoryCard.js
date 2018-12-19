@@ -112,6 +112,7 @@ var styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "nowrap",
   },
+
   username: {
     marginLeft: 5,
     textAlign: "center",
@@ -119,7 +120,15 @@ var styles = StyleSheet.create({
     fontWeight: "bold",
   },
   description: {
-    paddingLeft: 10,
+    textAlign: "center",
+    // paddingLeft: 10,
+  },
+  avatar: {
+    // borderWidth: 1,
+    // borderColor: "black",
+    // borderRadius: 100,
+    // marginRight: 5,
+    marginBottom: 20,
   },
 });
 

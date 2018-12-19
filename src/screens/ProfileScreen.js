@@ -91,7 +91,7 @@ export default class ProfileScreen extends React.Component {
       .signOut()
       .then(() =>
         this.props.navigator.immediatelyResetStack(
-          [AppNavigator.getRoute("Login")],
+          [AppNavigator.getRoute("Start")],
           0
         )
       )
