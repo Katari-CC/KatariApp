@@ -78,6 +78,12 @@ export default class ProfileScreen extends React.Component {
     this.setState({ modalVisible: !this.state.modalVisible });
   };
 
+  updateProfileImage = (newProfileURL) => {
+    this.setState({
+      currentUserImageURL: newProfileURL,
+    });
+  };
+
   logout = () => {
     console.log("logout current user");
     firebase
@@ -94,7 +100,12 @@ export default class ProfileScreen extends React.Component {
 
   render() {
     if (this.state.modalVisible) {
-      return <ImageUploadModal goback={this.toggleModal} />;
+      return (
+        <ImageUploadModal
+          goback={this.toggleModal}
+          updateProfileImage={this.updateProfileImage}
+        />
+      );
     }
     return (
       <ScrollView contentContainerStyle={styles.container}>

@@ -72,7 +72,7 @@ export default class SignUp extends React.Component {
                 // Create a new entry in the "users" table of the database
                 firestore
                   .collection("users")
-                  .doc()
+                  .doc(currentUser.uid)
                   .set({
                     displayName: username,
                     email: email,
