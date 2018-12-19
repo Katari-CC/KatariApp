@@ -19,7 +19,6 @@ import firestore from "../utils/firestore";
 
 let AVATAR_URL =
   "https://firebasestorage.googleapis.com/v0/b/storymapapp.appspot.com/o/avatar.png?alt=media&token=1f953209-d7c9-41ae-a46f-787fa25d579c";
-
 export default class SignUp extends React.Component {
   state = {
     email: "",
@@ -78,7 +77,7 @@ export default class SignUp extends React.Component {
                     displayName: username,
                     email: email,
                     uid: currentUser.uid,
-                    photoURL: "",
+                    photoURL: AVATAR_URL,
                     disabled: false,
                   });
 
