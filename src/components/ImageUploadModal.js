@@ -14,6 +14,7 @@ import {
   getCameraRollPermission,
 } from "../utils/permissions";
 import { Constants, ImagePicker, Permissions } from "expo";
+import firestore from "../utils/firestore";
 
 export default class ImageUploadModal extends Component {
   constructor(props) {
@@ -22,6 +23,7 @@ export default class ImageUploadModal extends Component {
       currentUserEmail: "Not available",
       currentUserUID: "",
       currentUserImageURL: null,
+      currentUserName: "",
     };
   }
 
@@ -103,6 +105,7 @@ export default class ImageUploadModal extends Component {
   };
 
   updateProfileImage(url) {
+    // Update the user account photoURL
     firebase
       .auth()
       .currentUser.updateProfile({
@@ -114,6 +117,25 @@ export default class ImageUploadModal extends Component {
       .catch((error) => {
         console.log(error);
       });
+
+    // Update the user table
+    console.log("trying to update img for user: ", this.state.currentUserUID);
+    firestore
+      .collection("users")
+      .where("uid", "==", this.state.currentUserUID)
+      .get()
+      .then((snapshot) => {
+        snapshot.forEach((doc) => {
+          firestore
+            .collection("users")
+            .doc(doc.id)
+            .update({
+              photoURL: url,
+            });
+        });
+      });
+    // Update the Image Component of the profile screen
+    this.props.updateProfileImage(url);
   }
 
   render() {
