@@ -32,7 +32,7 @@ class StoryCard extends React.Component {
       .where("uid", "==", this.state.story.userID)
       .get()
       .then((snapshot) => {
-        snapshot.forEach((doc) => {
+        (snapshot || []).forEach((doc) => {
           this.setState({
             user: doc.data(),
           });
@@ -63,10 +63,7 @@ class StoryCard extends React.Component {
     if (this.state.user) {
       return (
         <Card containerStyle={styles.storyCard}>
-          <TouchableOpacity
-            style={styles.storyCard}
-            onPress={() => this.onStoryPress()}
-          >
+          <TouchableOpacity onPress={() => this.onStoryPress()}>
             <View style={styles.userTitle}>
               <Avatar
                 rounded
@@ -101,11 +98,12 @@ class StoryCard extends React.Component {
 
 var styles = StyleSheet.create({
   storyCard: {
-    // flexDirection: "column",
     width: 150,
     height: 130,
     borderRadius: 20,
     alignItems: "center",
+    elevation: 3,
+    marginBottom: 5,
   },
   userTitle: {
     alignItems: "center",
@@ -129,7 +127,7 @@ var styles = StyleSheet.create({
     // borderColor: "black",
     // borderRadius: 100,
     // marginRight: 5,
-    marginBottom: 20,
+    // marginBottom: 20,
   },
 });
 

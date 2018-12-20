@@ -41,7 +41,7 @@ class LocationScreen extends React.Component {
       .where("location", "==", this.props.navigation.state.params.title)
       .get()
       .then((snapshot) => {
-        snapshot.forEach((doc) => {
+        (snapshot || []).forEach((doc) => {
           stories.push(doc.data());
         });
       })
@@ -55,7 +55,7 @@ class LocationScreen extends React.Component {
         );
         Promise.all(p2)
           .then((urls) => {
-            urls.forEach((url, index) => {
+            (urls || []).forEach((url, index) => {
               stories[index].avatar = url;
             });
           })

@@ -45,7 +45,7 @@ class Home extends React.Component {
       // .where("image", ">=", "")
       .get()
       .then((snapshot) => {
-        snapshot.forEach((doc) => {
+        (snapshot || []).forEach((doc) => {
           newLocation.push(doc.data());
         });
         this.setState({
@@ -70,7 +70,7 @@ class Home extends React.Component {
       .get()
       .then((snapshot) => {
         stories = [];
-        snapshot.forEach((doc) => {
+        (snapshot || []).forEach((doc) => {
           tempStory = doc.data();
           stories.push(tempStory);
         });
@@ -200,8 +200,8 @@ const styles = StyleSheet.create({
   // main Container (ScrollView)
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "#08708a",
-    // backgroundColor: "white",
+    // backgroundColor: "#08708a",
+    backgroundColor: "white",
     color: "#032B2F",
     flexDirection: "column",
   },
@@ -226,14 +226,14 @@ const styles = StyleSheet.create({
 
   textList: {
     fontWeight: "bold",
-    color: "white",
+    color: "gray",
     textAlign: "center",
   },
 
   // location Description
   addBtnText: {
     fontSize: 25,
-    color: "black",
+    color: "gray",
   },
 
   detailText: {

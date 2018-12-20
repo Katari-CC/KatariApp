@@ -65,7 +65,7 @@ const self = (function(self) {
       if ("responseType" in xhr && supportsBlob) {
         xhr.responseType = "blob";
       }
-      request.headers.forEach(function(value, name) {
+      (request.headers || []).forEach(function(value, name) {
         xhr.setRequestHeader(name, value);
       });
 
