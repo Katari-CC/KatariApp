@@ -1,11 +1,11 @@
 import React from "react";
-import { StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, View, Image } from "react-native";
 import {
   FormLabel,
   Text,
   FormInput,
   FormValidationMessage,
-  Button
+  Button,
 } from "react-native-elements";
 import firebase from "../utils/firebaseClient";
 
@@ -18,30 +18,40 @@ export default class Login extends React.Component {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => this.props.navigation.navigate("Main"))
-      .catch(error => this.setState({ errorMessage: error.message }));
+      .catch((error) => this.setState({ errorMessage: error.message }));
   };
 
   render() {
     return (
       <View style={styles.container}>
-        {this.state.errorMessage && (
-          <Text style={{ color: "red" }}>{this.state.errorMessage}</Text>
-        )}
-
+        {this.state.errorMessage &&
+          //   <Text style={{ color: "red", textAlign: "center" }}>{this.state.errorMessage}</Text>
+          Alert.alert("Error filling out form.", this.state.errorMessage, [
+            { text: "OK", onPress: () => console.log("OK Pressed") },
+          ])}
+        <View style={styles.imageContainer}>
+          <Image
+            // style={styles.avatar}
+            resizeMode="center"
+            source={require("../../assets/images/icon_white.png")}
+          />
+        </View>
         <FormLabel>Email</FormLabel>
         <FormInput
-          style={styles.formInput}
+          containerStyle={styles.formInput}
+          inputStyle={styles.inputContainer}
           underlineColorAndroid="transparent"
-          onChangeText={email => this.setState({ email })}
+          onChangeText={(email) => this.setState({ email })}
           value={this.state.email}
         />
         <FormValidationMessage>{"required"}</FormValidationMessage>
         <FormLabel>Password</FormLabel>
         <FormInput
           secureTextEntry
-          style={styles.formInput}
+          containerStyle={styles.formInput}
+          inputStyle={styles.inputContainer}
           underlineColorAndroid="transparent"
-          onChangeText={password => this.setState({ password })}
+          onChangeText={(password) => this.setState({ password })}
           value={this.state.password}
         />
         <FormValidationMessage>{"required"}</FormValidationMessage>
@@ -55,7 +65,7 @@ export default class Login extends React.Component {
           style={styles.link}
           onPress={() => this.props.navigation.navigate("SignUp")}
         >
-          Create a new account from here!
+          Don't have an account? Sign up here!
         </Text>
       </View>
     );
@@ -64,17 +74,18 @@ export default class Login extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 50,
+    ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
-    backgroundColor: "#d0d3c5",
+    // backgroundColor: "#df5e27",
+    backgroundColor: "white",
     color: "#56b1bf",
   },
   space: {
     marginTop: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
   link: {
-    marginLeft: 25,
+    textAlign: "center",
     color: "#d73a31",
     fontWeight: "bold",
     fontSize: 18,
@@ -83,24 +94,33 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     width: "100%",
-    height: 50
+    height: 50,
   },
   formInput: {
-    backgroundColor: "#56b1bf",
-    width: "100%",
-    height: 50,
-    borderWidth: 0,
+    backgroundColor: "white",
+    borderColor: "#242124",
+    borderWidth: 5,
     borderRadius: 5,
     marginTop: 10,
-    marginBottom: 10
+  },
+  inputContainer: {
+    marginLeft: 15,
+    color: "#242124",
   },
   button: {
-    backgroundColor: "#56b1bf",
+    // backgroundColor: "#df5e27",
+    backgroundColor: "#242124",
     width: "100%",
     height: 50,
     borderWidth: 0,
     borderRadius: 5,
     marginTop: 10,
-    marginBottom: 10
-  }
+    marginBottom: 10,
+  },
+  imageContainer: {
+    marginTop: 10,
+    height: "25%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
