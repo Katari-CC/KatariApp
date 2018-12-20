@@ -9,6 +9,7 @@ import {
   Dimensions,
 } from "react-native";
 import React from "react";
+import { pink, brown } from "../constants/Colors";
 
 class Panel extends React.Component {
   constructor(props) {
@@ -90,8 +91,8 @@ class Panel extends React.Component {
 
 var styles = StyleSheet.create({
   container: {
-    width: Dimensions.get("screen").width - 40,
-    backgroundColor: "#D0D3C5",
+    width: Dimensions.get("screen").width,
+    backgroundColor: "#FEEAE6",
     marginRight: 20,
     marginLeft: 20,
     overflow: "hidden",
@@ -103,9 +104,10 @@ var styles = StyleSheet.create({
   title: {
     flex: 1,
     padding: 10,
-    color: "#000000",
+    color: "#442C2E",
     fontWeight: "bold",
     textAlign: "center",
+    fontSize: 25,
   },
   button: {},
   buttonImage: {
@@ -116,6 +118,7 @@ var styles = StyleSheet.create({
   body: {
     padding: 10,
     paddingTop: 0,
+    color: "#FEDBD0",
   },
 });
 
