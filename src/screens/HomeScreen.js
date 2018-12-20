@@ -200,8 +200,8 @@ const styles = StyleSheet.create({
   // main Container (ScrollView)
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "#08708a",
-    // backgroundColor: "white",
+    // backgroundColor: "#08708a",
+    backgroundColor: "white",
     color: "#032B2F",
     flexDirection: "column",
   },
@@ -226,14 +226,14 @@ const styles = StyleSheet.create({
 
   textList: {
     fontWeight: "bold",
-    color: "white",
+    color: "gray",
     textAlign: "center",
   },
 
   // location Description
   addBtnText: {
     fontSize: 25,
-    color: "black",
+    color: "gray",
   },
 
   detailText: {
