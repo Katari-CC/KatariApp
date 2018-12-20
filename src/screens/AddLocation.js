@@ -14,8 +14,7 @@ import {
 import { Button, Icon } from "react-native-elements";
 import MapView, { PROVIDER_GOOGLE, Marker, Callout } from "react-native-maps";
 import { DEFAULT_MAP, ADD_LOCATION } from "../constants/MapLayout";
-// import Svg from 'expo';
-// const { Image } = Svg;
+
 import firestore from "../utils/firestore";
 import firebase from "../utils/firebaseClient";
 import { NavigationActions } from "react-navigation";
@@ -46,8 +45,8 @@ export default class AddLocation extends React.Component {
       selectedCategory: undefined,
       newLocationTitle: undefined,
       newLocationDescription: undefined,
-      newLocationImage:
-        "https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png",
+      newLocationImageURI: null,
+      newLocationImageURL: null,
     };
     this.onRegionChange = this.onRegionChange.bind(this);
     this.backToMap = this.backToMap.bind(this);
@@ -82,8 +81,7 @@ export default class AddLocation extends React.Component {
     if (
       !this.state.newLocationTitle ||
       !this.state.selectedCategory ||
-      !this.state.newLocationDescription ||
-      !this.state.newLocationImage
+      !this.state.newLocationDescription
     ) {
       Alert.alert(
         "Missing some field(s)!",
@@ -98,21 +96,28 @@ export default class AddLocation extends React.Component {
         latitude,
         longitude,
         description: this.state.newLocationDescription,
-        image: this.state.newLocationImage,
         title: this.state.newLocationTitle,
       };
+      // add a new doc in the locations table of the DB
       firestore
         .collection("locations")
-        .doc()
-        .set(newLocation)
+        .add(newLocation)
         .then((docRef) => {
-          if (this.state.newStoryImageURI) {
-            console.log("Story Created successfully, ID=>", docRef.id);
-            uploadImage(this.state.newLocationImage, "/locations/", docRef.id)
+          console.log("Location Created successfully, ID=>", docRef.id);
+          // If an image is provided
+          if (this.state.newLocationImageURI) {
+            // upload the image on the firebase storage
+            uploadImage(
+              this.state.newLocationImageURI,
+              "/locations/",
+              docRef.id
+            )
               .then((snapshot) => {
+                // when upload successfull get the DownloadURL
                 console.log("Image Uploaded Succesfully");
                 snapshot.ref.getDownloadURL().then((downloadURL) => {
                   console.log("Image Available at: ", downloadURL);
+                  // update the newLocation document with the url of the photo
                   this.addURL(downloadURL, docRef.id);
                 });
               })
@@ -130,6 +135,10 @@ export default class AddLocation extends React.Component {
             newLocationTitle: undefined,
             newLocationImage: undefined,
           });
+        })
+        .catch((e) => {
+          console.log(e);
+          return null;
         });
     }
   }
@@ -150,13 +159,16 @@ export default class AddLocation extends React.Component {
   }
 
   addURL = (url, locationID) => {
-    console.log("Update the url of the picture for location.");
+    console.log("Update the url of the picture for location on the DB.");
     firestore
       .collection("locations")
       .doc(locationID)
       .update({ image: url })
       .then(() => {
         console.log("Update Successful");
+        this.setState({
+          markers: [...this.state.markers, newLocation],
+        });
       })
       .catch((e) => {
         console.log(e);
@@ -176,7 +188,7 @@ export default class AddLocation extends React.Component {
                 if (!picker.cancelled) {
                   console.log("Here is your URI:", picker.uri);
                   this.setState({
-                    newLocationImage: picker.uri,
+                    newLocationImageURI: picker.uri,
                   });
                 }
               })
@@ -194,7 +206,7 @@ export default class AddLocation extends React.Component {
                 if (!picker.cancelled) {
                   console.log("Here is your URI:", picker.uri);
                   this.setState({
-                    newLocationImage: picker.uri,
+                    newLocationImageURI: picker.uri,
                   });
                 }
               })
@@ -219,6 +231,16 @@ export default class AddLocation extends React.Component {
           onRequestClose={() => this.setState({ modalVisible: false })}
         >
           <View style={styles.modalContainer}>
+            <Button
+              title="Close"
+              buttonStyle={styles.button}
+              onPress={() => {
+                this.setState({
+                  modalVisible: false,
+                });
+              }}
+            />
+
             <Text style={styles.detailTitle}>Adding Location</Text>
             <TextInput
               containerStyle={styles.textInput}
@@ -256,10 +278,10 @@ export default class AddLocation extends React.Component {
               }}
             />
 
-            {this.state.newLocationImage ? (
+            {this.state.newLocationImageURI ? (
               <Image
-                style={styles.imgStory}
-                source={{ uri: this.state.newLocationImage }}
+                style={styles.imgLocation}
+                source={{ uri: this.state.newLocationImageURI }}
               />
             ) : (
               <Text>No image</Text>
@@ -351,6 +373,10 @@ const styles = StyleSheet.create({
   },
   picker: {
     width: "60%",
+  },
+  imgLocation: {
+    width: 300,
+    height: 200,
   },
   circleButton: {
     justifyContent: "center",
