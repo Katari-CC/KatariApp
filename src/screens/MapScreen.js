@@ -127,6 +127,7 @@ class Main extends React.Component {
     const navigateAction = NavigationActions.navigate({
       routeName: "AddLocation",
       params: {
+        markers: this.state.markers,
         region: this.state.region,
         onNavigateBack: this.handleOnNavigateBack,
       },

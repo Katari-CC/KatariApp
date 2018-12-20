@@ -31,7 +31,7 @@ export default class AddLocation extends React.Component {
         longitudeDelta: this.props.navigation.state.params.region
           .longitudeDelta,
       },
-      markers: [],
+      markers: this.props.navigation.state.params.markers,
       modalVisible: false,
       categories: [
         "Entertainment",
@@ -53,30 +53,7 @@ export default class AddLocation extends React.Component {
     this.backToMap = this.backToMap.bind(this);
   }
 
-  componentDidMount() {
-    let markers = [];
-    firestore
-      .collection("locations")
-      .get()
-      .then((snapshot) => {
-        (snapshot || []).forEach((doc) => {
-          const marker = doc.data();
-          marker["title"] = doc.title;
-          marker["coordinate"] = {
-            longitude: marker.longitude,
-            latitude: marker.latitude,
-          };
-          markers.push(marker);
-        });
-        this.setState({
-          markers,
-        });
-        this.forceUpdate();
-      })
-      .catch((err) => {
-        console.log("Error getting documents", err);
-      });
-  }
+  componentDidMount() {}
 
   saveNewLocation() {
     if (
