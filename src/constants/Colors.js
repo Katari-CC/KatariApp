@@ -1,16 +1,19 @@
 const tintColor = "442C2E";
 // "#2f95dc";
-const TEXT_COLOR = "#442C2E";
+
 const pink = "#FEEAE6";
+const pinkDarker = "#FEDBD0";
 const brown = "#442C2E";
+const TEXT_COLOR = brown;
 
 export default {
   tintColor,
   pink,
   brown,
+  pinkDarker,
   tabIconDefault: "#ccc",
-  tabIconSelected: "#442C2E",
-  tabBar: "#FEEAE6",
+  tabIconSelected: brown,
+  tabBar: pinkDarker,
   errorBackground: "red",
   errorText: "#fff",
   warningBackground: "#EAEB5E",
