@@ -222,6 +222,8 @@ const styles = StyleSheet.create({
     height: 130,
     borderRadius: 20,
     alignItems: "center",
+    elevation: 3,
+    marginBottom: 5,
   },
   avatar: {
     marginTop: 10,

@@ -162,7 +162,7 @@ class LocationScreen extends React.Component {
 
               <Card containerStyle={styles.addCard}>
                 <TouchableOpacity
-                  style={styles.addCard}
+                  // style={styles.addCard}
                   onPress={() => this.setState({ isAddStoryFormVisible: true })}
                 >
                   <Text style={styles.addBtnText}>+</Text>
@@ -249,6 +249,8 @@ const styles = StyleSheet.create({
     height: 130,
     borderRadius: 20,
     alignItems: "center",
+    elevation: 3,
+    marginBottom: 5,
   },
   username: {
     marginLeft: 5,
@@ -282,6 +284,8 @@ const styles = StyleSheet.create({
     width: 150,
     height: 130,
     borderRadius: 20,
+    elevation: 3,
+    marginBottom: 5,
   },
   addBtnText: {
     fontSize: 25,
