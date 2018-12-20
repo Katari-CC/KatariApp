@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#56b1bf",
     borderWidth: 0,
-    borderRadius: 5,
+    borderRadius: 20,
   },
   detailImage: {
     width: Dimensions.get("window").width,

@@ -91,12 +91,12 @@ class Panel extends React.Component {
 
 var styles = StyleSheet.create({
   container: {
-    width: Dimensions.get("screen").width,
+    width: Dimensions.get("screen").width - 10,
     backgroundColor: "#FEEAE6",
     marginRight: 20,
     marginLeft: 20,
     overflow: "hidden",
-    borderRadius: 10,
+    borderRadius: 5,
   },
   titleContainer: {
     flexDirection: "row",
