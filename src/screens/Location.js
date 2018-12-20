@@ -249,6 +249,8 @@ const styles = StyleSheet.create({
     height: 130,
     borderRadius: 20,
     alignItems: "center",
+    elevation: 3,
+    marginBottom: 5,
   },
   username: {
     marginLeft: 5,
