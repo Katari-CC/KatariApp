@@ -105,7 +105,22 @@ export default class AddLocation extends React.Component {
         .collection("locations")
         .doc()
         .set(newLocation)
-        .then(() => {
+        .then((docRef) => {
+          if (this.state.newStoryImageURI) {
+            console.log("Story Created successfully, ID=>", docRef.id);
+            uploadImage(this.state.newLocationImage, "/locations/", docRef.id)
+              .then((snapshot) => {
+                console.log("Image Uploaded Succesfully");
+                snapshot.ref.getDownloadURL().then((downloadURL) => {
+                  console.log("Image Available at: ", downloadURL);
+                  this.addURL(downloadURL, docRef.id);
+                });
+              })
+              .catch((e) => {
+                console.log(e);
+                return null;
+              });
+          }
           newLocation["coordinate"] = { latitude, longitude };
           this.setState({
             modalVisible: false,
@@ -113,6 +128,7 @@ export default class AddLocation extends React.Component {
             selectedCategory: undefined,
             newLocationDescription: undefined,
             newLocationTitle: undefined,
+            newLocationImage: undefined,
           });
         });
     }
@@ -133,6 +149,66 @@ export default class AddLocation extends React.Component {
     this.props.navigation.dispatch(navigateAction);
   }
 
+  addURL = (url, locationID) => {
+    console.log("Update the url of the picture for location.");
+    firestore
+      .collection("locations")
+      .doc(locationID)
+      .update({ image: url })
+      .then(() => {
+        console.log("Update Successful");
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  imageDialog = (path, imgName) => {
+    Alert.alert(
+      "Upload an Image with your story",
+      "Pick a method:",
+      [
+        {
+          text: "Select from Gallery",
+          onPress: () => {
+            pickImage()
+              .then((picker) => {
+                if (!picker.cancelled) {
+                  console.log("Here is your URI:", picker.uri);
+                  this.setState({
+                    newLocationImage: picker.uri,
+                  });
+                }
+              })
+              .catch((e) => {
+                console.log(e);
+                return null;
+              });
+          },
+        },
+        {
+          text: "Take a picture",
+          onPress: () => {
+            takePhoto()
+              .then((picker) => {
+                if (!picker.cancelled) {
+                  console.log("Here is your URI:", picker.uri);
+                  this.setState({
+                    newLocationImage: picker.uri,
+                  });
+                }
+              })
+              .catch((e) => {
+                console.log(e);
+                return null;
+              });
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   render() {
     return (
       <View style={styles.map}>
@@ -142,16 +218,16 @@ export default class AddLocation extends React.Component {
           visible={this.state.modalVisible}
           onRequestClose={() => this.setState({ modalVisible: false })}
         >
-          <View>
+          <View style={styles.modalContainer}>
             <Text style={styles.detailTitle}>Adding Location</Text>
             <TextInput
-              style={styles.textInput}
+              containerStyle={styles.textInput}
               placeholder="Name of location:"
               onChangeText={(text) => this.setState({ newLocationTitle: text })}
             />
             <Picker
               selectedValue={this.state.selectedCategory}
-              style={{ height: 50, width: 100 }}
+              style={styles.picker}
               onValueChange={(itemValue, itemIndex) =>
                 this.setState({ selectedCategory: itemValue })
               }
@@ -166,12 +242,28 @@ export default class AddLocation extends React.Component {
               ))}
             </Picker>
             <TextInput
-              style={styles.textInput}
+              containerStyle={styles.textInput}
               placeholder="Enter a description about the location:"
               onChangeText={(text) =>
                 this.setState({ newLocationDescription: text })
               }
             />
+            <Button
+              title="Provide an Image"
+              buttonStyle={styles.button}
+              onPress={() => {
+                this.imageDialog();
+              }}
+            />
+
+            {this.state.newLocationImage ? (
+              <Image
+                style={styles.imgStory}
+                source={{ uri: this.state.newLocationImage }}
+              />
+            ) : (
+              <Text>No image</Text>
+            )}
             <Button
               title="Save location."
               onPress={() => {
@@ -242,9 +334,23 @@ export default class AddLocation extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  modalContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
   textInput: {
+    marginTop: 10,
     width: Dimensions.get("window").width - 50,
     height: 100,
+    borderWidth: 5,
+  },
+  button: {
+    backgroundColor: "black",
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  picker: {
+    width: "60%",
   },
   circleButton: {
     justifyContent: "center",

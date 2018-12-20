@@ -177,6 +177,10 @@ class LocationScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
   location: {
     paddingTop: 30,
     paddingBottom: 20,

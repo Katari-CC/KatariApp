@@ -163,7 +163,7 @@ class StoryForm extends React.Component {
                 source={{ uri: this.state.newStoryImageURI }}
               />
             ) : (
-              <Text>No imge</Text>
+              <Text>No image</Text>
             )}
             <TextInput
               style={styles.textInput}
