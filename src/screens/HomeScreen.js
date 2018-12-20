@@ -32,7 +32,7 @@ class Home extends React.Component {
     super(props);
     this.state = {
       locations: [],
-      detail: {},
+      selectedLocation: {},
       stories: [],
       isAddStoryFormVisible: false,
     };
@@ -59,7 +59,7 @@ class Home extends React.Component {
 
   onItemListClick = (item) => {
     this.setState({
-      detail: item,
+      selectedLocation: item,
       isAddStoryFormVisible: false,
     });
 
@@ -135,16 +135,19 @@ class Home extends React.Component {
             {this.state.isAddStoryFormVisible ? (
               // DISPLAY THE NEW STORY FORM
               <StoryForm
-                location={this.state.detail.title}
+                location={this.state.selectedLocation.title}
                 toggleDisplayForm={this.toggleFormDisplay}
                 addStory={this.addStory}
               />
             ) : (
               // DISPLAY THE DESCRIPTION TEXT
               <View style={styles.storyContainer}>
-                <Panel style={styles.storyList} title={this.state.detail.title}>
+                <Panel
+                  style={styles.storyList}
+                  title={this.state.selectedLocation.title}
+                >
                   <Text style={styles.detailText}>
-                    {this.state.detail.description}
+                    {this.state.selectedLocation.description}
                   </Text>
                 </Panel>
                 <ScrollView

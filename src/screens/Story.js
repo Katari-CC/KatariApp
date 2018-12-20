@@ -37,7 +37,6 @@ export default class Location extends React.Component {
         <Card containerStyle={styles.cardContainer}>
           <ScrollView contentContainerStyle={styles.cardContent}>
             <Avatar
-              size="large"
               rounded
               containerStyle={styles.avatar}
               source={{ uri: this.props.navigation.state.params.avatar }}

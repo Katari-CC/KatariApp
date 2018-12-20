@@ -18,7 +18,8 @@ import { self } from "../utils/quick_fix.js";
 import firebase from "../utils/firebaseClient";
 import AppNavigator from "../navigation/AppNavigator";
 
-import { Text, Button } from "react-native-elements";
+import StoryCard from "../components/StoryCard";
+import { Text, Button, Card } from "react-native-elements";
 import firestore from "../utils/firestore";
 import "firebase/firestore";
 
@@ -35,7 +36,7 @@ export default class ProfileScreen extends React.Component {
       currentUserUID: "",
       currentUserImageURL: null,
       currentUserName: "Not available",
-      stories: [{ title: "loading stories..." }],
+      stories: [],
       isAddStoryFormVisible: false,
       newStoryTitle: "",
       newStoryText: "",
@@ -43,7 +44,6 @@ export default class ProfileScreen extends React.Component {
   }
   componentDidMount() {
     newReviews = [];
-
     firestore
       .collection("stories")
       .where("userID", "==", this.state.currentUserUID)
@@ -57,7 +57,6 @@ export default class ProfileScreen extends React.Component {
         this.setState({
           stories: newReviews,
         });
-        console.log("stories=", this.state.stories);
       })
       .catch((error) => {
         console.log(error);
@@ -108,75 +107,74 @@ export default class ProfileScreen extends React.Component {
       );
     }
     return (
-      <ScrollView contentContainerStyle={styles.container}>
-        <View
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
-          <Text style={styles.username}>
-            {"Welcome " + this.state.currentUserName + "!"}
-          </Text>
+      <View style={styles.container}>
+        <Text style={styles.username}>
+          {"Welcome " + this.state.currentUserName + "!"}
+        </Text>
 
-          {this.state.currentUserImageURL ? (
-            <Image
-              style={styles.avatar}
-              resizeMode="cover"
-              source={{
-                uri: this.state.currentUserImageURL,
-              }}
-            />
-          ) : (
-            <Image
-              style={styles.avatar}
-              resizeMode="cover"
-              source={require("../../assets/images/avatar.png")}
-            />
-          )}
-          <FlatList
-            data={this.state.stories}
-            renderItem={({ item, index }) => {
-              return (
-                <View
-                  style={{
-                    flex: 1,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Text adjustsFontSizeToFit style={styles.textList}>
-                    {item.title}
-                  </Text>
-                  <Text adjustsFontSizeToFit style={styles.textList}>
-                    {item.location}
-                  </Text>
-                  <Text adjustsFontSizeToFit style={styles.textList}>
-                    {item.story}
-                  </Text>
-                </View>
-              );
+        {this.state.currentUserImageURL ? (
+          <Image
+            style={styles.avatar}
+            resizeMode="cover"
+            source={{
+              uri: this.state.currentUserImageURL,
             }}
           />
-
-          <View
+        ) : (
+          <Image
+            style={styles.avatar}
+            resizeMode="cover"
+            source={require("../../assets/images/avatar.png")}
+          />
+        )}
+        <ScrollView
+          style={styles.storyList}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          removeClippedSubviews
+          bounce={true}
+          overScrollMode="always"
+          centerContent={true}
+        >
+          {this.state.stories &&
+            this.state.stories.map((story, index) => {
+              return (
+                <StoryCard
+                  key={index}
+                  story={story}
+                  navigation={this.props.navigation}
+                />
+              );
+            })}
+          {!this.state.stories ? (
+            <Card
+              title={"No stories yet. Add one!"}
+              containerStyle={styles.storyCard}
+            />
+          ) : (
+            <View />
+          )}
+        </ScrollView>
+        {/* <View
             style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
           >
             <StatusBar barStyle="default" />
-          </View>
+          </View> */}
 
-          <Button
-            buttonStyle={styles.button}
-            title="Change the profile picture"
-            onPress={() => {
-              this.toggleModal();
-            }}
-          />
+        <Button
+          buttonStyle={styles.button}
+          title="Change the profile picture"
+          onPress={() => {
+            this.toggleModal();
+          }}
+        />
 
-          <Button
-            buttonStyle={styles.button}
-            title="Logout"
-            onPress={this.logout}
-          />
-        </View>
-      </ScrollView>
+        <Button
+          buttonStyle={styles.button}
+          title="Logout"
+          onPress={this.logout}
+        />
+      </View>
     );
   }
 }
@@ -186,7 +184,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 50,
     justifyContent: "center",
-    backgroundColor: "#d0d3c5",
     color: "#56b1bf",
     fontSize: 20,
   },
@@ -194,30 +191,37 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   container: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "#d0d3c5",
-    color: "#56b1bf",
-    paddingTop: 50,
+    // ...StyleSheet.absoluteFillObject,
+    backgroundColor: "white",
+    // color: "#56b1bf",
+    // paddingBottom: 500,
     justifyContent: "center",
     alignItems: "center",
   },
   button: {
-    justifyContent: "center",
-    alignItems: "center",
+    // justifyContent: "center",
+    // alignItems: "center",
     backgroundColor: "#56b1bf",
     // width: "100%",
     // height: 50,
     borderWidth: 0,
     borderRadius: 5,
-    marginTop: 10,
+    marginTop: 20,
     paddingLeft: 50,
     paddingRight: 50,
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   textList: {
     fontWeight: "bold",
     color: "white",
     textAlign: "center",
+  },
+  storyCard: {
+    // flexDirection: "column",
+    width: 150,
+    height: 130,
+    borderRadius: 20,
+    alignItems: "center",
   },
   avatar: {
     marginTop: 10,

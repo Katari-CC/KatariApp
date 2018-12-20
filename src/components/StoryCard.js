@@ -26,6 +26,7 @@ class StoryCard extends React.Component {
   }
 
   componentWillMount() {
+    console.log("STORY", this.state.story);
     firestore
       .collection("users")
       .where("uid", "==", this.state.story.userID)
@@ -48,9 +49,9 @@ class StoryCard extends React.Component {
       params: {
         title: this.state.story.title,
         story: this.state.story.story,
-        username: this.state.story.username,
-        avatar: this.state.story.avatar,
-        image: this.state.story.image,
+        username: this.state.user.displayName,
+        avatar: this.state.user.photoURL,
+        image: this.state.story.photoURL,
       },
     });
     this.props.navigation.dispatch(navigateAction);
