@@ -1,4 +1,5 @@
 import React from "react";
+import { TEXT_COLOR } from "../constants/Colors";
 import {
   View,
   Text,
@@ -208,19 +209,10 @@ export default class AddLocation extends React.Component {
           onRequestClose={() => this.setState({ modalVisible: false })}
         >
           <View style={styles.modalContainer}>
-            <Button
-              title="Close"
-              buttonStyle={styles.button}
-              onPress={() => {
-                this.setState({
-                  modalVisible: false,
-                });
-              }}
-            />
-
             <Text style={styles.detailTitle}>Adding Location</Text>
             <TextInput
-              containerStyle={styles.textInput}
+              containerStyle={styles.formInput}
+              inputStyle={styles.inputContainer}
               placeholder="Name of location:"
               onChangeText={(text) => this.setState({ newLocationTitle: text })}
             />
@@ -241,7 +233,8 @@ export default class AddLocation extends React.Component {
               ))}
             </Picker>
             <TextInput
-              containerStyle={styles.textInput}
+              containerStyle={styles.formInput}
+              inputStyle={styles.inputContainer}
               placeholder="Enter a description about the location:"
               onChangeText={(text) =>
                 this.setState({ newLocationDescription: text })
@@ -264,11 +257,34 @@ export default class AddLocation extends React.Component {
               <Text>No image</Text>
             )}
             <Button
+              buttonStyle={styles.button}
               title="Save location."
               onPress={() => {
                 this.saveNewLocation();
               }}
             />
+            {/* <Button
+              title="Close"
+              buttonStyle={styles.button}
+              onPress={() => {
+                this.setState({
+                  modalVisible: false,
+                });
+              }}
+            /> */}
+            <View style={styles.backBtn}>
+              <Icon
+                name="md-arrow-back"
+                onPress={() => {
+                  this.setState({
+                    modalVisible: false,
+                  });
+                }}
+                type="ionicon"
+                size={30}
+                color={TEXT_COLOR}
+              />
+            </View>
           </View>
         </Modal>
 
@@ -337,15 +353,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  textInput: {
-    marginTop: 10,
-    width: Dimensions.get("window").width - 50,
-    height: 100,
+
+  formInput: {
+    backgroundColor: "white",
+    borderColor: "#242124",
     borderWidth: 5,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  inputContainer: {
+    marginLeft: 15,
+    color: "#242124",
   },
   button: {
-    backgroundColor: "black",
-    marginTop: 10,
+    backgroundColor: "#56b1bf",
+    borderWidth: 0,
+    borderRadius: 5,
+    marginTop: 20,
+    paddingLeft: 50,
+    paddingRight: 50,
     marginBottom: 10,
   },
   picker: {
@@ -417,6 +443,12 @@ const styles = StyleSheet.create({
   addBtnText: {
     fontSize: 25,
     color: "white",
+  },
+  backBtn: {
+    position: "absolute",
+    top: 0,
+    left: 20,
+    marginBottom: 8,
   },
   description: {
     marginLeft: 3,

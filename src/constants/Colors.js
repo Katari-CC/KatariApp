@@ -1,5 +1,4 @@
 const tintColor = "442C2E";
-// "#2f95dc";
 
 const pink = "#FEEAE6";
 const pinkDarker = "#FEDBD0";
