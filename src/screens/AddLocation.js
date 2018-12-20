@@ -61,7 +61,7 @@ export default class AddLocation extends React.Component {
       .then((snapshot) => {
         snapshot.forEach((doc) => {
           const marker = doc.data();
-          marker["title"] = doc.id;
+          marker["title"] = doc.title;
           marker["coordinate"] = {
             longitude: marker.longitude,
             latitude: marker.latitude,

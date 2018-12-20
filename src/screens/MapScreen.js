@@ -33,6 +33,7 @@ class Main extends React.Component {
       //   longitude: DEFAULT_LONGITUDE
       // }),
       markers: [],
+      visibleMarkers: [],
       region: {
         latitude: DEFAULT_LATITUDE,
         longitude: DEFAULT_LONGITUDE,
@@ -45,6 +46,7 @@ class Main extends React.Component {
     this.toAddLocation = this.toAddLocation.bind(this);
     this.onRegionChange = this.onRegionChange.bind(this);
     this.handleOnNavigateBack = this.handleOnNavigateBack.bind(this);
+    this.renderMarkers = this.renderMarkers.bind(this);
   }
 
   componentDidMount() {
@@ -116,6 +118,8 @@ class Main extends React.Component {
     //   error => console.log(error),
     //   { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
     // );
+
+    this.renderMarkers();
   }
 
   toAddLocation() {
@@ -128,6 +132,40 @@ class Main extends React.Component {
       },
     });
     this.props.navigation.dispatch(navigateAction);
+  }
+
+  renderMarkers() {
+    const region = this.state.region;
+    const min = {
+      latitude: region.latitude - region.latitudeDelta / 1.5,
+      longitude: region.longitude - region.longitudeDelta / 1.5,
+    };
+    const max = {
+      latitude: region.latitude + region.latitudeDelta / 1.5,
+      longitude: region.longitude + region.longitudeDelta / 1.5,
+    };
+    const visibleMarkers = [];
+    this.state.markers.forEach((marker, index) => {
+      if (
+        marker.coordinate.latitude <= max.latitude &&
+        marker.coordinate.latitude >= min.latitude
+      ) {
+        if (
+          marker.coordinate.longitude <= max.longitude &&
+          marker.coordinate.longitude >= min.longitude
+        ) {
+          visibleMarkers.push(marker);
+        }
+      }
+    });
+    if (visibleMarkers.length != 0 && visibleMarkers[0].title == undefined)
+      console.log("VISIBLE MARKERS", visibleMarkers);
+    else
+      console.log(
+        "VISIBLE MARKERS",
+        visibleMarkers.map((marker) => marker.title)
+      );
+    this.setState({ visibleMarkers });
   }
 
   onMarkerPress(marker) {
@@ -144,6 +182,7 @@ class Main extends React.Component {
   }
 
   onRegionChange(region) {
+    this.renderMarkers();
     this.setState({ region });
   }
 
@@ -169,16 +208,17 @@ class Main extends React.Component {
           showsPointsOfInterest={false}
           provider={PROVIDER_GOOGLE}
         >
-          {this.state.markers &&
-            this.state.markers.map((marker, index) => {
-              // <CustomMarker
-              //   key={index}
-              //   coordinate={marker.coordinate}
-              //   image={marker.image}
-              //   isZoomed={}
-              // />
-              return (
-                <MapView.Marker
+          {this.state.visibleMarkers.map((marker, index) => (
+            <CustomMarker
+              key={index}
+              id={index}
+              marker={marker}
+              onMarkerPress={this.onMarkerPress}
+              // isZoomed={this.isMapZoomed(this.state.region)}
+            />
+          ))}
+
+          {/* <MapView.Marker
                   key={index}
                   flat={true}
                   coordinate={marker.coordinate}
@@ -202,9 +242,7 @@ class Main extends React.Component {
                       </Text>
                     </View>
                   </Callout>
-                </MapView.Marker>
-              );
-            })}
+                </MapView.Marker> */}
         </MapView>
         <View style={styles.addBtnPosition}>
           <TouchableOpacity
