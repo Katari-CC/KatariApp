@@ -125,7 +125,7 @@ export default class ImageUploadModal extends Component {
       .where("uid", "==", this.state.currentUserUID)
       .get()
       .then((snapshot) => {
-        snapshot.forEach((doc) => {
+        (snapshot || []).forEach((doc) => {
           firestore
             .collection("users")
             .doc(doc.id)
