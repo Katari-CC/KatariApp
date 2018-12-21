@@ -18,16 +18,20 @@ class CustomMarker extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // isZoomed: props.isZoomed,
+      isVisible: props.isVisible,
       marker: props.marker,
       id: props.id,
     };
   }
 
+  shouldComponentUpdate(prevProps) {
+    return prevProps.isVisible !== this.props.isVisible;
+  }
+
   render() {
     return (
       <MapView.Marker
-        key={this.state.id}
+        key={this.state.id + "_" + Date.now()}
         flat={true}
         coordinate={this.state.marker.coordinate}
         onPress={() => this.props.onMarkerPress(this.state.marker)}
