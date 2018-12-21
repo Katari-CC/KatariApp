@@ -155,9 +155,6 @@ class Home extends React.Component {
                   onChangeText={(text) => {
                     this.filter(text);
                   }}
-                  onClear={() => {
-                    this.clearFilter();
-                  }}
                   placeholder="Location Name"
                 />
               </View>
