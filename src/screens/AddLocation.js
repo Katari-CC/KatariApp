@@ -213,7 +213,7 @@ export default class AddLocation extends React.Component {
             <TextInput
               containerStyle={styles.formInput}
               inputStyle={styles.inputContainer}
-              placeholder="Name of location:"
+              placeholder="Location Name"
               onChangeText={(text) => this.setState({ newLocationTitle: text })}
             />
             <Picker
@@ -349,6 +349,13 @@ export default class AddLocation extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    // backgroundColor: "#df5e27",
+    backgroundColor: "white",
+    color: "#56b1bf",
+  },
   modalContainer: {
     justifyContent: "center",
     alignItems: "center",

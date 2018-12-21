@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Card, SearchBar, Icon } from "react-native-elements";
 
-import { TEXT_COLOR, pink } from "../constants/Colors";
+import { TEXT_COLOR, pinkDarker, brown, pink } from "../constants/Colors";
 
 import { createStackNavigator, NavigationActions } from "react-navigation";
 
@@ -36,8 +36,9 @@ class Home extends React.Component {
       stories: [],
       isAddStoryFormVisible: false,
       isSearchBarVisible: false,
+      searchIconType: "search",
     };
-    this.backupLocation =[];
+    this.backupLocation = [];
   }
 
   componentDidMount() {
@@ -53,8 +54,7 @@ class Home extends React.Component {
         this.setState({
           locations: newLocation,
         });
-        this.backupLocation = newLocation
-        
+        this.backupLocation = newLocation;
       })
       .catch((err) => {
         console.log("Error getting documents", err);
@@ -109,19 +109,30 @@ class Home extends React.Component {
 
   filter(text) {
     let newLocations = this.backupLocation.filter((location) =>
-    location.title.includes(text)
+      location.title.toLowerCase().includes(text.toLowerCase())
     );
     this.setState({
-    locations: newLocations,
+      locations: newLocations,
     });
+  }
+
+  toggleSearchBar() {
+    if (this.state.isSearchBarVisible) {
+      // hide the search bar
+      this.setState({
+        isSearchBarVisible: false,
+        searchIconType: "search",
+        // put back all the locations on the state
+        locations: this.backupLocation,
+      });
+    } else {
+      // Show the search bar
+      this.setState({
+        isSearchBarVisible: true,
+        searchIconType: "close",
+      });
     }
-    
-    clearFilter() {
-    this.setState({
-    // put back all the locations on the state
-    locations: this.backupLocation,
-    });
-    }
+  }
 
   render() {
     console.log("Rendering...");
@@ -129,17 +140,29 @@ class Home extends React.Component {
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container}>
-          <View >
+          <View>
             {this.state.isSearchBarVisible ? (
-              <SearchBar
-              round
-              searchIcon={{ size: 24 }}
-              onChangeText={(text)=>{this.filter(text)}}
-              onClear={()=>{this.clearFilter()}}
-              placeholder='Type Here...' 
-            />
+              <View style={styles.searchBar}>
+                <SearchBar
+                  round
+                  //lightTheme
+                  showLoading
+                  platform="android"
+                  searchIcon={{ size: 24 }}
+                  containerStyle={{ backgroundColor: "#442C2E" }}
+                  inputStyle={{ backgroundColor: "white" }}
+                  searchIcon={{ size: 24 }}
+                  onChangeText={(text) => {
+                    this.filter(text);
+                  }}
+                  onClear={() => {
+                    this.clearFilter();
+                  }}
+                  placeholder="Location Name"
+                />
+              </View>
             ) : (
-              <View/>
+              <View />
             )}
             <FlatList
               style={styles.locationList}
@@ -155,7 +178,10 @@ class Home extends React.Component {
                       this.onItemListClick(item);
                     }}
                   >
-                    <Image style={styles.imgList} source={{ uri: item.image }} />
+                    <Image
+                      style={styles.imgList}
+                      source={{ uri: item.image }}
+                    />
                     <Text adjustsFontSizeToFit style={styles.textList}>
                       {item.title}
                     </Text>
@@ -163,20 +189,17 @@ class Home extends React.Component {
                 );
               }}
             />
-            <View style={styles.searchButton}>
-              <Icon
+            <Icon
               raised
-              name='search'
-              type='font-awesome'
-              color='#442C2E'
+              name={this.state.searchIconType}
+              containerStyle={styles.searchButton}
+              type="font-awesome"
+              color="#442C2E"
               opacity={0.5}
               onPress={() => {
-                this.state.isSearchBarVisible? this.clearFilter(): null;
-                this.setState({
-                  isSearchBarVisible: !this.state.isSearchBarVisible
-                });
-            }} />
-            </View>
+                this.toggleSearchBar();
+              }}
+            />
           </View>
           <View style={styles.locationDetail}>
             {this.state.isAddStoryFormVisible ? (
@@ -253,11 +276,19 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
 
-  searchButton:{
+  searchButton: {
     opacity: 50,
     position: "absolute",
-    top: 15,
-    right: 0
+    top: 18,
+    right: 0,
+  },
+
+  searchBar: {
+    backgroundColor: "#442C2E",
+    // opacity: 0.5,
+    height: 80,
+    paddingTop: 20,
+    marginBottom: -40,
   },
 
   // Horizonthal locations list
