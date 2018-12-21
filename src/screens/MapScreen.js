@@ -146,7 +146,8 @@ class Main extends React.Component {
       longitude: region.longitude + region.longitudeDelta / 1.5,
     };
     const visibleMarkers = [];
-    this.state.markers.forEach((marker, index) => {
+    const markers = this.state.markers.map((marker, index) => {
+      marker.isVisible = false;
       if (
         marker.coordinate.latitude <= max.latitude &&
         marker.coordinate.latitude >= min.latitude
@@ -155,18 +156,17 @@ class Main extends React.Component {
           marker.coordinate.longitude <= max.longitude &&
           marker.coordinate.longitude >= min.longitude
         ) {
+          marker.isVisible = true;
           visibleMarkers.push(marker);
         }
       }
+      return marker;
     });
-    if (visibleMarkers.length != 0 && visibleMarkers[0].title == undefined)
-      console.log("VISIBLE MARKERS", visibleMarkers);
-    else
-      console.log(
-        "VISIBLE MARKERS",
-        visibleMarkers.map((marker) => marker.title)
-      );
-    this.setState({ visibleMarkers });
+    console.log(
+      "VISIBLE MARKERS",
+      visibleMarkers.map((marker) => marker.title)
+    );
+    this.setState({ markers });
   }
 
   onMarkerPress(marker) {
@@ -209,15 +209,21 @@ class Main extends React.Component {
           showsPointsOfInterest={false}
           provider={PROVIDER_GOOGLE}
         >
-          {this.state.visibleMarkers.map((marker, index) => (
-            <CustomMarker
-              key={index}
-              id={index}
-              marker={marker}
-              onMarkerPress={this.onMarkerPress}
-              // isZoomed={this.isMapZoomed(this.state.region)}
-            />
-          ))}
+          {this.state.markers.map((marker, index) => {
+            if (marker.isVisible) {
+              index++;
+              return (
+                <CustomMarker
+                  key={index}
+                  isVisible={true}
+                  id={index}
+                  marker={marker}
+                  onMarkerPress={this.onMarkerPress}
+                  // isZoomed={this.isMapZoomed(this.state.region)}
+                />
+              );
+            }
+          })}
 
           {/* <MapView.Marker
                   key={index}
