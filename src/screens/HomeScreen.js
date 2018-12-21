@@ -154,7 +154,6 @@ class Home extends React.Component {
           {this.state.isSearchBarVisible ? (
             <SearchBar
               round
-              //lightTheme
               showLoading
               platform="android"
               searchIcon={{ size: 24 }}
