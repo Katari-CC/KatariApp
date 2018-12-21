@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Card, SearchBar, Icon } from "react-native-elements";
 
-import { TEXT_COLOR } from "../constants/Colors";
+import { TEXT_COLOR, pink } from "../constants/Colors";
 
 import { createStackNavigator, NavigationActions } from "react-navigation";
 
@@ -35,7 +35,7 @@ class Home extends React.Component {
       selectedLocation: {},
       stories: [],
       isAddStoryFormVisible: false,
-      isSearchBarVisible: true,
+      isSearchBarVisible: false,
     };
     this.backupLocation =[];
   }
@@ -129,44 +129,55 @@ class Home extends React.Component {
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container}>
-          
-          <FlatList
-            style={styles.locationList}
-            horizontal={true}
-            data={this.state.locations}
-            keyExtractor={this._keyExtractor}
-            renderItem={({ item, index }) => {
-              return (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.locationItem}
-                  onPress={() => {
-                    this.onItemListClick(item);
-                  }}
-                >
-                  <Image style={styles.imgList} source={{ uri: item.image }} />
-                  <Text adjustsFontSizeToFit style={styles.textList}>
-                    {item.title}
-                  </Text>
-                </TouchableOpacity>
-              );
-            }}
-          />
-
-          
-          {this.state.isSearchBarVisible ? (
-            <SearchBar
-            round
-            searchIcon={{ size: 24 }}
-            onChangeText={(text)=>{this.filter(text)}}
-            onClear={()=>{this.clearFilter()}}
-            placeholder='Type Here...' 
-          />
-          ) : (
-            <View/>
-          )}
-
-          
+          <View >
+            {this.state.isSearchBarVisible ? (
+              <SearchBar
+              round
+              searchIcon={{ size: 24 }}
+              onChangeText={(text)=>{this.filter(text)}}
+              onClear={()=>{this.clearFilter()}}
+              placeholder='Type Here...' 
+            />
+            ) : (
+              <View/>
+            )}
+            <FlatList
+              style={styles.locationList}
+              horizontal={true}
+              data={this.state.locations}
+              keyExtractor={this._keyExtractor}
+              renderItem={({ item, index }) => {
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.locationItem}
+                    onPress={() => {
+                      this.onItemListClick(item);
+                    }}
+                  >
+                    <Image style={styles.imgList} source={{ uri: item.image }} />
+                    <Text adjustsFontSizeToFit style={styles.textList}>
+                      {item.title}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              }}
+            />
+            <View style={styles.searchButton}>
+              <Icon
+              raised
+              name='search'
+              type='font-awesome'
+              color='#442C2E'
+              opacity={0.5}
+              onPress={() => {
+                this.state.isSearchBarVisible? this.clearFilter(): null;
+                this.setState({
+                  isSearchBarVisible: !this.state.isSearchBarVisible
+                });
+            }} />
+            </View>
+          </View>
           <View style={styles.locationDetail}>
             {this.state.isAddStoryFormVisible ? (
               // DISPLAY THE NEW STORY FORM
@@ -240,6 +251,13 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     color: "#032B2F",
     flexDirection: "column",
+  },
+
+  searchButton:{
+    opacity: 50,
+    position: "absolute",
+    top: 15,
+    right: 0
   },
 
   // Horizonthal locations list
