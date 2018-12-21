@@ -191,25 +191,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   container: {
-    // ...StyleSheet.absoluteFillObject,
     backgroundColor: "white",
-    // color: "#56b1bf",
-    // paddingBottom: 500,
     justifyContent: "center",
     alignItems: "center",
   },
   button: {
-    // justifyContent: "center",
-    // alignItems: "center",
     backgroundColor: "#56b1bf",
-    // width: "100%",
-    // height: 50,
     borderWidth: 0,
     borderRadius: 5,
     marginTop: 20,
     paddingLeft: 50,
     paddingRight: 50,
-    // marginBottom: 10,
   },
   textList: {
     fontWeight: "bold",
@@ -217,7 +209,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   storyCard: {
-    // flexDirection: "column",
     width: 150,
     height: 130,
     borderRadius: 20,
