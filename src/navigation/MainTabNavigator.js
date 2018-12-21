@@ -37,7 +37,7 @@ MapStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === "ios" ? "ios-navigate" : "md-navigate"}
+      name={Platform.OS === "ios" ? "ios-navigate" : "md-pin"}
     />
   ),
 };
@@ -67,6 +67,9 @@ export default createBottomTabNavigator(
     backBehavior: "initialRoute",
     defaultNavigationOptions: {
       header: null,
+    },
+    tabBarOptions: {
+      showLabel: false,
     },
   }
 );

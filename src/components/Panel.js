@@ -111,9 +111,11 @@ var styles = StyleSheet.create({
   },
   button: {},
   buttonImage: {
-    width: 30,
-    height: 25,
+    width: 40,
+    height: 40,
+    borderColor: "transparent",
     marginRight: 20,
+    color: "#442C2E",
   },
   body: {
     padding: 10,
