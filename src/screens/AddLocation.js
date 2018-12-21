@@ -12,7 +12,7 @@ import {
   Modal,
   Picker,
 } from "react-native";
-import { Button, Icon } from "react-native-elements";
+import { Button, Icon, FormInput } from "react-native-elements";
 import MapView, { PROVIDER_GOOGLE, Marker, Callout } from "react-native-maps";
 import { DEFAULT_MAP, ADD_LOCATION } from "../constants/MapLayout";
 
@@ -246,8 +246,9 @@ export default class AddLocation extends React.Component {
         >
           <View style={styles.modalContainer}>
             <Text style={styles.detailTitle}>Adding Location</Text>
-            <TextInput
+            <FormInput
               containerStyle={styles.formInput}
+              underlineColorAndroid="transparent"
               inputStyle={styles.inputContainer}
               placeholder="Location Name"
               onChangeText={(text) => this.setState({ newLocationTitle: text })}
@@ -261,6 +262,8 @@ export default class AddLocation extends React.Component {
             >
               <Picker.Item
                 key={-1}
+                mode="dropdown"
+                textStyle={{ fontSize: 12, color: "yellow" }}
                 label="Select a Category"
                 value={undefined}
               />
@@ -268,20 +271,14 @@ export default class AddLocation extends React.Component {
                 <Picker.Item key={index} label={category} value={category} />
               ))}
             </Picker>
-            <TextInput
+            <FormInput
               containerStyle={styles.formInput}
               inputStyle={styles.inputContainer}
+              underlineColorAndroid="transparent"
               placeholder="Enter a description about the location:"
               onChangeText={(text) =>
                 this.setState({ newLocationDescription: text })
               }
-            />
-            <Button
-              title="Provide an Image"
-              buttonStyle={styles.button}
-              onPress={() => {
-                this.imageDialog();
-              }}
             />
 
             {this.state.newLocationImageURI ? (
@@ -290,11 +287,18 @@ export default class AddLocation extends React.Component {
                 source={{ uri: this.state.newLocationImageURI }}
               />
             ) : (
-              <Text>No image</Text>
+              <Text style={styles.textList}>No Image</Text>
             )}
             <Button
+              title="Provide an Image"
               buttonStyle={styles.button}
-              title="Save location."
+              onPress={() => {
+                this.imageDialog();
+              }}
+            />
+            <Button
+              buttonStyle={styles.button}
+              title="Save location"
               onPress={() => {
                 this.saveNewLocation();
               }}
@@ -349,7 +353,6 @@ export default class AddLocation extends React.Component {
                   id={index}
                   marker={marker}
                   onMarkerPress={this.onMarkerPress}
-                  // isZoomed={this.isMapZoomed(this.state.region)}
                 />
               );
             }
@@ -386,7 +389,6 @@ const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
-    // backgroundColor: "#df5e27",
     backgroundColor: "white",
     color: "#56b1bf",
   },
@@ -394,13 +396,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  textList: {
+    marginTop: 20,
+    fontWeight: "bold",
+    color: "#442C2E",
+  },
 
   formInput: {
     backgroundColor: "white",
-    borderColor: "#242124",
+    borderColor: "#442C2E",
     borderWidth: 5,
     borderRadius: 5,
-    marginTop: 10,
+    marginTop: 5,
   },
   inputContainer: {
     marginLeft: 15,
@@ -416,9 +423,17 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   picker: {
-    width: "60%",
+    width: "100%",
+    borderWidth: 5,
+    borderRadius: 5,
+    marginTop: 10,
+    backgroundColor: "white",
+    borderColor: "#442C2E",
+    alignItems: "center",
+    transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }],
   },
   imgLocation: {
+    marginTop: 20,
     width: 300,
     height: 200,
   },
@@ -450,8 +465,10 @@ const styles = StyleSheet.create({
     margin: 1,
     fontSize: 25,
     textAlign: "center",
-    color: "#898989",
+    color: "#442C2E",
     fontWeight: "bold",
+    marginTop: 10,
+    marginBottom: 5,
   },
   container: {
     // flex: 1,
@@ -486,6 +503,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   backBtn: {
+    marginTop: 10,
     position: "absolute",
     top: 0,
     left: 20,

@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
 
   textList: {
     fontWeight: "bold",
-    color: "gray",
+    color: "#442C2E",
     textAlign: "center",
   },
 
