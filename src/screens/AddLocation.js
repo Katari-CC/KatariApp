@@ -15,6 +15,7 @@ import { Button, Icon } from "react-native-elements";
 import MapView, { PROVIDER_GOOGLE, Marker, Callout } from "react-native-maps";
 import { DEFAULT_MAP, ADD_LOCATION } from "../constants/MapLayout";
 
+import CustomMarker from "../components/CustomMarker.js";
 import firestore from "../utils/firestore";
 import firebase from "../utils/firebaseClient";
 import { NavigationActions } from "react-navigation";
@@ -50,6 +51,7 @@ export default class AddLocation extends React.Component {
     };
     this.onRegionChange = this.onRegionChange.bind(this);
     this.backToMap = this.backToMap.bind(this);
+    this.renderMarkers = this.renderMarkers.bind(this);
   }
 
   componentDidMount() {}
@@ -122,6 +124,40 @@ export default class AddLocation extends React.Component {
 
   onRegionChange(region) {
     this.setState({ region });
+  }
+
+  renderMarkers() {
+    const region = this.state.region;
+    const min = {
+      latitude: region.latitude - region.latitudeDelta / 1.5,
+      longitude: region.longitude - region.longitudeDelta / 1.5,
+    };
+    const max = {
+      latitude: region.latitude + region.latitudeDelta / 1.5,
+      longitude: region.longitude + region.longitudeDelta / 1.5,
+    };
+    const visibleMarkers = [];
+    const markers = this.state.markers.map((marker, index) => {
+      marker.isVisible = false;
+      if (
+        marker.coordinate.latitude <= max.latitude &&
+        marker.coordinate.latitude >= min.latitude
+      ) {
+        if (
+          marker.coordinate.longitude <= max.longitude &&
+          marker.coordinate.longitude >= min.longitude
+        ) {
+          marker.isVisible = true;
+          visibleMarkers.push(marker);
+        }
+      }
+      return marker;
+    });
+    console.log(
+      "VISIBLE MARKERS",
+      visibleMarkers.map((marker) => marker.title)
+    );
+    this.setState({ markers });
   }
 
   backToMap() {
@@ -288,21 +324,19 @@ export default class AddLocation extends React.Component {
           provider={PROVIDER_GOOGLE}
         >
           {this.state.markers.map((marker, index) => {
-            return (
-              <MapView.Marker key={index} coordinate={marker.coordinate}>
-                <Callout style={styles.callout}>
-                  <View style={styles.container}>
-                    <Text style={styles.title}>{marker.title}</Text>
-                    {/* <Svg width={50} height={50}>
-                      <Image
-                          href={{uri: marker.image}}
-                          width={50} height={50} />
-                  </Svg> */}
-                    <Text style={styles.description}>{marker.description}</Text>
-                  </View>
-                </Callout>
-              </MapView.Marker>
-            );
+            if (marker.isVisible) {
+              index++;
+              return (
+                <CustomMarker
+                  key={index}
+                  isVisible={true}
+                  id={index}
+                  marker={marker}
+                  onMarkerPress={this.onMarkerPress}
+                  // isZoomed={this.isMapZoomed(this.state.region)}
+                />
+              );
+            }
           })}
         </MapView>
 
