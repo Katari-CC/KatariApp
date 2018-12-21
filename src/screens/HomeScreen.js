@@ -35,7 +35,8 @@ class Home extends React.Component {
       selectedLocation: {},
       stories: [],
       isAddStoryFormVisible: false,
-      isSearchBarVisible: true,
+      isSearchBarVisible: false,
+      searchIconType: "search",
     };
     this.backupLocation = [];
   }
@@ -108,18 +109,29 @@ class Home extends React.Component {
 
   filter(text) {
     let newLocations = this.backupLocation.filter((location) =>
-      location.title.includes(text)
+      location.title.toLowerCase().includes(text.toLowerCase())
     );
     this.setState({
       locations: newLocations,
     });
   }
 
-  clearFilter() {
-    this.setState({
-      // put back all the locations on the state
-      locations: this.backupLocation,
-    });
+  toggleSearchBar() {
+    if (this.state.isSearchBarVisible) {
+      // hide the search bar
+      this.setState({
+        isSearchBarVisible: false,
+        searchIconType: "search",
+        // put back all the locations on the state
+        locations: this.backupLocation,
+      });
+    } else {
+      // Show the search bar
+      this.setState({
+        isSearchBarVisible: true,
+        searchIconType: "close",
+      });
+    }
   }
 
   render() {
@@ -128,52 +140,64 @@ class Home extends React.Component {
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container}>
-          <FlatList
-            style={styles.locationList}
-            horizontal={true}
-            data={this.state.locations}
-            keyExtractor={this._keyExtractor}
-            renderItem={({ item, index }) => {
-              return (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.locationItem}
-                  onPress={() => {
-                    this.onItemListClick(item);
+          <View>
+            {this.state.isSearchBarVisible ? (
+              <View style={styles.searchBar}>
+                <SearchBar
+                  round
+                  //lightTheme
+                  showLoading
+                  platform="android"
+                  searchIcon={{ size: 24 }}
+                  containerStyle={{ backgroundColor: "#442C2E" }}
+                  inputStyle={{ backgroundColor: "white" }}
+                  searchIcon={{ size: 24 }}
+                  onChangeText={(text) => {
+                    this.filter(text);
                   }}
-                >
-                  <Image style={styles.imgList} source={{ uri: item.image }} />
-                  <Text adjustsFontSizeToFit style={styles.textList}>
-                    {item.title}
-                  </Text>
-                </TouchableOpacity>
-              );
-            }}
-          />
-
-          {this.state.isSearchBarVisible ? (
-            <SearchBar
-              round
-              showLoading
-              platform="android"
-              searchIcon={{ size: 24 }}
-              clearIcon={true}
-              containerStyle={{ backgroundColor: "#442C2E" }}
-              inputStyle={{ backgroundColor: "white" }}
-              searchIcon={{ size: 24 }}
-              cancelIcon={{ type: "font-awesome", name: "chevron-left" }}
-              onChangeText={(text) => {
-                this.filter(text);
+                  placeholder="Location Name"
+                />
+              </View>
+            ) : (
+              <View />
+            )}
+            <FlatList
+              style={styles.locationList}
+              horizontal={true}
+              data={this.state.locations}
+              keyExtractor={this._keyExtractor}
+              renderItem={({ item, index }) => {
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.locationItem}
+                    onPress={() => {
+                      this.onItemListClick(item);
+                    }}
+                  >
+                    <Image
+                      style={styles.imgList}
+                      source={{ uri: item.image }}
+                    />
+                    <Text adjustsFontSizeToFit style={styles.textList}>
+                      {item.title}
+                    </Text>
+                  </TouchableOpacity>
+                );
               }}
-              onClear={() => {
-                this.clearFilter();
-              }}
-              placeholder="Location Name"
             />
-          ) : (
-            <View />
-          )}
-
+            <Icon
+              raised
+              name={this.state.searchIconType}
+              containerStyle={styles.searchButton}
+              type="font-awesome"
+              color="#442C2E"
+              opacity={0.5}
+              onPress={() => {
+                this.toggleSearchBar();
+              }}
+            />
+          </View>
           <View style={styles.locationDetail}>
             {this.state.isAddStoryFormVisible ? (
               // DISPLAY THE NEW STORY FORM
@@ -247,6 +271,21 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     color: "#032B2F",
     flexDirection: "column",
+  },
+
+  searchButton: {
+    opacity: 50,
+    position: "absolute",
+    top: 18,
+    right: 0,
+  },
+
+  searchBar: {
+    backgroundColor: "#442C2E",
+    // opacity: 0.5,
+    height: 80,
+    paddingTop: 20,
+    marginBottom: -40,
   },
 
   // Horizonthal locations list
