@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Card, SearchBar, Icon } from "react-native-elements";
 
-import { TEXT_COLOR } from "../constants/Colors";
+import { TEXT_COLOR, pinkDarker, brown, pink } from "../constants/Colors";
 
 import { createStackNavigator, NavigationActions } from "react-navigation";
 
@@ -37,7 +37,7 @@ class Home extends React.Component {
       isAddStoryFormVisible: false,
       isSearchBarVisible: true,
     };
-    this.backupLocation =[];
+    this.backupLocation = [];
   }
 
   componentDidMount() {
@@ -53,8 +53,7 @@ class Home extends React.Component {
         this.setState({
           locations: newLocation,
         });
-        this.backupLocation = newLocation
-        
+        this.backupLocation = newLocation;
       })
       .catch((err) => {
         console.log("Error getting documents", err);
@@ -109,19 +108,19 @@ class Home extends React.Component {
 
   filter(text) {
     let newLocations = this.backupLocation.filter((location) =>
-    location.title.includes(text)
+      location.title.includes(text)
     );
     this.setState({
-    locations: newLocations,
+      locations: newLocations,
     });
-    }
-    
-    clearFilter() {
+  }
+
+  clearFilter() {
     this.setState({
-    // put back all the locations on the state
-    locations: this.backupLocation,
+      // put back all the locations on the state
+      locations: this.backupLocation,
     });
-    }
+  }
 
   render() {
     console.log("Rendering...");
@@ -129,7 +128,6 @@ class Home extends React.Component {
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container}>
-          
           <FlatList
             style={styles.locationList}
             horizontal={true}
@@ -153,20 +151,30 @@ class Home extends React.Component {
             }}
           />
 
-          
           {this.state.isSearchBarVisible ? (
             <SearchBar
-            round
-            searchIcon={{ size: 24 }}
-            onChangeText={(text)=>{this.filter(text)}}
-            onClear={()=>{this.clearFilter()}}
-            placeholder='Type Here...' 
-          />
+              round
+              //lightTheme
+              showLoading
+              platform="android"
+              searchIcon={{ size: 24 }}
+              clearIcon={true}
+              containerStyle={{ backgroundColor: "#442C2E" }}
+              inputStyle={{ backgroundColor: "white" }}
+              searchIcon={{ size: 24 }}
+              cancelIcon={{ type: "font-awesome", name: "chevron-left" }}
+              onChangeText={(text) => {
+                this.filter(text);
+              }}
+              onClear={() => {
+                this.clearFilter();
+              }}
+              placeholder="Location Name"
+            />
           ) : (
-            <View/>
+            <View />
           )}
 
-          
           <View style={styles.locationDetail}>
             {this.state.isAddStoryFormVisible ? (
               // DISPLAY THE NEW STORY FORM
