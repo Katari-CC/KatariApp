@@ -115,7 +115,6 @@ var styles = StyleSheet.create({
     height: 40,
     borderColor: "transparent",
     marginRight: 20,
-    color: "#442C2E",
   },
   body: {
     padding: 10,

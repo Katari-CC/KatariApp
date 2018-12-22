@@ -49,7 +49,10 @@ class Home extends React.Component {
       .get()
       .then((snapshot) => {
         (snapshot || []).forEach((doc) => {
-          newLocation.push(doc.data());
+          let tempLocation = doc.data();
+          // Need to pass a key parameter to avoid warning
+          tempLocation.key = doc.id;
+          newLocation.push(tempLocation);
         });
         this.setState({
           locations: newLocation,
