@@ -262,9 +262,7 @@ export default class AddLocation extends React.Component {
             >
               <Picker.Item
                 key={-1}
-                mode="dropdown"
-                textStyle={{ fontSize: 12, color: "yellow" }}
-                label="Select a Category"
+                label="  Click here to Select a Category"
                 value={undefined}
               />
               {this.state.categories.map((category, index) => (
@@ -275,7 +273,7 @@ export default class AddLocation extends React.Component {
               containerStyle={styles.formInput}
               inputStyle={styles.inputContainer}
               underlineColorAndroid="transparent"
-              placeholder="Enter a description about the location:"
+              placeholder="Description about the location"
               onChangeText={(text) =>
                 this.setState({ newLocationDescription: text })
               }
@@ -401,14 +399,25 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#442C2E",
   },
-
   formInput: {
-    backgroundColor: "white",
+    width: Dimensions.get("window").width - 40,
+    marginTop: 10,
+    paddingTop: 10,
     borderColor: "#442C2E",
-    borderWidth: 5,
-    borderRadius: 5,
-    marginTop: 5,
+    paddingBottom: 10,
+    borderWidth: 1.5,
+    paddingLeft: 8,
+    borderRadius: 8,
+    fontSize: 14,
   },
+
+  // formInput: {
+  //   backgroundColor: "white",
+  //   borderColor: "#442C2E",
+  //   borderWidth: 5,
+  //   borderRadius: 5,
+  //   marginTop: 5,
+  // },
   inputContainer: {
     marginLeft: 15,
     color: "#242124",
@@ -430,7 +439,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderColor: "#442C2E",
     alignItems: "center",
-    transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }],
   },
   imgLocation: {
     marginTop: 20,

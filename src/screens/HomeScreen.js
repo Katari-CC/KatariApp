@@ -148,10 +148,8 @@ class Home extends React.Component {
                   //lightTheme
                   showLoading
                   platform="android"
-                  searchIcon={{ size: 24 }}
                   containerStyle={{ backgroundColor: "#442C2E" }}
                   inputStyle={{ backgroundColor: "white" }}
-                  searchIcon={{ size: 24 }}
                   onChangeText={(text) => {
                     this.filter(text);
                   }}

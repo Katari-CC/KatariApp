@@ -148,23 +148,8 @@ class StoryForm extends React.Component {
       <View>
         <Card containerStyle={styles.inputCard}>
           <View style={styles.inputCard}>
-            <Text>Tell your story</Text>
-            <Button
-              title="Provide an Image"
-              buttonStyle={styles.button}
-              onPress={() => {
-                this.imageDialog();
-              }}
-            />
+            <Text style={styles.detailTitle}>Tell your story</Text>
 
-            {this.state.newStoryImageURI ? (
-              <Image
-                style={styles.imgStory}
-                source={{ uri: this.state.newStoryImageURI }}
-              />
-            ) : (
-              <Text>No image</Text>
-            )}
             <TextInput
               style={styles.textInput}
               placeholder="Give your story a title"
@@ -175,6 +160,22 @@ class StoryForm extends React.Component {
               multiline={true}
               placeholder="Give us your best story"
               onChangeText={(text) => this.setState({ newStoryText: text })}
+            />
+
+            {this.state.newStoryImageURI ? (
+              <Image
+                style={styles.imgStory}
+                source={{ uri: this.state.newStoryImageURI }}
+              />
+            ) : (
+              <Text style={styles.textList}>No image</Text>
+            )}
+            <Button
+              title="Provide an Image"
+              buttonStyle={styles.button}
+              onPress={() => {
+                this.imageDialog();
+              }}
             />
             <Button
               title="Save your story"
@@ -200,25 +201,34 @@ class StoryForm extends React.Component {
 }
 
 var styles = StyleSheet.create({
+  detailTitle: {
+    margin: 1,
+    fontSize: 25,
+    textAlign: "center",
+    color: "#442C2E",
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  textList: {
+    marginTop: 20,
+    fontWeight: "bold",
+    color: "#442C2E",
+  },
   inputCard: {
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    // width: Dimensions.get("screen").width - 20,
     borderRadius: 10,
   },
   button: {
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#56b1bf",
-    // width: "100%",
-    // height: 50,
     borderWidth: 0,
     borderRadius: 5,
     marginTop: 10,
     paddingLeft: 50,
     paddingRight: 50,
-    // marginBottom: 10
   },
   imgStory: {
     width: 200,
@@ -229,9 +239,6 @@ var styles = StyleSheet.create({
     marginTop: 10,
     paddingTop: 10,
     paddingBottom: 10,
-    // height: 50,
-    // backgroundColor: "#08708A",
-    // color: "white",
     borderWidth: 1.5,
     paddingLeft: 8,
     borderRadius: 8,
