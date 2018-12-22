@@ -17,13 +17,14 @@ import { self } from "../utils/quick_fix.js";
 
 import firebase from "../utils/firebaseClient";
 import AppNavigator from "../navigation/AppNavigator";
-
+import MyStories from "./MyStories";
 import StoryCard from "../components/StoryCard";
 import { Text, Button, Card } from "react-native-elements";
 import firestore from "../utils/firestore";
 import "firebase/firestore";
+import { createStackNavigator, NavigationActions } from "react-navigation";
 
-export default class ProfileScreen extends React.Component {
+class Profile extends React.Component {
   static navigationOptions = {
     title: "Profile",
     header: null,
@@ -41,7 +42,9 @@ export default class ProfileScreen extends React.Component {
       newStoryTitle: "",
       newStoryText: "",
     };
+    this.toMyStories = this.toMyStories.bind(this);
   }
+
   componentDidMount() {
     newReviews = [];
     firestore
@@ -72,6 +75,16 @@ export default class ProfileScreen extends React.Component {
       currentUserImageURL: currentUser.photoURL,
     });
   }
+
+  toMyStories = () => {
+    const navigateAction = NavigationActions.navigate({
+      routeName: "MyStories",
+      params: {
+        stories: this.state.stories,
+      },
+    });
+    this.props.navigation.dispatch(navigateAction);
+  };
 
   toggleModal = () => {
     this.setState({ modalVisible: !this.state.modalVisible });
@@ -127,39 +140,13 @@ export default class ProfileScreen extends React.Component {
             source={require("../../assets/images/avatar.png")}
           />
         )}
-        <ScrollView
-          style={styles.storyList}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          removeClippedSubviews
-          bounce={true}
-          overScrollMode="always"
-          centerContent={true}
-        >
-          {this.state.stories &&
-            this.state.stories.map((story, index) => {
-              return (
-                <StoryCard
-                  key={index}
-                  story={story}
-                  navigation={this.props.navigation}
-                />
-              );
-            })}
-          {!this.state.stories ? (
-            <Card
-              title={"No stories yet. Add one!"}
-              containerStyle={styles.storyCard}
-            />
-          ) : (
-            <View />
-          )}
-        </ScrollView>
-        {/* <View
-            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-          >
-            <StatusBar barStyle="default" />
-          </View> */}
+        <Button
+          buttonStyle={styles.button}
+          title="My Stories"
+          onPress={() => {
+            this.toMyStories();
+          }}
+        />
 
         <Button
           buttonStyle={styles.button}
@@ -226,3 +213,23 @@ const styles = StyleSheet.create({
     borderRadius: 75,
   },
 });
+
+const ProfileScreen = createStackNavigator(
+  {
+    Profile: { screen: Profile },
+    MyStories: {
+      screen: MyStories,
+      navigationOptions: () => ({
+        backBehavior: "initialRoute",
+      }),
+    },
+  },
+  {
+    initialRouteName: "Profile",
+    headerMode: "none",
+  }
+);
+ProfileScreen.navigationOptions = {
+  header: null,
+};
+export default ProfileScreen;

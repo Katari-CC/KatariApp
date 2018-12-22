@@ -7,7 +7,7 @@ import {
 } from "react-native";
 
 import React from "react";
-import { Card, Avatar, Divider } from "react-native-elements";
+import { Card, Avatar, Divider, Icon } from "react-native-elements";
 
 import { createStackNavigator, NavigationActions } from "react-navigation";
 
@@ -21,7 +21,9 @@ class StoryCard extends React.Component {
     super(props);
     this.state = {
       story: props.story,
+      allowEdit: props.allowEdit,
       user: null,
+      toggleDelete: false,
     };
   }
 
@@ -43,6 +45,12 @@ class StoryCard extends React.Component {
       });
   }
 
+  handleLongPress = () => {
+    if (this.state.allowEdit) {
+      this.setState({ toggleDelete: true });
+    }
+  };
+
   onStoryPress = () => {
     const navigateAction = NavigationActions.navigate({
       routeName: "Story",
@@ -63,7 +71,10 @@ class StoryCard extends React.Component {
     if (this.state.user) {
       return (
         <Card containerStyle={styles.storyCard}>
-          <TouchableOpacity onPress={() => this.onStoryPress()}>
+          <TouchableOpacity
+            onPress={() => this.onStoryPress()}
+            onLongPress={() => this.handleLongPress()}
+          >
             <View style={styles.userTitle}>
               <Avatar
                 rounded

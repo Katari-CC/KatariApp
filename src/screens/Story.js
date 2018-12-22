@@ -7,8 +7,9 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
+  Alert,
 } from "react-native";
-import { Card, Button, Avatar } from "react-native-elements";
+import { Card, Button, Avatar, Icon } from "react-native-elements";
 import firestore from "../utils/firestore";
 import firebase from "../utils/firebaseClient";
 import { ScrollView } from "react-native-gesture-handler";
@@ -25,16 +26,63 @@ export default class Location extends React.Component {
       title: this.props.navigation.state.params.title,
       story: this.props.navigation.state.params.story,
       image: this.props.navigation.state.params.image,
+      viewer: firebase.auth().currentUser.displayName,
       // color: this.props.navigation.state.params.color,
     };
+    this.displayOptions = this.displayOptions.bind(this);
   }
 
   componentDidMount() {}
+
+  displayOptions = () => {
+    Alert.alert(
+      "Options",
+      "Choose an option:",
+      [
+        {
+          text: "Edit Story",
+          onPress: () => {
+            console.log("Edit the story clicked.");
+          },
+        },
+        {
+          text: "Delete Story",
+          onPress: () => {
+            firestore
+              .collection("stories")
+              .delete()
+              .where("title", "==", this.state.title)
+              .then(function() {
+                console.log("Document successfully deleted!");
+              })
+              .catch(function(error) {
+                console.error("Error removing document: ", error);
+              });
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
 
   render() {
     return (
       <View styles={styles.container}>
         <Card containerStyle={styles.cardContainer}>
+          <View styles={styles.options}>
+            {this.state.viewer == this.state.username ? (
+              <View styles={styles.icon}>
+                <Icon
+                  name="md-settings"
+                  type="ionicon"
+                  onPress={() => this.displayOptions()}
+                  size={25}
+                />
+              </View>
+            ) : (
+              <View />
+            )}
+          </View>
           <ScrollView contentContainerStyle={styles.cardContent}>
             <Avatar
               rounded
@@ -67,6 +115,15 @@ export default class Location extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  options: {
+    position: "absolute",
+    right: 0,
+    top: 0,
+  },
+  icon: {
+    width: "30",
+    height: "30",
+  },
   container: {
     backgroundColor: "red",
   },
