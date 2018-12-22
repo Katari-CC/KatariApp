@@ -45,6 +45,7 @@ class MyStories extends React.Component {
             this.state.stories.map((story, index) => {
               return (
                 <StoryCard
+                  prevRoute="MyStories"
                   key={index}
                   story={story}
                   allowEdit={true}

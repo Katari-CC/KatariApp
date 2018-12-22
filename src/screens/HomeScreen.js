@@ -78,8 +78,9 @@ class Home extends React.Component {
       .then((snapshot) => {
         stories = [];
         (snapshot || []).forEach((doc) => {
-          tempStory = doc.data();
-          stories.push(tempStory);
+          let story = doc.data();
+          story.id = doc.id;
+          stories.push(story);
         });
         return stories;
       })
@@ -238,6 +239,7 @@ class Home extends React.Component {
                   {this.state.stories.map((story, index) => {
                     return (
                       <StoryCard
+                        prevRoute="Home"
                         key={index}
                         story={story}
                         navigation={this.props.navigation}
