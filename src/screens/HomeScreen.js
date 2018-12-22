@@ -37,6 +37,7 @@ class Home extends React.Component {
       isAddStoryFormVisible: false,
       isSearchBarVisible: false,
       searchIconType: "search",
+      locationSelected: false,
     };
     this.backupLocation = [];
   }
@@ -66,6 +67,7 @@ class Home extends React.Component {
 
   onItemListClick = (item) => {
     this.setState({
+      locationSelected: true,
       selectedLocation: item,
       isAddStoryFormVisible: false,
     });
@@ -208,7 +210,7 @@ class Home extends React.Component {
                 toggleDisplayForm={this.toggleFormDisplay}
                 addStory={this.addStory}
               />
-            ) : (
+            ) : this.state.locationSelected ? (
               // DISPLAY THE DESCRIPTION TEXT
               <View style={styles.storyContainer}>
                 <Panel
@@ -259,6 +261,10 @@ class Home extends React.Component {
                   </Card>
                 </ScrollView>
               </View>
+            ) : (
+              <View>
+                <Text style={styles.filler}>Choose a location</Text>
+              </View>
             )}
           </View>
         </ScrollView>
@@ -301,7 +307,11 @@ const styles = StyleSheet.create({
   locationItem: {
     padding: 6,
   },
-
+  filler: {
+    textAlign: "center",
+    fontSize: 30,
+    marginTop: 20,
+  },
   imgList: {
     height: Dimensions.get("window").height / 3,
     width: Dimensions.get("window").width / 1.7,
