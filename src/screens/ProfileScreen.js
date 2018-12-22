@@ -53,7 +53,9 @@ class Profile extends React.Component {
       .get()
       .then((snapshot) => {
         (snapshot || []).forEach((doc) => {
-          newReviews.push(doc.data());
+          let story = doc.data();
+          story.id = doc.id;
+          newReviews.push(story);
         });
       })
       .then(() => {

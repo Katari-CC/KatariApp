@@ -42,7 +42,9 @@ class LocationScreen extends React.Component {
       .get()
       .then((snapshot) => {
         (snapshot || []).forEach((doc) => {
-          stories.push(doc.data());
+          let story = doc.data();
+          story.id = doc.id;
+          stories.push(story);
         });
       })
       .then(() => {
@@ -72,6 +74,7 @@ class LocationScreen extends React.Component {
     const navigateAction = NavigationActions.navigate({
       routeName: "Story",
       params: {
+        id: story.id,
         title: story.title,
         story: story.story,
         username: story.username,
@@ -153,6 +156,7 @@ class LocationScreen extends React.Component {
               {this.state.stories.map((story, index) => {
                 return (
                   <StoryCard
+                    prevRoute="Location"
                     key={index}
                     story={story}
                     navigation={this.props.navigation}

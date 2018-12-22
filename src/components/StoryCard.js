@@ -20,6 +20,7 @@ class StoryCard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      prevRoute: props.prevRoute,
       story: props.story,
       allowEdit: props.allowEdit,
       user: null,
@@ -55,23 +56,33 @@ class StoryCard extends React.Component {
     const navigateAction = NavigationActions.navigate({
       routeName: "Story",
       params: {
+        id: this.state.story.id,
         title: this.state.story.title,
         story: this.state.story.story,
         username: this.state.user.displayName,
         avatar: this.state.user.photoURL,
         image: this.state.story.photoURL,
+        handleDelete: this.handleDelete,
+        prevRoute: this.state.prevRoute,
       },
     });
     this.props.navigation.dispatch(navigateAction);
   };
 
+  handleDelete = (id) => {
+    if (this.state.story.id == id) {
+      this.setState({ user: null });
+    }
+  };
+
   render() {
-    console.log("Rendering StoryCard...");
+    // console.log("Rendering StoryCard...");
 
     if (this.state.user) {
       return (
         <Card containerStyle={styles.storyCard}>
           <TouchableOpacity
+            // key={this.state.id}
             onPress={() => this.onStoryPress()}
             onLongPress={() => this.handleLongPress()}
           >

@@ -37,6 +37,7 @@ class Home extends React.Component {
       isAddStoryFormVisible: false,
       isSearchBarVisible: false,
       searchIconType: "search",
+      locationSelected: false,
     };
     this.backupLocation = [];
   }
@@ -66,6 +67,7 @@ class Home extends React.Component {
 
   onItemListClick = (item) => {
     this.setState({
+      locationSelected: true,
       selectedLocation: item,
       isAddStoryFormVisible: false,
     });
@@ -78,8 +80,9 @@ class Home extends React.Component {
       .then((snapshot) => {
         stories = [];
         (snapshot || []).forEach((doc) => {
-          tempStory = doc.data();
-          stories.push(tempStory);
+          let story = doc.data();
+          story.id = doc.id;
+          stories.push(story);
         });
         return stories;
       })
@@ -207,7 +210,7 @@ class Home extends React.Component {
                 toggleDisplayForm={this.toggleFormDisplay}
                 addStory={this.addStory}
               />
-            ) : (
+            ) : this.state.locationSelected ? (
               // DISPLAY THE DESCRIPTION TEXT
               <View style={styles.storyContainer}>
                 <Panel
@@ -238,6 +241,7 @@ class Home extends React.Component {
                   {this.state.stories.map((story, index) => {
                     return (
                       <StoryCard
+                        prevRoute="Home"
                         key={index}
                         story={story}
                         navigation={this.props.navigation}
@@ -256,6 +260,10 @@ class Home extends React.Component {
                     </TouchableOpacity>
                   </Card>
                 </ScrollView>
+              </View>
+            ) : (
+              <View>
+                <Text style={styles.filler}>Choose a location</Text>
               </View>
             )}
           </View>
@@ -299,7 +307,11 @@ const styles = StyleSheet.create({
   locationItem: {
     padding: 6,
   },
-
+  filler: {
+    textAlign: "center",
+    fontSize: 30,
+    marginTop: 20,
+  },
   imgList: {
     height: Dimensions.get("window").height / 3,
     width: Dimensions.get("window").width / 1.7,
