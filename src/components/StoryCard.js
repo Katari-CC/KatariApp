@@ -7,7 +7,7 @@ import {
 } from "react-native";
 
 import React from "react";
-import { Card, Avatar, Divider } from "react-native-elements";
+import { Card, Avatar, Divider, Icon } from "react-native-elements";
 
 import { createStackNavigator, NavigationActions } from "react-navigation";
 
@@ -20,8 +20,11 @@ class StoryCard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      prevRoute: props.prevRoute,
       story: props.story,
+      allowEdit: props.allowEdit,
       user: null,
+      toggleDelete: false,
     };
   }
 
@@ -43,27 +46,46 @@ class StoryCard extends React.Component {
       });
   }
 
+  handleLongPress = () => {
+    if (this.state.allowEdit) {
+      this.setState({ toggleDelete: true });
+    }
+  };
+
   onStoryPress = () => {
     const navigateAction = NavigationActions.navigate({
       routeName: "Story",
       params: {
+        id: this.state.story.id,
         title: this.state.story.title,
         story: this.state.story.story,
         username: this.state.user.displayName,
         avatar: this.state.user.photoURL,
         image: this.state.story.photoURL,
+        handleDelete: this.handleDelete,
+        prevRoute: this.state.prevRoute,
       },
     });
     this.props.navigation.dispatch(navigateAction);
   };
 
+  handleDelete = (id) => {
+    if (this.state.story.id == id) {
+      this.setState({ user: null });
+    }
+  };
+
   render() {
-    console.log("Rendering StoryCard...");
+    // console.log("Rendering StoryCard...");
 
     if (this.state.user) {
       return (
         <Card containerStyle={styles.storyCard}>
-          <TouchableOpacity onPress={() => this.onStoryPress()}>
+          <TouchableOpacity
+            // key={this.state.id}
+            onPress={() => this.onStoryPress()}
+            onLongPress={() => this.handleLongPress()}
+          >
             <View style={styles.userTitle}>
               <Avatar
                 rounded

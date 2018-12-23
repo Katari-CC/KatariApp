@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Avatar } from "react-native-elements";
 import MapView, { PROVIDER_GOOGLE, Marker, Callout } from "react-native-maps";
+// import MapView from "@bam.tech/react-native-component-map-clustering";
 import { DEFAULT_MAP } from "../constants/MapLayout";
 import { getLocationPermission } from "../utils/permissions";
 // import Svg from 'expo';
@@ -205,6 +206,7 @@ class Main extends React.Component {
           moveOnMarkerPress
           showsUserLocation
           showsCompass
+          // clustering={true}
           customMapStyle={DEFAULT_MAP}
           showsPointsOfInterest={false}
           provider={PROVIDER_GOOGLE}
