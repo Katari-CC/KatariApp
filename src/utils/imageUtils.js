@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Alert } from "react-native";
-import { ImagePicker, Permissions } from "expo";
+import { ImagePicker, Permissions, ImageManipulator } from "expo";
 
 import firestore from "../utils/firestore";
 import firebase from "../utils/firebaseClient";
@@ -10,7 +10,17 @@ import firebase from "../utils/firebaseClient";
 import { self } from "../utils/quick_fix.js";
 
 uploadImage = async (uri, path, name) => {
-  const response = await fetch(uri);
+  const resizedImageURI = await ImageManipulator.manipulateAsync(
+    uri,
+    [
+      {
+        resize: { height: 394, width: 700 },
+      },
+    ],
+    { format: "jpg" }
+  );
+  console.log("Resized Img URL:", resizedImageURI);
+  const response = await fetch(resizedImageURI.uri);
   const blob = await response.blob();
   var ref = firebase
     .storage()
@@ -26,7 +36,7 @@ pickImage = async (path, name, state) => {
   // Gallery Image Picker
   let pickerResult = await ImagePicker.launchImageLibraryAsync({
     allowsEditing: true,
-    aspect: [4, 3],
+    aspect: [16, 9],
   });
   return pickerResult;
 };

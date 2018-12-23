@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     paddingLeft: 8,
     borderRadius: 8,
-    fontSize: 14,
+    // fontSize: 14,
   },
   inputContainer: {
     marginLeft: 15,
