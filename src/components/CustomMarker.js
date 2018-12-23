@@ -37,7 +37,10 @@ class CustomMarker extends React.Component {
         onPress={() => this.props.onMarkerPress(this.state.marker)}
       >
         {/* <Image style={styles.locationImage} source={{uri: marker.image}} /> */}
-        <Avatar rounded source={{ uri: this.state.marker.image }} />
+        <Avatar
+          rounded
+          source={{ uri: this.state.marker.thumb || this.state.marker.image }}
+        />
         {/* <Callout
               containerStyle={styles.callout}
               onPress={() => this.onMarkerPress(marker)}
