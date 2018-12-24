@@ -249,16 +249,16 @@ class Home extends React.Component {
                     );
                   })}
 
-                  <Card containerStyle={styles.addCard}>
-                    <TouchableOpacity
-                      // style={styles.addCard}
-                      onPress={() =>
-                        this.setState({ isAddStoryFormVisible: true })
-                      }
-                    >
+                  <TouchableOpacity
+                    // style={styles.addCard}
+                    onPress={() =>
+                      this.setState({ isAddStoryFormVisible: true })
+                    }
+                  >
+                    <Card containerStyle={styles.addCard}>
                       <Text style={styles.addBtnText}>+</Text>
-                    </TouchableOpacity>
-                  </Card>
+                    </Card>
+                  </TouchableOpacity>
                 </ScrollView>
               </View>
             ) : (
@@ -313,8 +313,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   imgList: {
+    // height: Dimensions.get("window").height / 3,
+    // width: Dimensions.get("window").width / 1.7,
     height: Dimensions.get("window").height / 3,
-    width: Dimensions.get("window").width / 1.7,
+    width: Dimensions.get("window").width / 1.5,
     borderRadius: 5,
     margin: 2,
   },
