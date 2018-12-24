@@ -57,7 +57,7 @@ class StoryForm extends React.Component {
         .then((docRef) => {
           if (this.state.newStoryImageURI) {
             console.log("Story Created successfully, ID=>", docRef.id);
-            uploadImage(this.state.newStoryImageURI, "/stories/", docRef.id)
+            (this.state.newStoryImageURI, "/stories/", docRef.id)
               .then((snapshot) => {
                 console.log("Image Uploaded Succesfully");
                 snapshot.ref.getDownloadURL().then((downloadURL) => {

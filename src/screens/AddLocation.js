@@ -410,14 +410,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     // fontSize: 14,
   },
-
-  // formInput: {
-  //   backgroundColor: "white",
-  //   borderColor: "#442C2E",
-  //   borderWidth: 5,
-  //   borderRadius: 5,
-  //   marginTop: 5,
-  // },
   inputContainer: {
     marginLeft: 15,
     color: "#242124",
