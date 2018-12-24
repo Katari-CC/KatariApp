@@ -151,13 +151,16 @@ class StoryForm extends React.Component {
             <Text style={styles.detailTitle}>Tell your story</Text>
 
             <TextInput
-              style={styles.textInput}
+              style={styles.storytitle}
+              underlineColorAndroid="transparent"
               placeholder="Give your story a title"
               onChangeText={(text) => this.setState({ newStoryTitle: text })}
             />
             <TextInput
-              style={styles.textInput}
+              style={styles.textarea}
               multiline={true}
+              numberOfLines={5}
+              underlineColorAndroid="transparent"
               placeholder="Give us your best story"
               onChangeText={(text) => this.setState({ newStoryText: text })}
             />
@@ -243,6 +246,27 @@ var styles = StyleSheet.create({
     paddingLeft: 8,
     borderRadius: 8,
     fontSize: 14,
+  },
+  textarea: {
+    height: 100,
+    borderColor: "#442C2E",
+    width: Dimensions.get("window").width - 40,
+    marginTop: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
+    borderWidth: 1.5,
+    paddingLeft: 8,
+    borderRadius: 8,
+  },
+  storytitle: {
+    width: Dimensions.get("window").width - 40,
+    marginTop: 10,
+    paddingTop: 10,
+    borderColor: "#442C2E",
+    paddingBottom: 10,
+    borderWidth: 1.5,
+    paddingLeft: 8,
+    borderRadius: 8,
   },
   backBtn: {
     position: "absolute",
