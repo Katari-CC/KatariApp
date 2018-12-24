@@ -1,25 +1,15 @@
 import React from "react";
+import { View, Alert, Image, StyleSheet, TouchableOpacity } from "react-native";
 import {
-  ScrollView,
-  View,
-  Clipboard,
-  ActivityIndicator,
-  Share,
-  Image,
-  StyleSheet,
-  StatusBar,
-  FlatList,
-} from "react-native";
-import ImageUploadModal from "../components/ImageUploadModal";
-
-// File to import to allow upload of the picure on the firebase storage
-import { self } from "../utils/quick_fix.js";
+  getCameraPermission,
+  getCameraRollPermission,
+} from "../utils/permissions";
+import { ImagePicker, Permissions } from "expo";
 
 import firebase from "../utils/firebaseClient";
 import AppNavigator from "../navigation/AppNavigator";
 import MyStories from "./MyStories";
-import StoryCard from "../components/StoryCard";
-import { Text, Button, Card } from "react-native-elements";
+import { Text, Button } from "react-native-elements";
 import firestore from "../utils/firestore";
 import "firebase/firestore";
 import { createStackNavigator, NavigationActions } from "react-navigation";
@@ -32,7 +22,6 @@ class Profile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      modalVisible: false,
       currentUserEmail: "Not available",
       currentUserUID: "",
       currentUserImageURL: null,
@@ -88,10 +77,6 @@ class Profile extends React.Component {
     this.props.navigation.dispatch(navigateAction);
   };
 
-  toggleModal = () => {
-    this.setState({ modalVisible: !this.state.modalVisible });
-  };
-
   updateProfileImage = (newProfileURL) => {
     this.setState({
       currentUserImageURL: newProfileURL,
@@ -112,15 +97,128 @@ class Profile extends React.Component {
       .catch((err) => console.log("logout error", err));
   };
 
-  render() {
-    if (this.state.modalVisible) {
-      return (
-        <ImageUploadModal
-          goback={this.toggleModal}
-          updateProfileImage={this.updateProfileImage}
-        />
-      );
+  _pickImage = async () => {
+    // Request Gallery Permissions
+    await Permissions.askAsync(Permissions.CAMERA_ROLL);
+
+    let pickerResult = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+    });
+    if (!pickerResult.cancelled) {
+      console.log("Here is your link", pickerResult.uri);
+      this.uploadImage(pickerResult.uri)
+        .then((snapshot) => {
+          console.log("Image correctly uploaded");
+          snapshot.ref.getDownloadURL().then((downloadURL) => {
+            console.log("Image available at", downloadURL);
+            this.setState({
+              currentUserImageURL: downloadURL,
+            });
+            this.updateProfileImage(downloadURL);
+          });
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     }
+  };
+
+  uploadImage = async (uri) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    var ref = firebase
+      .storage()
+      .ref()
+      .child("profile_img/" + this.state.currentUserUID + ".jpg");
+    return ref.put(blob);
+  };
+
+  updateProfileImage(url) {
+    // Update the user account photoURL
+    firebase
+      .auth()
+      .currentUser.updateProfile({
+        photoURL: url,
+      })
+      .then(() => {
+        console.log("Profile Picture updated");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    // Update the user table
+    console.log("trying to update img for user: ", this.state.currentUserUID);
+    firestore
+      .collection("users")
+      .where("uid", "==", this.state.currentUserUID)
+      .get()
+      .then((snapshot) => {
+        snapshot.forEach((doc) => {
+          firestore
+            .collection("users")
+            .doc(doc.id)
+            .update({
+              photoURL: url,
+            });
+        });
+      });
+    // Update the Image Component of the profile screen
+    this.updateProfileImage(url);
+  }
+
+  _takePhoto = async () => {
+    // Request Camera  Permissions
+    await Permissions.askAsync(Permissions.CAMERA);
+
+    let pickerResult = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+    });
+
+    if (!pickerResult.cancelled) {
+      console.log("Local path to the picture:", pickerResult.uri);
+      this.uploadImage(pickerResult.uri)
+        .then((snapshot) => {
+          console.log("Image correctly uploaded");
+          snapshot.ref.getDownloadURL().then((downloadURL) => {
+            console.log("Image available at", downloadURL);
+            this.setState({
+              currentUserImageURL: downloadURL,
+            });
+            this.updateProfileImage(downloadURL);
+          });
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  };
+
+  imageDialog = (path, imgName) => {
+    Alert.alert(
+      "Upload an Image with your story",
+      "Pick a method:",
+      [
+        {
+          text: "Select from Gallery",
+          onPress: () => {
+            this._pickImage();
+          },
+        },
+        {
+          text: "Take a picture",
+          onPress: () => {
+            this._takePhoto();
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  render() {
     return (
       <View style={styles.container}>
         <Text style={styles.username}>
@@ -128,33 +226,37 @@ class Profile extends React.Component {
         </Text>
 
         {this.state.currentUserImageURL ? (
-          <Image
-            style={styles.avatar}
-            resizeMode="cover"
-            source={{
-              uri: this.state.currentUserImageURL,
+          <TouchableOpacity
+            onPress={() => {
+              this.imageDialog();
             }}
-          />
+          >
+            <Image
+              style={styles.avatar}
+              resizeMode="cover"
+              source={{
+                uri: this.state.currentUserImageURL,
+              }}
+            />
+          </TouchableOpacity>
         ) : (
-          <Image
-            style={styles.avatar}
-            resizeMode="cover"
-            source={require("../../assets/images/avatar.png")}
-          />
+          <TouchableOpacity
+            onPress={() => {
+              this.imageDialog();
+            }}
+          >
+            <Image
+              style={styles.avatar}
+              resizeMode="cover"
+              source={require("../../assets/images/avatar.png")}
+            />
+          </TouchableOpacity>
         )}
         <Button
           buttonStyle={styles.button}
           title="My Stories"
           onPress={() => {
             this.toMyStories();
-          }}
-        />
-
-        <Button
-          buttonStyle={styles.button}
-          title="Change the profile picture"
-          onPress={() => {
-            this.toggleModal();
           }}
         />
 
