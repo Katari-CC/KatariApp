@@ -140,6 +140,12 @@ class Home extends React.Component {
     }
   }
 
+  componentDidUpdate() {
+    if (this.state.isSearchBarVisible) {
+      this.search.focus();
+    }
+  }
+
   render() {
     console.log("Rendering...");
 
@@ -154,6 +160,7 @@ class Home extends React.Component {
                   //lightTheme
                   showLoading
                   platform="android"
+                  ref={(search) => (this.search = search)}
                   containerStyle={{ backgroundColor: "#442C2E" }}
                   inputStyle={{ backgroundColor: "white" }}
                   onChangeText={(text) => {
