@@ -38,8 +38,16 @@ class Home extends React.Component {
       isSearchBarVisible: false,
       searchIconType: "search",
       locationSelected: false,
+      imgListStyle: {
+        height: Dimensions.get("window").height / 1.4,
+        width: Dimensions.get("window").width / 1.3,
+        borderRadius: 5,
+        margin: 2,
+      },
     };
     this.backupLocation = [];
+    this.changeBigImage = this.changeBigImage.bind(this);
+    this.changeSmallImage = this.changeSmallImage.bind(this);
   }
 
   componentDidMount() {
@@ -65,11 +73,33 @@ class Home extends React.Component {
       });
   }
 
+  changeBigImage = () => {
+    this.setState({
+      locationSelected: false,
+      imgListStyle: {
+        height: Dimensions.get("window").height / 1.4,
+        width: Dimensions.get("window").width / 1.5,
+        borderRadius: 5,
+        margin: 2,
+      },
+    });
+  };
+
+  changeSmallImage = () => {
+    this.setState({});
+  };
+
   onItemListClick = (item) => {
     this.setState({
       locationSelected: true,
       selectedLocation: item,
       isAddStoryFormVisible: false,
+      imgListStyle: {
+        height: Dimensions.get("window").height / 3,
+        width: Dimensions.get("window").width / 1.5,
+        borderRadius: 5,
+        margin: 2,
+      },
     });
 
     // let avatar;
@@ -176,6 +206,7 @@ class Home extends React.Component {
               horizontal={true}
               data={this.state.locations}
               keyExtractor={this._keyExtractor}
+              onScroll={() => this.changeBigImage()}
               renderItem={({ item, index }) => {
                 return (
                   <TouchableOpacity
@@ -186,7 +217,7 @@ class Home extends React.Component {
                     }}
                   >
                     <Image
-                      style={styles.imgList}
+                      style={this.state.imgListStyle}
                       source={{ uri: item.image }}
                     />
                     <Text adjustsFontSizeToFit style={styles.textList}>
@@ -300,12 +331,13 @@ const styles = StyleSheet.create({
     // opacity: 0.5,
     height: 80,
     paddingTop: 20,
-    marginBottom: -40,
+    marginBottom: -80,
   },
 
   // Horizonthal locations list
   locationList: {
     paddingTop: 60,
+    marginTop: 20,
   },
   storyList: {
     paddingTop: 20,
@@ -324,7 +356,7 @@ const styles = StyleSheet.create({
     // height: Dimensions.get("window").height / 3,
     // width: Dimensions.get("window").width / 1.5,
     height: Dimensions.get("window").height / 1.4,
-    width: Dimensions.get("window").width / 1.5,
+    width: Dimensions.get("window").width / 1.3,
     borderRadius: 5,
     margin: 2,
   },
