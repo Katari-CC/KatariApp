@@ -1,20 +1,11 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
 import React from "react";
 import { Card, Avatar, Divider, Icon } from "react-native-elements";
 
 import { createStackNavigator, NavigationActions } from "react-navigation";
 
-import Story from "../screens/Story";
-
 import firestore from "../utils/firestore";
-import firebase from "../utils/firebaseClient";
 
 class StoryCard extends React.Component {
   constructor(props) {
@@ -149,6 +140,7 @@ var styles = StyleSheet.create({
     // borderColor: "black",
     // borderRadius: 100,
     // marginRight: 5,
+    // marginTop: 20,
     // marginBottom: 20,
   },
 });
