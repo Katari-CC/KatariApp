@@ -1,5 +1,12 @@
 import React from "react";
-import { StyleSheet, TextInput, View, Image, Alert } from "react-native";
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  Image,
+  Alert,
+  KeyboardAvoidingView,
+} from "react-native";
 import {
   Input,
   Text,
@@ -97,72 +104,78 @@ export default class SignUp extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        {this.state.errorMessage &&
-          //   <Text style={{ color: "red", textAlign: "center" }}>{this.state.errorMessage}</Text>
-          Alert.alert("Error filling out form.", this.state.errorMessage, [
-            { text: "OK", onPress: () => console.log("OK Pressed") },
-          ])}
-        <View style={styles.imageContainer}>
-          <Image
-            style={styles.avatar}
-            resizeMode="center"
-            source={require("../../assets/images/icon_white.png")}
-          />
-        </View>
-        {/* <GoogleSigninButton
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior="padding"
+          enabled
+        >
+          {this.state.errorMessage &&
+            //   <Text style={{ color: "red", textAlign: "center" }}>{this.state.errorMessage}</Text>
+            Alert.alert("Error filling out form.", this.state.errorMessage, [
+              { text: "OK", onPress: () => console.log("OK Pressed") },
+            ])}
+          <View style={styles.imageContainer}>
+            <Image
+              style={styles.avatar}
+              resizeMode="center"
+              source={require("../../assets/images/icon_white.png")}
+            />
+          </View>
+          {/* <GoogleSigninButton
           style={{ width: 48, height: 48 }}
           size={GoogleSigninButton.Size.Icon}
           color={GoogleSigninButton.Color.Dark}
           onPress={this._gsignIn}
           disabled={this.state.isSigninInProgress}
         /> */}
-        <FormLabel>Username</FormLabel>
-        <FormInput
-          containerStyle={styles.formInput}
-          underlineColorAndroid="transparent"
-          onChangeText={(username) => this.setState({ username })}
-          value={this.state.username}
-        />
-        <FormValidationMessage style={{ marginBottom: 0, marginTop: 0 }}>
-          {"required"}
-        </FormValidationMessage>
+          <FormLabel>Username</FormLabel>
+          <FormInput
+            containerStyle={styles.formInput}
+            underlineColorAndroid="transparent"
+            onChangeText={(username) => this.setState({ username })}
+            value={this.state.username}
+          />
+          <FormValidationMessage style={{ marginBottom: 0, marginTop: 0 }}>
+            {"required"}
+          </FormValidationMessage>
 
-        <FormLabel>Email</FormLabel>
-        <FormInput
-          containerStyle={styles.formInput}
-          inputStyle={styles.inputContainer}
-          underlineColorAndroid="transparent"
-          keyboardType="email-address"
-          onChangeText={(email) => this.setState({ email })}
-          value={this.state.email}
-        />
-        <FormValidationMessage style={{ marginBottom: 0, marginTop: 0 }}>
-          {"required"}
-        </FormValidationMessage>
-        <FormLabel>Password</FormLabel>
-        <FormInput
-          secureTextEntry
-          containerStyle={styles.formInput}
-          inputStyle={styles.inputContainer}
-          underlineColorAndroid="transparent"
-          onChangeText={(password) => this.setState({ password })}
-          value={this.state.password}
-        />
-        <FormValidationMessage style={{ marginBottom: 0 }}>
-          {"required"}
-        </FormValidationMessage>
-        {/* <Text style={styles.space} /> */}
-        <Button
-          buttonStyle={styles.button}
-          title="Sign Up"
-          onPress={this.handleSignUp}
-        />
-        <Text
-          style={styles.link}
-          onPress={() => this.props.navigation.navigate("Login")}
-        >
-          Already have an account? Log in here!
-        </Text>
+          <FormLabel>Email</FormLabel>
+          <FormInput
+            containerStyle={styles.formInput}
+            inputStyle={styles.inputContainer}
+            underlineColorAndroid="transparent"
+            keyboardType="email-address"
+            onChangeText={(email) => this.setState({ email })}
+            value={this.state.email}
+          />
+          <FormValidationMessage style={{ marginBottom: 0, marginTop: 0 }}>
+            {"required"}
+          </FormValidationMessage>
+          <FormLabel>Password</FormLabel>
+          <FormInput
+            secureTextEntry
+            containerStyle={styles.formInput}
+            inputStyle={styles.inputContainer}
+            underlineColorAndroid="transparent"
+            onChangeText={(password) => this.setState({ password })}
+            value={this.state.password}
+          />
+          <FormValidationMessage style={{ marginBottom: 0 }}>
+            {"required"}
+          </FormValidationMessage>
+          {/* <Text style={styles.space} /> */}
+          <Button
+            buttonStyle={styles.button}
+            title="Sign Up"
+            onPress={this.handleSignUp}
+          />
+          <Text
+            style={styles.link}
+            onPress={() => this.props.navigation.navigate("Login")}
+          >
+            Already have an account? Log in here!
+          </Text>
+        </KeyboardAvoidingView>
       </View>
     );
   }

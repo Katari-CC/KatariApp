@@ -1,5 +1,12 @@
 import React from "react";
-import { StyleSheet, TextInput, View, Image, Alert } from "react-native";
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  Image,
+  Alert,
+  KeyboardAvoidingView,
+} from "react-native";
 import {
   FormLabel,
   Text,
@@ -24,50 +31,56 @@ export default class Login extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        {this.state.errorMessage &&
-          //   <Text style={{ color: "red", textAlign: "center" }}>{this.state.errorMessage}</Text>
-          Alert.alert("Error filling out form.", this.state.errorMessage, [
-            { text: "OK", onPress: () => console.log("OK Pressed") },
-          ])}
-        <View style={styles.imageContainer}>
-          <Image
-            // style={styles.avatar}
-            resizeMode="center"
-            source={require("../../assets/images/icon_white.png")}
-          />
-        </View>
-        <FormLabel>Email</FormLabel>
-        <FormInput
-          containerStyle={styles.formInput}
-          inputStyle={styles.inputContainer}
-          underlineColorAndroid="transparent"
-          keyboardType="email-address"
-          onChangeText={(email) => this.setState({ email })}
-          value={this.state.email}
-        />
-        <FormValidationMessage>{"required"}</FormValidationMessage>
-        <FormLabel>Password</FormLabel>
-        <FormInput
-          secureTextEntry
-          containerStyle={styles.formInput}
-          inputStyle={styles.inputContainer}
-          underlineColorAndroid="transparent"
-          onChangeText={(password) => this.setState({ password })}
-          value={this.state.password}
-        />
-        <FormValidationMessage>{"required"}</FormValidationMessage>
-        <Text style={styles.space} />
-        <Button
-          buttonStyle={styles.button}
-          title="Login"
-          onPress={this.handleLogin}
-        />
-        <Text
-          style={styles.link}
-          onPress={() => this.props.navigation.navigate("SignUp")}
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior="padding"
+          enabled
         >
-          Don't have an account? Sign up here!
-        </Text>
+          {this.state.errorMessage &&
+            //   <Text style={{ color: "red", textAlign: "center" }}>{this.state.errorMessage}</Text>
+            Alert.alert("Error filling out form.", this.state.errorMessage, [
+              { text: "OK", onPress: () => console.log("OK Pressed") },
+            ])}
+          <View style={styles.imageContainer}>
+            <Image
+              // style={styles.avatar}
+              resizeMode="center"
+              source={require("../../assets/images/icon_white.png")}
+            />
+          </View>
+          <FormLabel>Email</FormLabel>
+          <FormInput
+            containerStyle={styles.formInput}
+            inputStyle={styles.inputContainer}
+            underlineColorAndroid="transparent"
+            keyboardType="email-address"
+            onChangeText={(email) => this.setState({ email })}
+            value={this.state.email}
+          />
+          <FormValidationMessage>{"required"}</FormValidationMessage>
+          <FormLabel>Password</FormLabel>
+          <FormInput
+            secureTextEntry
+            containerStyle={styles.formInput}
+            inputStyle={styles.inputContainer}
+            underlineColorAndroid="transparent"
+            onChangeText={(password) => this.setState({ password })}
+            value={this.state.password}
+          />
+          <FormValidationMessage>{"required"}</FormValidationMessage>
+          <Text style={styles.space} />
+          <Button
+            buttonStyle={styles.button}
+            title="Login"
+            onPress={this.handleLogin}
+          />
+          <Text
+            style={styles.link}
+            onPress={() => this.props.navigation.navigate("SignUp")}
+          >
+            Don't have an account? Sign up here!
+          </Text>
+        </KeyboardAvoidingView>
       </View>
     );
   }
