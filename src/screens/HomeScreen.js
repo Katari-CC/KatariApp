@@ -239,7 +239,7 @@ class Home extends React.Component {
                 >
                   {this.state.stories.length == 0 ? (
                     <Card
-                      title={"No stories yet. Add one!"}
+                      title={"This location has no stories."}
                       containerStyle={styles.storyCard}
                     />
                   ) : (
@@ -270,7 +270,7 @@ class Home extends React.Component {
               </View>
             ) : (
               <View>
-                <Text style={styles.filler}>Choose a location</Text>
+                {/* <Text style={styles.filler}>Choose a location</Text> */}
               </View>
             )}
           </View>
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
 
   // Horizonthal locations list
   locationList: {
-    paddingTop: 40,
+    paddingTop: 60,
   },
   storyList: {
     paddingTop: 20,
@@ -322,7 +322,9 @@ const styles = StyleSheet.create({
   imgList: {
     // height: Dimensions.get("window").height / 3,
     // width: Dimensions.get("window").width / 1.7,
-    height: Dimensions.get("window").height / 3,
+    // height: Dimensions.get("window").height / 3,
+    // width: Dimensions.get("window").width / 1.5,
+    height: Dimensions.get("window").height / 1.4,
     width: Dimensions.get("window").width / 1.5,
     borderRadius: 5,
     margin: 2,
