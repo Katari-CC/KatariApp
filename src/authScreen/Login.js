@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, TextInput, View, Image } from "react-native";
+import { StyleSheet, TextInput, View, Image, Alert } from "react-native";
 import {
   FormLabel,
   Text,
@@ -41,6 +41,7 @@ export default class Login extends React.Component {
           containerStyle={styles.formInput}
           inputStyle={styles.inputContainer}
           underlineColorAndroid="transparent"
+          keyboardType="email-address"
           onChangeText={(email) => this.setState({ email })}
           value={this.state.email}
         />
