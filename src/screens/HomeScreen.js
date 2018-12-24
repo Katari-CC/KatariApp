@@ -148,7 +148,6 @@ class Home extends React.Component {
 
   render() {
     console.log("Rendering...");
-
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container}>
@@ -201,9 +200,9 @@ class Home extends React.Component {
               raised
               name={this.state.searchIconType}
               containerStyle={styles.searchButton}
+              reverse
               type="font-awesome"
               color="#442C2E"
-              opacity={0.5}
               onPress={() => {
                 this.toggleSearchBar();
               }}
