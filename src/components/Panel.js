@@ -65,26 +65,27 @@ class Panel extends React.Component {
     }
 
     return (
-      <Animated.View
-        style={[styles.container, { height: this.state.animation }]}
+      <TouchableHighlight
+        style={styles.button}
+        onPress={this.toggle.bind(this)}
+        underlayColor="#f1f1f1"
       >
-        <View
-          style={styles.titleContainer}
-          onLayout={this._setMinHeight.bind(this)}
+        <Animated.View
+          style={[styles.container, { height: this.state.animation }]}
         >
-          <Text style={styles.title}>{this.props.title}</Text>
-          <TouchableHighlight
-            style={styles.button}
-            onPress={this.toggle.bind(this)}
-            underlayColor="#f1f1f1"
+          <View
+            style={styles.titleContainer}
+            onLayout={this._setMinHeight.bind(this)}
           >
+            <Text style={styles.title}>{this.props.title}</Text>
+
             <Image style={styles.buttonImage} source={icon} />
-          </TouchableHighlight>
-        </View>
-        <View style={styles.body} onLayout={this._setMaxHeight.bind(this)}>
-          {this.props.children}
-        </View>
-      </Animated.View>
+          </View>
+          <View style={styles.body} onLayout={this._setMaxHeight.bind(this)}>
+            {this.props.children}
+          </View>
+        </Animated.View>
+      </TouchableHighlight>
     );
   }
 }
