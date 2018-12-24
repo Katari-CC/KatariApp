@@ -29,7 +29,7 @@ export default class Story extends React.Component {
       story: this.props.navigation.state.params.story,
       image: this.props.navigation.state.params.image,
       viewer: firebase.auth().currentUser.displayName,
-      prevRoute: this.props.navigation.state.prevRoute,
+      prevRoute: this.props.navigation.state.params.prevRoute,
       // color: this.props.navigation.state.params.color,
     };
     this.displayOptions = this.displayOptions.bind(this);
@@ -38,14 +38,14 @@ export default class Story extends React.Component {
   componentDidMount() {}
 
   backToMyStories = () => {
-    const navigateAction = NavigationActions.navigate({
-      routeName: "Main",
-    });
-    this.props.navigation.dispatch(navigateAction);
     // const navigateAction = NavigationActions.navigate({
-    //   routeName: this.state.prevRoute,
+    //   routeName: "Main",
     // });
     // this.props.navigation.dispatch(navigateAction);
+    const navigateAction = NavigationActions.navigate({
+      routeName: this.state.prevRoute,
+    });
+    this.props.navigation.dispatch(navigateAction);
   };
 
   displayOptions = () => {
