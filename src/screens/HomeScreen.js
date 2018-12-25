@@ -9,6 +9,8 @@ import {
   Dimensions,
   TouchableOpacity,
   FlatList,
+  Animated,
+  Easing,
 } from "react-native";
 import { Card, SearchBar, Icon } from "react-native-elements";
 
@@ -39,15 +41,12 @@ class Home extends React.Component {
       searchIconType: "search",
       locationSelected: false,
       isImageSmall: false,
-      imgListStyle: {
-        height: Dimensions.get("window").height / 1.4,
-        width: Dimensions.get("window").width / 1.3,
-        borderRadius: 5,
-        margin: 2,
-      },
+      imgListStyle: {},
       listKey: 1,
     };
     this.backupLocation = [];
+    this.animateToSmall = new Animated.Value(0);
+    this.animateToBig = new Animated.Value(1);
     this.changeBigImage = this.changeBigImage.bind(this);
     this.changeSmallImage = this.changeSmallImage.bind(this);
   }
@@ -67,6 +66,26 @@ class Home extends React.Component {
         });
         this.setState({
           locations: newLocation,
+          imgListStyle: {
+            height: Dimensions.get("window").height / 1.4,
+            width: Dimensions.get("window").width / 1.5,
+            borderRadius: 5,
+            margin: 2,
+            // transform: [
+            //   {
+            //     translateY: this.animateToSmall.interpolate({
+            //       inputRange: [0, 1],
+            //       outputRange: [0, 140]
+            //     })
+            //   },
+            //   {
+            //     scaleY: this.animateToSmall.interpolate({
+            //       inputRange: [0, 1],
+            //       outputRange: [1, .25]
+            //     })
+            //   }
+            // ]
+          },
         });
         this.backupLocation = newLocation;
       })
@@ -90,7 +109,11 @@ class Home extends React.Component {
   };
 
   changeSmallImage = (item) => {
-    console.log("INSIDE CHANGE SMALL IMAGE");
+    // Animated.timing(this.animateToSmall, {
+    //   toValue: 1,
+    //   duration: 1000,
+    //   easing: Easing.ease
+    // }).start()
     this.setState({
       listKey: this.state.listKey++,
       imgListStyle: {
@@ -107,11 +130,6 @@ class Home extends React.Component {
   };
 
   onItemListClick = (item) => {
-    console.log(
-      this.state.selectedLocation.key,
-      item.key,
-      this.state.isImageSmall
-    );
     if (
       this.state.selectedLocation &&
       this.state.selectedLocation.key === item.key &&
@@ -120,7 +138,6 @@ class Home extends React.Component {
       this.changeBigImage();
     } else {
       if (!this.state.isImageSmall) {
-        console.log("IMAGE IS BIG");
         this.changeSmallImage(item);
       } else {
         this.setState({
@@ -130,7 +147,6 @@ class Home extends React.Component {
           isAddStoryFormVisible: false,
         });
       }
-      // let avatar;
       const p1 = firestore
         .collection("stories")
         .where("location", "==", item.title)
@@ -236,11 +252,12 @@ class Home extends React.Component {
               horizontal={true}
               data={this.state.locations}
               keyExtractor={this._keyExtractor}
+              extraData={this.state}
               // onScroll={() => this.changeBigImage()}
               renderItem={({ item, index }) => {
                 return (
                   <TouchableOpacity
-                    key={index}
+                    key={index + this.state.listKey}
                     style={styles.locationItem}
                     onPress={() => {
                       this.onItemListClick(item);
@@ -251,7 +268,11 @@ class Home extends React.Component {
                       style={this.state.imgListStyle}
                       source={{ uri: item.image }}
                     />
-                    <Text adjustsFontSizeToFit style={styles.textList}>
+                    <Text
+                      key={index + this.state.listKey}
+                      adjustsFontSizeToFit
+                      style={styles.textList}
+                    >
                       {item.title}
                     </Text>
                   </TouchableOpacity>
