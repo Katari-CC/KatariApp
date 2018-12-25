@@ -225,7 +225,7 @@ class Home extends React.Component {
     console.log("Rendering...");
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
           <View>
             {this.state.isSearchBarVisible ? (
               <View style={styles.searchBar}>
@@ -301,10 +301,11 @@ class Home extends React.Component {
               }}
             />
           </View>
-          <View style={styles.locationDetail}>
-            {this.state.isAddStoryFormVisible ? (
-              // DISPLAY THE NEW STORY FORM
-              <View style={styles.storyFormContainer}>
+
+          <ScrollView style={styles.locationDetail}>
+            <View style={styles.locationDetail}>
+              {this.state.isAddStoryFormVisible ? (
+                // DISPLAY THE NEW STORY FORM
                 <StoryForm
                   location={this.state.selectedLocation.title}
                   toggleDisplayForm={this.toggleFormDisplay}
@@ -354,28 +355,40 @@ class Home extends React.Component {
                         story={story}
                         navigation={this.props.navigation}
                       />
-                    );
-                  })}
+                    ) : (
+                      <View />
+                    )}
+                    {this.state.stories.map((story, index) => {
+                      return (
+                        <StoryCard
+                          prevRoute="Home"
+                          key={index}
+                          story={story}
+                          navigation={this.props.navigation}
+                        />
+                      );
+                    })}
 
-                  <TouchableOpacity
-                    // style={styles.addCard}
-                    onPress={() =>
-                      this.setState({ isAddStoryFormVisible: true })
-                    }
-                  >
-                    <Card containerStyle={styles.addCard}>
-                      <Text style={styles.addBtnText}>+</Text>
-                    </Card>
-                  </TouchableOpacity>
-                </ScrollView>
-              </View>
-            ) : (
-              <View>
-                {/* <Text style={styles.filler}>Choose a location</Text> */}
-              </View>
-            )}
-          </View>
-        </ScrollView>
+                    <TouchableOpacity
+                      // style={styles.addCard}
+                      onPress={() =>
+                        this.setState({ isAddStoryFormVisible: true })
+                      }
+                    >
+                      <Card containerStyle={styles.addCard}>
+                        <Text style={styles.addBtnText}>+</Text>
+                      </Card>
+                    </TouchableOpacity>
+                  </ScrollView>
+                </View>
+              ) : (
+                <View>
+                  {/* <Text style={styles.filler}>Choose a location</Text> */}
+                </View>
+              )}
+            </View>
+          </ScrollView>
+        </View>
       </View>
     );
   }
@@ -416,7 +429,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
   },
   storyList: {
-    paddingTop: 20,
+    // paddingTop: 20,
   },
   locationItem: {
     padding: 6,
@@ -508,9 +521,9 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   locationDetail: {
-    paddingTop: 10,
-    paddingBottom: 20,
-    minHeight: Dimensions.get("screen").height / 2 - 20,
+    // paddingTop: 10,
+    paddingBottom: 0,
+    minHeight: Dimensions.get("screen").height / 8,
   },
 
   tabBarInfoContainer: {
