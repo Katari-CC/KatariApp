@@ -147,7 +147,7 @@ class LocationScreen extends React.Component {
             <View style={styles.storyContainer}>
               {this.state.stories.length == 0 ? (
                 <Card
-                  title={"No stories yet. Add one!"}
+                  title={"This location has no stories."}
                   containerStyle={styles.storyCard}
                 />
               ) : (
@@ -164,14 +164,14 @@ class LocationScreen extends React.Component {
                 );
               })}
 
-              <Card containerStyle={styles.addCard}>
-                <TouchableOpacity
-                  // style={styles.addCard}
-                  onPress={() => this.setState({ isAddStoryFormVisible: true })}
-                >
+              <TouchableOpacity
+                // style={styles.addCard}
+                onPress={() => this.setState({ isAddStoryFormVisible: true })}
+              >
+                <Card containerStyle={styles.addCard}>
                   <Text style={styles.addBtnText}>+</Text>
-                </TouchableOpacity>
-              </Card>
+                </Card>
+              </TouchableOpacity>
             </View>
           )}
         </View>

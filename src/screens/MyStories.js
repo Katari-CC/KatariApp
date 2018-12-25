@@ -55,7 +55,7 @@ class MyStories extends React.Component {
             })}
           {!this.state.stories ? (
             <Card
-              title={"No stories yet. Add one!"}
+              title={"You have not posted any stories yet."}
               containerStyle={styles.storyCard}
             />
           ) : (

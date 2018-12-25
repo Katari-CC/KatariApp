@@ -71,12 +71,12 @@ class StoryCard extends React.Component {
 
     if (this.state.user) {
       return (
-        <Card containerStyle={styles.storyCard}>
-          <TouchableOpacity
-            // key={this.state.id}
-            onPress={() => this.onStoryPress()}
-            onLongPress={() => this.handleLongPress()}
-          >
+        <TouchableOpacity
+          // key={this.state.id}
+          onPress={() => this.onStoryPress()}
+          onLongPress={() => this.handleLongPress()}
+        >
+          <Card containerStyle={styles.storyCard}>
             <View style={styles.userTitle}>
               <Avatar
                 rounded
@@ -101,8 +101,8 @@ class StoryCard extends React.Component {
                 {this.state.story.title}
               </Text>
             </View>
-          </TouchableOpacity>
-        </Card>
+          </Card>
+        </TouchableOpacity>
       );
     }
     return <View />;
