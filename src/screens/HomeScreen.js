@@ -230,34 +230,45 @@ class Home extends React.Component {
             ) : (
               <View />
             )}
-            <FlatList
-              key={this.state.listKey}
-              style={styles.locationList}
-              horizontal={true}
-              data={this.state.locations}
-              keyExtractor={this._keyExtractor}
-              // onScroll={() => this.changeBigImage()}
-              renderItem={({ item, index }) => {
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.locationItem}
-                    onPress={() => {
-                      this.onItemListClick(item);
-                    }}
-                  >
-                    <Image
-                      key={index + "_" + this.state.listKey}
-                      style={this.state.imgListStyle}
-                      source={{ uri: item.image }}
-                    />
-                    <Text adjustsFontSizeToFit style={styles.textList}>
-                      {item.title}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              }}
-            />
+            {this.state.locations == 0 ? (
+              // NO LOCATIONS
+              <Image
+                style={styles.noResult}
+                resizeMode="contain"
+                source={require("../../assets/images/no_results.png")}
+              />
+            ) : (
+              //
+              <FlatList
+                key={this.state.listKey}
+                style={styles.locationList}
+                horizontal={true}
+                data={this.state.locations}
+                keyExtractor={this._keyExtractor}
+                // onScroll={() => this.changeBigImage()}
+                renderItem={({ item, index }) => {
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      style={styles.locationItem}
+                      onPress={() => {
+                        this.onItemListClick(item);
+                      }}
+                    >
+                      <Image
+                        key={index + "_" + this.state.listKey}
+                        style={this.state.imgListStyle}
+                        source={{ uri: item.image }}
+                      />
+                      <Text adjustsFontSizeToFit style={styles.textList}>
+                        {item.title}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+            )}
+
             <Icon
               raised
               name={this.state.searchIconType}
@@ -302,10 +313,16 @@ class Home extends React.Component {
                   centerContent={true}
                 >
                   {this.state.stories.length == 0 ? (
-                    <Card
-                      title={"This location has no stories."}
-                      containerStyle={styles.storyCard}
-                    />
+                    <Card containerStyle={styles.noStoryCard}>
+                      <Image
+                        style={{
+                          width: 120,
+                          height: 110,
+                        }}
+                        resizeMode="cover"
+                        source={require("../../assets/images/no_stories.png")}
+                      />
+                    </Card>
                   ) : (
                     <View />
                   )}
@@ -373,6 +390,11 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     marginTop: 20,
   },
+  noResult: {
+    marginTop: 90,
+    height: Dimensions.get("window").height / 2,
+    width: Dimensions.get("window").width,
+  },
   storyList: {
     paddingTop: 20,
   },
@@ -403,8 +425,9 @@ const styles = StyleSheet.create({
 
   // location Description
   addBtnText: {
-    fontSize: 25,
-    color: "gray",
+    fontSize: 35,
+    fontWeight: "bold",
+    color: "#442C2E",
   },
 
   detailText: {
@@ -424,6 +447,16 @@ const styles = StyleSheet.create({
     // flexDirection: "column",
     width: 150,
     height: 130,
+    borderRadius: 20,
+    alignItems: "center",
+    elevation: 3,
+    marginBottom: 5,
+  },
+  noStoryCard: {
+    // flexDirection: "column",
+    width: 150,
+    height: 130,
+    paddingTop: 10,
     borderRadius: 20,
     alignItems: "center",
     elevation: 3,
