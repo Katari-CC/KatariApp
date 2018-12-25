@@ -38,12 +38,14 @@ class Home extends React.Component {
       isSearchBarVisible: false,
       searchIconType: "search",
       locationSelected: false,
+      isImageSmall: false,
       imgListStyle: {
         height: Dimensions.get("window").height / 1.4,
         width: Dimensions.get("window").width / 1.3,
         borderRadius: 5,
         margin: 2,
       },
+      listKey: 1,
     };
     this.backupLocation = [];
     this.changeBigImage = this.changeBigImage.bind(this);
@@ -75,7 +77,9 @@ class Home extends React.Component {
 
   changeBigImage = () => {
     this.setState({
+      listKey: this.state.listKey++,
       locationSelected: false,
+      isImageSmall: false,
       imgListStyle: {
         height: Dimensions.get("window").height / 1.4,
         width: Dimensions.get("window").width / 1.5,
@@ -85,40 +89,65 @@ class Home extends React.Component {
     });
   };
 
-  changeSmallImage = () => {
-    this.setState({});
-  };
-
-  onItemListClick = (item) => {
+  changeSmallImage = (item) => {
+    console.log("INSIDE CHANGE SMALL IMAGE");
     this.setState({
-      locationSelected: true,
-      selectedLocation: item,
-      isAddStoryFormVisible: false,
+      listKey: this.state.listKey++,
       imgListStyle: {
         height: Dimensions.get("window").height / 3,
         width: Dimensions.get("window").width / 1.5,
         borderRadius: 5,
         margin: 2,
       },
+      isImageSmall: true,
+      locationSelected: true,
+      selectedLocation: item,
+      isAddStoryFormVisible: false,
     });
+  };
 
-    // let avatar;
-    const p1 = firestore
-      .collection("stories")
-      .where("location", "==", item.title)
-      .get()
-      .then((snapshot) => {
-        stories = [];
-        (snapshot || []).forEach((doc) => {
-          let story = doc.data();
-          story.id = doc.id;
-          stories.push(story);
+  onItemListClick = (item) => {
+    console.log(
+      this.state.selectedLocation.key,
+      item.key,
+      this.state.isImageSmall
+    );
+    if (
+      this.state.selectedLocation &&
+      this.state.selectedLocation.key === item.key &&
+      this.state.isImageSmall
+    ) {
+      this.changeBigImage();
+    } else {
+      if (!this.state.isImageSmall) {
+        console.log("IMAGE IS BIG");
+        this.changeSmallImage(item);
+      } else {
+        this.setState({
+          isImageSmall: true,
+          locationSelected: true,
+          selectedLocation: item,
+          isAddStoryFormVisible: false,
         });
-        return stories;
-      })
-      .then((stories) => {
-        this.setState({ stories });
-      });
+      }
+      // let avatar;
+      const p1 = firestore
+        .collection("stories")
+        .where("location", "==", item.title)
+        .get()
+        .then((snapshot) => {
+          stories = [];
+          (snapshot || []).forEach((doc) => {
+            let story = doc.data();
+            story.id = doc.id;
+            stories.push(story);
+          });
+          return stories;
+        })
+        .then((stories) => {
+          this.setState({ stories });
+        });
+    }
   };
 
   uploadImage = async (uri, path, name) => {
@@ -202,11 +231,12 @@ class Home extends React.Component {
               <View />
             )}
             <FlatList
+              key={this.state.listKey}
               style={styles.locationList}
               horizontal={true}
               data={this.state.locations}
               keyExtractor={this._keyExtractor}
-              onScroll={() => this.changeBigImage()}
+              // onScroll={() => this.changeBigImage()}
               renderItem={({ item, index }) => {
                 return (
                   <TouchableOpacity
@@ -217,6 +247,7 @@ class Home extends React.Component {
                     }}
                   >
                     <Image
+                      key={index + "_" + this.state.listKey}
                       style={this.state.imgListStyle}
                       source={{ uri: item.image }}
                     />
