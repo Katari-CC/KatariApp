@@ -24,6 +24,8 @@ import firebase from "../utils/firebaseClient";
 import { NavigationActions } from "react-navigation";
 import { ScrollView } from "react-native-gesture-handler";
 
+import { uploadImage, pickImage } from "../utils/imageUtils.js";
+
 export default class AddLocation extends React.Component {
   constructor(props) {
     super(props);

@@ -89,34 +89,31 @@ export default class Story extends React.Component {
       <View>
         <Card containerStyle={styles.cardContainer}>
           {this.state.viewer == this.state.username ? (
-            <View>
-              <View style={{ position: "absolute", right: 10, zIndex: 10 }}>
-                <Icon
-                  // style={{ zIndex: 10 }}
-                  name="md-settings"
-                  type="ionicon"
-                  color={"#442C2E"}
-                  onPress={() => this.displayOptions()}
-                  size={25}
-                />
-              </View>
-              <View style={{ position: "absolute", right: 260, zIndex: 11 }}>
-                <Icon
-                  // style={{ zIndex: 10 }}
-                  name="md-arrow-back"
-                  onPress={() => {
-                    this.backToMyStories();
-                  }}
-                  type="ionicon"
-                  size={30}
-                  color={"#442C2E"}
-                />
-              </View>
+            <View style={{ position: "absolute", right: 10, zIndex: 10 }}>
+              <Icon
+                // style={{ zIndex: 10 }}
+                name="md-settings"
+                type="ionicon"
+                color={"#442C2E"}
+                onPress={() => this.displayOptions()}
+                size={25}
+              />
             </View>
           ) : (
             <View />
           )}
-
+          <View style={{ position: "absolute", right: 260, zIndex: 11 }}>
+            <Icon
+              // style={{ zIndex: 10 }}
+              name="md-arrow-back"
+              onPress={() => {
+                this.backToMyStories();
+              }}
+              type="ionicon"
+              size={30}
+              color={"#442C2E"}
+            />
+          </View>
           <ScrollView contentContainerStyle={styles.cardContent}>
             <View
               style={{
