@@ -211,11 +211,13 @@ class Home extends React.Component {
           <View style={styles.locationDetail}>
             {this.state.isAddStoryFormVisible ? (
               // DISPLAY THE NEW STORY FORM
-              <StoryForm
-                location={this.state.selectedLocation.title}
-                toggleDisplayForm={this.toggleFormDisplay}
-                addStory={this.addStory}
-              />
+              <View style={styles.storyFormContainer}>
+                <StoryForm
+                  location={this.state.selectedLocation.title}
+                  toggleDisplayForm={this.toggleFormDisplay}
+                  addStory={this.addStory}
+                />
+              </View>
             ) : this.state.locationSelected ? (
               // DISPLAY THE DESCRIPTION TEXT
               <View style={styles.storyContainer}>
@@ -227,6 +229,7 @@ class Home extends React.Component {
                     {this.state.selectedLocation.description}
                   </Text>
                 </Panel>
+
                 <ScrollView
                   style={styles.storyList}
                   horizontal={true}
@@ -360,6 +363,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     elevation: 3,
     marginBottom: 5,
+  },
+  //Story Form
+  storyFormContainer: {
+    paddingBottom: 120,
   },
   username: {
     marginLeft: 5,

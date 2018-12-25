@@ -257,6 +257,7 @@ var styles = StyleSheet.create({
     borderWidth: 1.5,
     paddingLeft: 8,
     borderRadius: 8,
+    textAlignVertical: "top",
   },
   storytitle: {
     width: Dimensions.get("window").width - 40,
