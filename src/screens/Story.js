@@ -29,13 +29,24 @@ export default class Story extends React.Component {
       story: this.props.navigation.state.params.story,
       image: this.props.navigation.state.params.image,
       viewer: firebase.auth().currentUser.displayName,
-      prevRoute: this.props.navigation.state.prevRoute,
+      prevRoute: this.props.navigation.state.params.prevRoute,
       // color: this.props.navigation.state.params.color,
     };
     this.displayOptions = this.displayOptions.bind(this);
   }
 
   componentDidMount() {}
+
+  backToMyStories = () => {
+    // const navigateAction = NavigationActions.navigate({
+    //   routeName: "Main",
+    // });
+    // this.props.navigation.dispatch(navigateAction);
+    const navigateAction = NavigationActions.navigate({
+      routeName: this.state.prevRoute,
+    });
+    this.props.navigation.dispatch(navigateAction);
+  };
 
   displayOptions = () => {
     Alert.alert(
@@ -75,28 +86,49 @@ export default class Story extends React.Component {
 
   render() {
     return (
-      <View styles={styles.container}>
+      <View>
         <Card containerStyle={styles.cardContainer}>
-          <View styles={styles.options}>
-            {this.state.viewer == this.state.username ? (
-              <View styles={styles.icon}>
+          {this.state.viewer == this.state.username ? (
+            <View style={{ left: 150 }}>
+              <Icon
+                name="md-settings"
+                type="ionicon"
+                color={"#442C2E"}
+                onPress={() => this.displayOptions()}
+                size={25}
+              />
+              <View style={{ right: 150 }}>
                 <Icon
-                  name="md-settings"
+                  name="md-arrow-back"
+                  onPress={() => {
+                    this.backToMyStories();
+                  }}
                   type="ionicon"
-                  onPress={() => this.displayOptions()}
-                  size={25}
+                  size={30}
+                  color={"#442C2E"}
                 />
               </View>
-            ) : (
-              <View />
-            )}
-          </View>
+            </View>
+          ) : (
+            <View />
+          )}
+
           <ScrollView contentContainerStyle={styles.cardContent}>
-            <Avatar
-              rounded
-              containerStyle={styles.avatar}
-              source={{ uri: this.props.navigation.state.params.avatar }}
-            />
+            <View
+              style={{
+                flex: 2,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginBottom: 10,
+                marginTop: 10,
+              }}
+            >
+              <Avatar
+                rounded
+                containerStyle={styles.avatar}
+                source={{ uri: this.props.navigation.state.params.avatar }}
+              />
+            </View>
             <Text adjustsFontSizeToFit style={styles.username}>
               {this.props.navigation.state.params.username}
             </Text>
@@ -123,33 +155,6 @@ export default class Story extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  options: {
-    position: "absolute",
-    right: 0,
-    top: 0,
-  },
-  icon: {
-    width: "30",
-    height: "30",
-  },
-  container: {
-    backgroundColor: "red",
-  },
-  location: {
-    paddingTop: 30,
-    paddingBottom: 20,
-  },
-  textInput: {
-    width: Dimensions.get("window").width - 50,
-    height: 100,
-  },
-  button: {
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#56b1bf",
-    borderWidth: 0,
-    borderRadius: 20,
-  },
   detailImage: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height / 3,
@@ -158,17 +163,13 @@ const styles = StyleSheet.create({
 
   detailTitle: {
     margin: 1,
-    // fontSize: 25,
     textAlign: "center",
     color: TEXT_COLOR,
     fontWeight: "bold",
   },
 
   detailText: {
-    // width: Dimensions.get("window").width - 20,
-    // fontSize: 20,
     textAlign: "center",
-
     color: TEXT_COLOR,
   },
   storyContainer: {
@@ -184,12 +185,11 @@ const styles = StyleSheet.create({
   cardContainer: {
     borderRadius: 20,
     height: Dimensions.get("screen").height - 130,
-    // width: Dimensions.get("screen").width - 30,
-    marginTop: 30,
+    marginTop: 10,
     backgroundColor: "#56b1bf",
-    // backgroundColor: "white"
   },
   cardContent: {
+    marginTop: 30,
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "column",
@@ -198,4 +198,11 @@ const styles = StyleSheet.create({
     color: TEXT_COLOR,
   },
   avatar: {},
+  backBtn: {
+    // right: 150,
+    // marginTop: 10,
+    // position: "absolute",
+    bottom: 0,
+    marginBottom: 8,
+  },
 });

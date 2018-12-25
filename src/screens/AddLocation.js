@@ -11,6 +11,8 @@ import {
   TouchableOpacity,
   Modal,
   Picker,
+  KeyboardAvoidingView,
+  ToastAndroid,
 } from "react-native";
 import { Button, Icon, FormInput } from "react-native-elements";
 import MapView, { PROVIDER_GOOGLE, Marker, Callout } from "react-native-maps";
@@ -20,6 +22,7 @@ import CustomMarker from "../components/CustomMarker.js";
 import firestore from "../utils/firestore";
 import firebase from "../utils/firebaseClient";
 import { NavigationActions } from "react-navigation";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default class AddLocation extends React.Component {
   constructor(props) {
@@ -50,12 +53,23 @@ export default class AddLocation extends React.Component {
       newLocationImageURI: null,
       newLocationImageURL: null,
     };
+
+    this.isFirstLaunch = true;
     this.onRegionChange = this.onRegionChange.bind(this);
     this.backToMap = this.backToMap.bind(this);
     this.renderMarkers = this.renderMarkers.bind(this);
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    if (this.isFirstLaunch) {
+      ToastAndroid.showWithGravity(
+        "Move the map to position the pin on the correct location.",
+        ToastAndroid.LONG,
+        ToastAndroid.CENTER
+      );
+      this.isFirstLaunch = false;
+    }
+  }
 
   saveNewLocation() {
     if (
@@ -238,95 +252,103 @@ export default class AddLocation extends React.Component {
   render() {
     return (
       <View style={styles.map}>
-        <Modal
+        <Modal // DISPLAY NEW LOCATION FORM
           // animationType="slide"
           transparent={false}
           visible={this.state.modalVisible}
           onRequestClose={() => this.setState({ modalVisible: false })}
         >
-          <View style={styles.modalContainer}>
-            <Text style={styles.detailTitle}>Adding Location</Text>
-            <FormInput
-              containerStyle={styles.formInput}
-              underlineColorAndroid="transparent"
-              inputStyle={styles.inputContainer}
-              placeholder="Location Name"
-              onChangeText={(text) => this.setState({ newLocationTitle: text })}
-            />
-            <Picker
-              selectedValue={this.state.selectedCategory}
-              style={styles.picker}
-              onValueChange={(itemValue, itemIndex) =>
-                this.setState({ selectedCategory: itemValue })
-              }
-            >
-              <Picker.Item
-                key={-1}
-                label="  Click here to Select a Category"
-                value={undefined}
-              />
-              {this.state.categories.map((category, index) => (
-                <Picker.Item key={index} label={category} value={category} />
-              ))}
-            </Picker>
-            <FormInput
-              containerStyle={styles.formInput}
-              inputStyle={styles.inputContainer}
-              underlineColorAndroid="transparent"
-              placeholder="Description about the location"
-              onChangeText={(text) =>
-                this.setState({ newLocationDescription: text })
-              }
-            />
+          <KeyboardAvoidingView
+            style={styles.container}
+            behavior="padding"
+            enabled
+          >
+            <ScrollView style={styles.container}>
+              <View style={styles.modalContainer}>
+                <Text style={styles.detailTitle}>Adding Location</Text>
+                <TextInput
+                  style={styles.storytitle}
+                  inputStyle={styles.inputContainer}
+                  underlineColorAndroid="transparent"
+                  placeholder="Location Name"
+                  onChangeText={(text) =>
+                    this.setState({ newLocationTitle: text })
+                  }
+                />
+                <View style={styles.pickerContainer}>
+                  <Picker
+                    selectedValue={this.state.selectedCategory}
+                    onValueChange={(itemValue, itemIndex) =>
+                      this.setState({ selectedCategory: itemValue })
+                    }
+                  >
+                    <Picker.Item
+                      key={-1}
+                      label="  Click here to Select a Category"
+                      value={undefined}
+                    />
+                    {this.state.categories.map((category, index) => (
+                      <Picker.Item
+                        key={index}
+                        label={category}
+                        value={category}
+                      />
+                    ))}
+                  </Picker>
+                </View>
+                <TextInput
+                  style={styles.textarea}
+                  multiline={true}
+                  numberOfLines={5}
+                  underlineColorAndroid="transparent"
+                  placeholder="Description about the location"
+                  onChangeText={(text) =>
+                    this.setState({ newLocationDescription: text })
+                  }
+                />
 
-            {this.state.newLocationImageURI ? (
-              <Image
-                style={styles.imgLocation}
-                source={{ uri: this.state.newLocationImageURI }}
-              />
-            ) : (
-              <Text style={styles.textList}>No Image</Text>
-            )}
-            <Button
-              title="Provide an Image"
-              buttonStyle={styles.button}
-              onPress={() => {
-                this.imageDialog();
-              }}
-            />
-            <Button
-              buttonStyle={styles.button}
-              title="Save location"
-              onPress={() => {
-                this.saveNewLocation();
-              }}
-            />
-            {/* <Button
-              title="Close"
-              buttonStyle={styles.button}
-              onPress={() => {
-                this.setState({
-                  modalVisible: false,
-                });
-              }}
-            /> */}
-            <View style={styles.backBtn}>
-              <Icon
-                name="md-arrow-back"
-                onPress={() => {
-                  this.setState({
-                    modalVisible: false,
-                  });
-                }}
-                type="ionicon"
-                size={30}
-                color={TEXT_COLOR}
-              />
-            </View>
-          </View>
+                {this.state.newLocationImageURI ? (
+                  <Image
+                    style={styles.imgLocation}
+                    source={{ uri: this.state.newLocationImageURI }}
+                  />
+                ) : (
+                  <Text style={styles.textList}>No Image</Text>
+                )}
+                <Button
+                  title="Provide an Image"
+                  buttonStyle={styles.button}
+                  onPress={() => {
+                    this.imageDialog();
+                  }}
+                />
+                <Button
+                  buttonStyle={styles.button}
+                  title="Save location"
+                  onPress={() => {
+                    this.saveNewLocation();
+                  }}
+                />
+
+                <View style={styles.backBtn}>
+                  <Icon
+                    name="md-arrow-back"
+                    onPress={() => {
+                      this.setState({
+                        modalVisible: false,
+                      });
+                    }}
+                    type="ionicon"
+                    size={30}
+                    color={TEXT_COLOR}
+                  />
+                </View>
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
         </Modal>
 
-        <MapView
+        <MapView // DISPLAY MAP WITH UNIQUE CENTER MARKER
           ref={(MapView) => (this.MapView = MapView)}
           region={this.state.region}
           onRegionChangeComplete={this.onRegionChange}
@@ -386,7 +408,6 @@ export default class AddLocation extends React.Component {
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: "center",
     backgroundColor: "white",
     color: "#56b1bf",
   },
@@ -399,7 +420,19 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#442C2E",
   },
-  formInput: {
+  textarea: {
+    height: 100,
+    borderColor: "#442C2E",
+    width: Dimensions.get("window").width - 40,
+    marginTop: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
+    borderWidth: 1.5,
+    paddingLeft: 8,
+    borderRadius: 8,
+    textAlignVertical: "top",
+  },
+  storytitle: {
     width: Dimensions.get("window").width - 40,
     marginTop: 10,
     paddingTop: 10,
@@ -408,16 +441,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     paddingLeft: 8,
     borderRadius: 8,
-    // fontSize: 14,
   },
-
-  // formInput: {
-  //   backgroundColor: "white",
-  //   borderColor: "#442C2E",
-  //   borderWidth: 5,
-  //   borderRadius: 5,
-  //   marginTop: 5,
-  // },
   inputContainer: {
     marginLeft: 15,
     color: "#242124",
@@ -431,14 +455,12 @@ const styles = StyleSheet.create({
     paddingRight: 50,
     marginBottom: 10,
   },
-  picker: {
-    width: "100%",
-    borderWidth: 5,
+  pickerContainer: {
+    width: Dimensions.get("window").width - 40,
+    borderWidth: 1.5,
+    borderColor: "#442C2E",
     borderRadius: 5,
     marginTop: 10,
-    backgroundColor: "white",
-    borderColor: "#442C2E",
-    alignItems: "center",
   },
   imgLocation: {
     marginTop: 20,
@@ -477,14 +499,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 10,
     marginBottom: 5,
-  },
-  container: {
-    // flex: 1,
-    width: 140,
-    height: 60,
-    flexDirection: "column",
-    alignItems: "center",
-    backgroundColor: "#fff",
   },
   map: {
     ...StyleSheet.absoluteFillObject,
