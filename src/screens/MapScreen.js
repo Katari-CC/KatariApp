@@ -149,13 +149,10 @@ class Main extends React.Component {
     const visibleMarkers = [];
     const markers = this.state.markers.map((marker, index) => {
       marker.isVisible = false;
-      if (
-        marker.coordinate.latitude <= max.latitude &&
-        marker.coordinate.latitude >= min.latitude
-      ) {
+      if (marker.latitude <= max.latitude && marker.latitude >= min.latitude) {
         if (
-          marker.coordinate.longitude <= max.longitude &&
-          marker.coordinate.longitude >= min.longitude
+          marker.longitude <= max.longitude &&
+          marker.longitude >= min.longitude
         ) {
           marker.isVisible = true;
           visibleMarkers.push(marker);
