@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   },
   location: {
     paddingTop: 30,
-    paddingBottom: 20,
+    paddingBottom: 100,
   },
   textInput: {
     width: Dimensions.get("window").width - 40,

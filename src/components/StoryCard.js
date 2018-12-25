@@ -128,11 +128,12 @@ var styles = StyleSheet.create({
   username: {
     marginLeft: 5,
     textAlign: "center",
-    marginBottom: 25,
+    // marginBottom: 25,
     fontWeight: "bold",
   },
   description: {
     textAlign: "center",
+    marginTop: 10,
     // paddingLeft: 10,
   },
   avatar: {
