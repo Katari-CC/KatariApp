@@ -246,10 +246,10 @@ export default class AddLocation extends React.Component {
         >
           <View style={styles.modalContainer}>
             <Text style={styles.detailTitle}>Adding Location</Text>
-            <FormInput
-              containerStyle={styles.formInput}
-              underlineColorAndroid="transparent"
+            <TextInput
+              style={styles.storytitle}
               inputStyle={styles.inputContainer}
+              underlineColorAndroid="transparent"
               placeholder="Location Name"
               onChangeText={(text) => this.setState({ newLocationTitle: text })}
             />
@@ -269,9 +269,10 @@ export default class AddLocation extends React.Component {
                 <Picker.Item key={index} label={category} value={category} />
               ))}
             </Picker>
-            <FormInput
-              containerStyle={styles.formInput}
-              inputStyle={styles.inputContainer}
+            <TextInput
+              style={styles.textarea}
+              multiline={true}
+              numberOfLines={5}
               underlineColorAndroid="transparent"
               placeholder="Description about the location"
               onChangeText={(text) =>
@@ -301,15 +302,7 @@ export default class AddLocation extends React.Component {
                 this.saveNewLocation();
               }}
             />
-            {/* <Button
-              title="Close"
-              buttonStyle={styles.button}
-              onPress={() => {
-                this.setState({
-                  modalVisible: false,
-                });
-              }}
-            /> */}
+
             <View style={styles.backBtn}>
               <Icon
                 name="md-arrow-back"
@@ -399,7 +392,18 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#442C2E",
   },
-  formInput: {
+  textarea: {
+    height: 100,
+    borderColor: "#442C2E",
+    width: Dimensions.get("window").width - 40,
+    marginTop: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
+    borderWidth: 1.5,
+    paddingLeft: 8,
+    borderRadius: 8,
+  },
+  storytitle: {
     width: Dimensions.get("window").width - 40,
     marginTop: 10,
     paddingTop: 10,
@@ -408,7 +412,6 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     paddingLeft: 8,
     borderRadius: 8,
-    // fontSize: 14,
   },
   inputContainer: {
     marginLeft: 15,
