@@ -20,7 +20,6 @@ class StoryCard extends React.Component {
   }
 
   componentWillMount() {
-    console.log("STORY", this.state.story);
     firestore
       .collection("users")
       .where("uid", "==", this.state.story.userID)

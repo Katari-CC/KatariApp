@@ -32,7 +32,7 @@ class MyStories extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.username}>Your Stories</Text>
+        <Text style={styles.username}>My Stories</Text>
 
         <ScrollView
           style={styles.storyList}
