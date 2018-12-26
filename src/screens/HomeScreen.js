@@ -11,6 +11,7 @@ import {
   FlatList,
   Animated,
   Easing,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Card, SearchBar, Icon } from "react-native-elements";
 
@@ -222,10 +223,14 @@ class Home extends React.Component {
   }
 
   render() {
-    console.log("Rendering...");
+    console.log("Homescreen Rendering...");
     return (
       <View style={styles.container}>
-        <View style={styles.container}>
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior="padding"
+          enabled
+        >
           <View>
             {this.state.isSearchBarVisible ? (
               <View style={styles.searchBar}>
@@ -300,7 +305,7 @@ class Home extends React.Component {
               }}
             />
           </View>
-          <ScrollView style={styles.locationDetail}>
+          <ScrollView>
             <View style={styles.locationDetail}>
               {this.state.isAddStoryFormVisible ? (
                 // DISPLAY THE NEW STORY FORM
@@ -353,7 +358,6 @@ class Home extends React.Component {
                         />
                       );
                     })}
-
                     <TouchableOpacity
                       // style={styles.addCard}
                       onPress={() =>
@@ -373,7 +377,7 @@ class Home extends React.Component {
               )}
             </View>
           </ScrollView>
-        </View>
+        </KeyboardAvoidingView>
       </View>
     );
   }
@@ -403,7 +407,7 @@ const styles = StyleSheet.create({
     marginBottom: -80,
   },
   noResult: {
-    marginTop: 90,
+    marginTop: 40,
     height: Dimensions.get("window").height / 2,
     width: Dimensions.get("window").width,
   },
@@ -506,7 +510,7 @@ const styles = StyleSheet.create({
   },
   locationDetail: {
     // paddingTop: 10,
-    paddingBottom: 0,
+    paddingBottom: 50,
     minHeight: Dimensions.get("screen").height / 8,
   },
 

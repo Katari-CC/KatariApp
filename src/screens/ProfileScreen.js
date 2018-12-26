@@ -1,18 +1,21 @@
 import React from "react";
 import { View, Alert, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, Button } from "react-native-elements";
+
 import {
   getCameraPermission,
   getCameraRollPermission,
 } from "../utils/permissions";
-import { ImagePicker, Permissions } from "expo";
+import { ImagePicker, Permissions, ImageManipulator } from "expo";
+
+import AppNavigator from "../navigation/AppNavigator";
+import { createStackNavigator, NavigationActions } from "react-navigation";
+
+import MyStories from "./MyStories";
 
 import firebase from "../utils/firebaseClient";
-import AppNavigator from "../navigation/AppNavigator";
-import MyStories from "./MyStories";
-import { Text, Button } from "react-native-elements";
 import firestore from "../utils/firestore";
 import "firebase/firestore";
-import { createStackNavigator, NavigationActions } from "react-navigation";
 
 class Profile extends React.Component {
   static navigationOptions = {
@@ -77,12 +80,6 @@ class Profile extends React.Component {
     this.props.navigation.dispatch(navigateAction);
   };
 
-  updateProfileImage = (newProfileURL) => {
-    this.setState({
-      currentUserImageURL: newProfileURL,
-    });
-  };
-
   logout = () => {
     console.log("logout current user");
     firebase
@@ -95,6 +92,29 @@ class Profile extends React.Component {
         )
       )
       .catch((err) => console.log("logout error", err));
+  };
+
+  // UPDATE PROFILE IMAGE
+  imageDialog = (path, imgName) => {
+    Alert.alert(
+      "Upload an Image with your story",
+      "Pick a method:",
+      [
+        {
+          text: "Select from Gallery",
+          onPress: () => {
+            this._pickImage();
+          },
+        },
+        {
+          text: "Take a picture",
+          onPress: () => {
+            this._takePhoto();
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   _pickImage = async () => {
@@ -124,50 +144,6 @@ class Profile extends React.Component {
     }
   };
 
-  uploadImage = async (uri) => {
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    var ref = firebase
-      .storage()
-      .ref()
-      .child("profile_img/" + this.state.currentUserUID + ".jpg");
-    return ref.put(blob);
-  };
-
-  updateProfileImage(url) {
-    // Update the user account photoURL
-    firebase
-      .auth()
-      .currentUser.updateProfile({
-        photoURL: url,
-      })
-      .then(() => {
-        console.log("Profile Picture updated");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    // Update the user table
-    console.log("trying to update img for user: ", this.state.currentUserUID);
-    firestore
-      .collection("users")
-      .where("uid", "==", this.state.currentUserUID)
-      .get()
-      .then((snapshot) => {
-        snapshot.forEach((doc) => {
-          firestore
-            .collection("users")
-            .doc(doc.id)
-            .update({
-              photoURL: url,
-            });
-        });
-      });
-    // Update the Image Component of the profile screen
-    this.updateProfileImage(url);
-  }
-
   _takePhoto = async () => {
     // Request Camera  Permissions
     await Permissions.askAsync(Permissions.CAMERA);
@@ -196,26 +172,66 @@ class Profile extends React.Component {
     }
   };
 
-  imageDialog = (path, imgName) => {
-    Alert.alert(
-      "Upload an Image with your story",
-      "Pick a method:",
+  uploadImage = async (uri) => {
+    const resizedImageURI = await ImageManipulator.manipulateAsync(
+      uri,
       [
         {
-          text: "Select from Gallery",
-          onPress: () => {
-            this._pickImage();
-          },
-        },
-        {
-          text: "Take a picture",
-          onPress: () => {
-            this._takePhoto();
-          },
+          resize: { height: 150, width: 200 },
         },
       ],
-      { cancelable: true }
+      { format: "jpg" }
     );
+    console.log("Resized Img URL:", resizedImageURI.uri);
+    const response = await fetch(resizedImageURI.uri);
+    const blob = await response.blob();
+    var ref = firebase
+      .storage()
+      .ref()
+      .child("profile_img/" + this.state.currentUserUID + ".jpg");
+    return ref.put(blob);
+  };
+
+  updateProfileImage(url) {
+    // Update the user account photoURL
+    firebase
+      .auth()
+      .currentUser.updateProfile({
+        photoURL: url,
+      })
+      .then(() => {
+        console.log("Profile Picture updated");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    // Update the user table
+    console.log("trying to update img for user: ", this.state.currentUserUID);
+    console.log("this.state.currentUserUID", this.state.currentUserUID);
+    firestore
+      .collection("users")
+      .where("uid", "==", this.state.currentUserUID)
+      .get()
+      .then((snapshot) => {
+        snapshot.forEach((doc) => {
+          console.log("HEELLOOO");
+          firestore
+            .collection("users")
+            .doc(doc.id)
+            .update({
+              photoURL: url,
+            });
+        });
+      });
+    // Update the Image Component of the profile screen
+    this.updateLocalImage(url);
+  }
+
+  updateLocalImage = (newProfileURL) => {
+    this.setState({
+      currentUserImageURL: newProfileURL,
+    });
   };
 
   render() {
@@ -224,7 +240,6 @@ class Profile extends React.Component {
         <Text style={styles.username}>
           {"Welcome " + this.state.currentUserName + "!"}
         </Text>
-
         {this.state.currentUserImageURL ? (
           <TouchableOpacity
             onPress={() => {
