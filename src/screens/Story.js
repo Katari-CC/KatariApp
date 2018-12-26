@@ -53,12 +53,12 @@ export default class Story extends React.Component {
       "Options",
       "Choose an option:",
       [
-        {
-          text: "Edit Story",
-          onPress: () => {
-            console.log("Edit the story clicked.");
-          },
-        },
+        // {
+        //   text: "Edit Story",
+        //   onPress: () => {
+        //     console.log("Edit the story clicked.");
+        //   },
+        // },
         {
           text: "Delete Story",
           onPress: () => {

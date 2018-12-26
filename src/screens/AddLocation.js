@@ -79,7 +79,8 @@ export default class AddLocation extends React.Component {
     if (
       !this.state.newLocationTitle ||
       !this.state.selectedCategory ||
-      !this.state.newLocationDescription
+      !this.state.newLocationDescription ||
+      !this.state.newLocationImageURI
     ) {
       Alert.alert(
         "Missing some field(s)!",
@@ -119,28 +120,38 @@ export default class AddLocation extends React.Component {
                   console.log("Image Available at: ", downloadURL);
                   // update the newLocation document with the url of the photo
                   this.addURL(downloadURL, docRef.id);
+                  newLocation.image = downloadURL;
+                  this.setState({
+                    markers: [...this.state.markers, newLocation],
+                    modalVisible: false,
+                    selectedCategory: undefined,
+                    newLocationDescription: undefined,
+                    newLocationTitle: undefined,
+                    newLocationImage: undefined,
+                  });
+                  this.backToMap(newLocation);
                 });
               })
               .catch((e) => {
                 console.log(e);
                 return null;
               });
+          } else {
+            this.setState({
+              modalVisible: false,
+              selectedCategory: undefined,
+              newLocationDescription: undefined,
+              newLocationTitle: undefined,
+              newLocationImage: undefined,
+            });
+            this.backToMap(newLocation);
           }
-          this.setState({
-            modalVisible: false,
-            markers: [...this.state.markers, newLocation],
-            selectedCategory: undefined,
-            newLocationDescription: undefined,
-            newLocationTitle: undefined,
-            newLocationImage: undefined,
-          });
         })
         .catch((e) => {
           console.log(e);
           return null;
         });
     }
-    // this.backToMap(newLocation);
   }
 
   onRegionChange(region) {
@@ -193,7 +204,7 @@ export default class AddLocation extends React.Component {
     this.props.navigation.dispatch(navigateAction);
   }
 
-  addURL = (url, locationID) => {
+  addURL = (url, locationID, newLocation) => {
     console.log("Update the url of the picture for location on the DB.");
     firestore
       .collection("locations")
@@ -201,9 +212,6 @@ export default class AddLocation extends React.Component {
       .update({ image: url })
       .then(() => {
         console.log("Update Successful");
-        this.setState({
-          markers: [...this.state.markers, newLocation],
-        });
       })
       .catch((e) => {
         console.log(e);
