@@ -91,13 +91,15 @@ export default class Story extends React.Component {
       <View>
         <Card containerStyle={styles.cardContainer}>
           {this.state.viewer == this.state.username ? (
-            <View style={{ position: "absolute", right: 10, zIndex: 10 }}>
+            <View
+              style={{ position: "absolute", top: 11, right: 20, zIndex: 10 }}
+            >
               <Icon
                 // style={{ zIndex: 10 }}
                 // name="md-settings"
                 name="md-trash"
                 type="ionicon"
-                color={"#442C2E"}
+                color={"#FFFFFF"}
                 onPress={() => this.displayOptions()}
                 size={25}
               />
@@ -105,7 +107,9 @@ export default class Story extends React.Component {
           ) : (
             <View />
           )}
-          <View style={{ position: "absolute", right: 260, zIndex: 11 }}>
+          <View
+            style={{ position: "absolute", top: 10, right: 285, zIndex: 11 }}
+          >
             <Icon
               // style={{ zIndex: 10 }}
               name="md-arrow-back"
@@ -114,7 +118,7 @@ export default class Story extends React.Component {
               }}
               type="ionicon"
               size={30}
-              color={"#442C2E"}
+              color={"#FFFFFF"}
             />
           </View>
           <ScrollView contentContainerStyle={styles.cardContent}>
@@ -163,6 +167,8 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height / 3,
     margin: 2,
+    marginTop: 5,
+    marginBottom: 5,
   },
 
   detailTitle: {
@@ -190,8 +196,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     height: Dimensions.get("screen").height - 130,
     marginTop: 30,
-    backgroundColor: "#56b1bf",
-    // backgroundColor: "grey",
+    // backgroundColor: "#56b1bf",
+    backgroundColor: "#a9a9a9",
+    padding: 0,
   },
   cardContent: {
     marginTop: 30,

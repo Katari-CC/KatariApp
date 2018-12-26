@@ -212,10 +212,8 @@ class Profile extends React.Component {
     firestore
       .collection("users")
       .where("uid", "==", this.state.currentUserUID)
-      .get()
-      .then((snapshot) => {
+      .onSnapshot((snapshot) => {
         snapshot.forEach((doc) => {
-          console.log("HEELLOOO");
           firestore
             .collection("users")
             .doc(doc.id)
