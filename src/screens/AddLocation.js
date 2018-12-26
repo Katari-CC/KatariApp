@@ -24,6 +24,8 @@ import firebase from "../utils/firebaseClient";
 import { NavigationActions } from "react-navigation";
 import { ScrollView } from "react-native-gesture-handler";
 
+import { uploadImage, pickImage } from "../utils/imageUtils.js";
+
 export default class AddLocation extends React.Component {
   constructor(props) {
     super(props);
@@ -63,7 +65,7 @@ export default class AddLocation extends React.Component {
   componentDidMount() {
     if (this.isFirstLaunch) {
       ToastAndroid.showWithGravity(
-        "Move the map to position the pin on the correct location.",
+        "Move the map to position the pin at the location you wish to add.",
         ToastAndroid.LONG,
         ToastAndroid.CENTER
       );
@@ -86,7 +88,9 @@ export default class AddLocation extends React.Component {
       const latitude = this.state.region.latitude;
       const longitude = this.state.region.longitude;
       const newLocation = {
+        key: this.state.markers.length,
         category: this.state.selectedCategory,
+        coordinate: { latitude, longitude },
         latitude,
         longitude,
         description: this.state.newLocationDescription,
@@ -120,7 +124,6 @@ export default class AddLocation extends React.Component {
                 return null;
               });
           }
-          newLocation["coordinate"] = { latitude, longitude };
           this.setState({
             modalVisible: false,
             markers: [...this.state.markers, newLocation],
@@ -135,6 +138,7 @@ export default class AddLocation extends React.Component {
           return null;
         });
     }
+    // this.backToMap(newLocation);
   }
 
   onRegionChange(region) {
@@ -154,13 +158,10 @@ export default class AddLocation extends React.Component {
     const visibleMarkers = [];
     const markers = this.state.markers.map((marker, index) => {
       marker.isVisible = false;
-      if (
-        marker.coordinate.latitude <= max.latitude &&
-        marker.coordinate.latitude >= min.latitude
-      ) {
+      if (marker.latitude <= max.latitude && marker.latitude >= min.latitude) {
         if (
-          marker.coordinate.longitude <= max.longitude &&
-          marker.coordinate.longitude >= min.longitude
+          marker.longitude <= max.longitude &&
+          marker.longitude >= min.longitude
         ) {
           marker.isVisible = true;
           visibleMarkers.push(marker);
@@ -175,10 +176,14 @@ export default class AddLocation extends React.Component {
     this.setState({ markers });
   }
 
-  backToMap() {
+  backToMap(newLocation) {
+    let markers = this.state.markers;
+    if (newLocation) {
+      markers = [...this.state.markers, newLocation];
+    }
     this.props.navigation.state.params.onNavigateBack(
       this.state.region,
-      this.state.markers
+      markers
     );
     const navigateAction = NavigationActions.navigate({
       routeName: "Main",
