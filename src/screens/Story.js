@@ -108,7 +108,12 @@ export default class Story extends React.Component {
             <View />
           )}
           <View
-            style={{ position: "absolute", top: 10, right: 285, zIndex: 11 }}
+            style={{
+              position: "absolute",
+              top: 10,
+              right: Dimensions.get("window").width - 75,
+              zIndex: 11,
+            }}
           >
             <Icon
               // style={{ zIndex: 10 }}
