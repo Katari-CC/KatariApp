@@ -211,17 +211,9 @@ class Home extends React.Component {
     }
   }
 
-  didBlurSubscription = this.props.navigation.addListener(
-    "didBlur",
-    (payload) => {
-      console.debug("didBlur!!!!!");
-    }
-  );
-
   willFocusSubscription = this.props.navigation.addListener(
     "willFocus",
     (payload) => {
-      console.debug("WillFocus!!!!!");
       this.fetchData();
     }
   );

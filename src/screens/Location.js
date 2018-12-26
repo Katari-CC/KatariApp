@@ -7,6 +7,7 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Card, Button, Icon, Avatar, Divider } from "react-native-elements";
 import firestore from "../utils/firestore";
@@ -121,65 +122,71 @@ class LocationScreen extends React.Component {
     return (
       <ScrollView>
         <View style={styles.location}>
-          <Text style={styles.detailTitle}>
-            {this.props.navigation.state.params.title}
-          </Text>
-          {this.props.navigation.state.params.image !== undefined ? (
-            // display image only if exist
-            <Image
-              style={styles.detailImage}
-              source={{ uri: this.props.navigation.state.params.image }}
-            />
-          ) : (
-            <View />
-          )}
-          <Text style={styles.detailText}>
-            {this.props.navigation.state.params.description}
-          </Text>
-          {this.state.isAddStoryFormVisible ? (
-            // DISPLAY THE NEW STORY FORM
-            <StoryForm
-              location={this.props.navigation.state.params.title}
-              toggleDisplayForm={this.toggleFormDisplay}
-              addStory={this.addStory}
-            />
-          ) : (
-            <View style={styles.storyContainer}>
-              {this.state.stories.length == 0 ? (
-                <Card containerStyle={styles.noStoryCard}>
-                  <Image
-                    style={{
-                      width: 120,
-                      height: 110,
-                    }}
-                    resizeMode="cover"
-                    source={require("../../assets/images/no_stories.png")}
-                  />
-                </Card>
-              ) : (
-                <View />
-              )}
-              {this.state.stories.map((story, index) => {
-                return (
-                  <StoryCard
-                    prevRoute="Location"
-                    key={index}
-                    story={story}
-                    navigation={this.props.navigation}
-                  />
-                );
-              })}
+          <KeyboardAvoidingView
+            style={styles.container}
+            behavior="padding"
+            enabled
+          >
+            <Text style={styles.detailTitle}>
+              {this.props.navigation.state.params.title}
+            </Text>
+            {this.props.navigation.state.params.image !== undefined ? (
+              // display image only if exist
+              <Image
+                style={styles.detailImage}
+                source={{ uri: this.props.navigation.state.params.image }}
+              />
+            ) : (
+              <View />
+            )}
+            <Text style={styles.detailText}>
+              {this.props.navigation.state.params.description}
+            </Text>
+            {this.state.isAddStoryFormVisible ? (
+              // DISPLAY THE NEW STORY FORM
+              <StoryForm
+                location={this.props.navigation.state.params.title}
+                toggleDisplayForm={this.toggleFormDisplay}
+                addStory={this.addStory}
+              />
+            ) : (
+              <View style={styles.storyContainer}>
+                {this.state.stories.length == 0 ? (
+                  <Card containerStyle={styles.noStoryCard}>
+                    <Image
+                      style={{
+                        width: 120,
+                        height: 110,
+                      }}
+                      resizeMode="cover"
+                      source={require("../../assets/images/no_stories.png")}
+                    />
+                  </Card>
+                ) : (
+                  <View />
+                )}
+                {this.state.stories.map((story, index) => {
+                  return (
+                    <StoryCard
+                      prevRoute="Location"
+                      key={index}
+                      story={story}
+                      navigation={this.props.navigation}
+                    />
+                  );
+                })}
 
-              <TouchableOpacity
-                // style={styles.addCard}
-                onPress={() => this.setState({ isAddStoryFormVisible: true })}
-              >
-                <Card containerStyle={styles.addCard}>
-                  <Text style={styles.addBtnText}>+</Text>
-                </Card>
-              </TouchableOpacity>
-            </View>
-          )}
+                <TouchableOpacity
+                  // style={styles.addCard}
+                  onPress={() => this.setState({ isAddStoryFormVisible: true })}
+                >
+                  <Card containerStyle={styles.addCard}>
+                    <Text style={styles.addBtnText}>+</Text>
+                  </Card>
+                </TouchableOpacity>
+              </View>
+            )}
+          </KeyboardAvoidingView>
         </View>
       </ScrollView>
     );
