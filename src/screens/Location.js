@@ -39,15 +39,12 @@ class LocationScreen extends React.Component {
     const p1 = firestore
       .collection("stories")
       .where("location", "==", this.props.navigation.state.params.title)
-      .get()
-      .then((snapshot) => {
+      .onSnapshot((snapshot) => {
         (snapshot || []).forEach((doc) => {
           let story = doc.data();
           story.id = doc.id;
           stories.push(story);
         });
-      })
-      .then(() => {
         const p2 = stories.map((story) =>
           firebase
             .storage()
