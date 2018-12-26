@@ -67,7 +67,7 @@ class StoryForm extends React.Component {
                   // Update the current HomeScreen with the newStory
                   let tempStory = newStory;
                   tempStory.photoURL = downloadURL;
-                  this.props.addStory(newStory);
+                  this.props.addStory(tempStory);
                 });
               })
               .catch((e) => {
