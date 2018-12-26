@@ -64,10 +64,12 @@ export default class AddLocation extends React.Component {
 
   componentDidMount() {
     if (this.isFirstLaunch) {
-      ToastAndroid.showWithGravity(
+      ToastAndroid.showWithGravityAndOffset(
         "Move the map to position the pin at the location you wish to add.",
         ToastAndroid.LONG,
-        ToastAndroid.CENTER
+        ToastAndroid.CENTER,
+        0,
+        20
       );
       this.isFirstLaunch = false;
     }

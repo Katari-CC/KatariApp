@@ -46,13 +46,16 @@ class Home extends React.Component {
       listKey: 1,
     };
     this.backupLocation = [];
-    this.animateToSmall = new Animated.Value(0);
-    this.animateToBig = new Animated.Value(1);
     this.changeBigImage = this.changeBigImage.bind(this);
     this.changeSmallImage = this.changeSmallImage.bind(this);
+    this.fetchData = this.fetchData.bind(this);
   }
 
   componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData = () => {
     newLocation = [];
     firestore
       .collection("locations")
@@ -72,20 +75,6 @@ class Home extends React.Component {
             width: Dimensions.get("window").width / 1.5,
             borderRadius: 5,
             margin: 2,
-            // transform: [
-            //   {
-            //     translateY: this.animateToSmall.interpolate({
-            //       inputRange: [0, 1],
-            //       outputRange: [0, 140]
-            //     })
-            //   },
-            //   {
-            //     scaleY: this.animateToSmall.interpolate({
-            //       inputRange: [0, 1],
-            //       outputRange: [1, .25]
-            //     })
-            //   }
-            // ]
           },
         });
         this.backupLocation = newLocation;
@@ -93,7 +82,7 @@ class Home extends React.Component {
       .catch((err) => {
         console.log("Error getting documents", err);
       });
-  }
+  };
 
   changeBigImage = () => {
     this.setState({
@@ -221,6 +210,21 @@ class Home extends React.Component {
       this.search.focus();
     }
   }
+
+  didBlurSubscription = this.props.navigation.addListener(
+    "didBlur",
+    (payload) => {
+      console.debug("didBlur!!!!!");
+    }
+  );
+
+  willFocusSubscription = this.props.navigation.addListener(
+    "willFocus",
+    (payload) => {
+      console.debug("WillFocus!!!!!");
+      this.fetchData();
+    }
+  );
 
   render() {
     console.log("Homescreen Rendering...");
