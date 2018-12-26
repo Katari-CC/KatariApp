@@ -146,10 +146,16 @@ class LocationScreen extends React.Component {
           ) : (
             <View style={styles.storyContainer}>
               {this.state.stories.length == 0 ? (
-                <Card
-                  title={"This location has no stories."}
-                  containerStyle={styles.storyCard}
-                />
+                <Card containerStyle={styles.noStoryCard}>
+                  <Image
+                    style={{
+                      width: 120,
+                      height: 110,
+                    }}
+                    resizeMode="cover"
+                    source={require("../../assets/images/no_stories.png")}
+                  />
+                </Card>
               ) : (
                 <View />
               )}
@@ -274,6 +280,16 @@ const styles = StyleSheet.create({
     // borderRadius: 100,
     // marginRight: 5,
     marginBottom: 20,
+  },
+  noStoryCard: {
+    // flexDirection: "column",
+    width: 150,
+    height: 130,
+    paddingTop: 10,
+    borderRadius: 20,
+    alignItems: "center",
+    elevation: 3,
+    marginBottom: 5,
   },
   inputCard: {
     flexDirection: "column",

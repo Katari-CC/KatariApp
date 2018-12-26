@@ -254,7 +254,6 @@ class Home extends React.Component {
                 source={require("../../assets/images/no_results.png")}
               />
             ) : (
-              //
               <FlatList
                 key={this.state.listKey}
                 style={styles.locationList}
@@ -331,10 +330,23 @@ class Home extends React.Component {
                     centerContent={true}
                   >
                     {this.state.stories.length == 0 ? (
+<<<<<<< HEAD
                       <Card
                         title={"This location has no stories."}
                         containerStyle={styles.storyCard}
                       />
+=======
+                      <Card containerStyle={styles.noStoryCard}>
+                        <Image
+                          style={{
+                            width: 120,
+                            height: 110,
+                          }}
+                          resizeMode="cover"
+                          source={require("../../assets/images/no_stories.png")}
+                        />
+                      </Card>
+>>>>>>> b5142484e3428c098d3954ed0796a84cac8e2050
                     ) : (
                       <View />
                     )}
@@ -397,16 +409,15 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     marginBottom: -80,
   },
-
-  // Horizonthal locations list
-  locationList: {
-    paddingTop: 60,
-    marginTop: 20,
-  },
   noResult: {
     marginTop: 90,
     height: Dimensions.get("window").height / 2,
     width: Dimensions.get("window").width,
+  },
+  // Horizonthal locations list
+  locationList: {
+    paddingTop: 60,
+    marginTop: 20,
   },
   storyList: {
     // paddingTop: 20,
