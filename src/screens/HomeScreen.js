@@ -48,41 +48,40 @@ class Home extends React.Component {
     this.backupLocation = [];
     this.changeBigImage = this.changeBigImage.bind(this);
     this.changeSmallImage = this.changeSmallImage.bind(this);
-    this.fetchData = this.fetchData.bind(this);
   }
 
   componentDidMount() {
-    this.fetchData();
-  }
-
-  fetchData = () => {
-    newLocation = [];
     firestore
       .collection("locations")
       // .where("image", ">=", "")
-      .get()
-      .then((snapshot) => {
-        (snapshot || []).forEach((doc) => {
-          let tempLocation = doc.data();
-          // Need to pass a key parameter to avoid warning
-          tempLocation.key = doc.id;
-          newLocation.push(tempLocation);
-        });
-        this.setState({
-          locations: newLocation,
-          imgListStyle: {
-            height: Dimensions.get("window").height / 1.4,
-            width: Dimensions.get("window").width / 1.5,
-            borderRadius: 5,
-            margin: 2,
-          },
-        });
-        this.backupLocation = newLocation;
-      })
-      .catch((err) => {
-        console.log("Error getting documents", err);
-      });
-  };
+      .onSnapshot(
+        (snapshot) => {
+          const newLocation = [];
+          (snapshot || []).forEach((doc) => {
+            let tempLocation = doc.data();
+            // Need to pass a key parameter to avoid warning
+            tempLocation.key = doc.id;
+            newLocation.push(tempLocation);
+          });
+          this.setState({
+            locations: newLocation,
+            imgListStyle: {
+              height: Dimensions.get("window").height / 1.4,
+              width: Dimensions.get("window").width / 1.5,
+              borderRadius: 5,
+              margin: 2,
+            },
+          });
+          this.backupLocation = newLocation;
+        },
+        (err) => {
+          console.log("Error getting documents", err);
+        }
+      );
+    // .catch((err) => {
+    //   console.log("Error getting documents", err);
+    // });
+  }
 
   changeBigImage = () => {
     this.setState({
@@ -210,13 +209,6 @@ class Home extends React.Component {
       this.search.focus();
     }
   }
-
-  willFocusSubscription = this.props.navigation.addListener(
-    "willFocus",
-    (payload) => {
-      this.fetchData();
-    }
-  );
 
   render() {
     console.log("Homescreen Rendering...");

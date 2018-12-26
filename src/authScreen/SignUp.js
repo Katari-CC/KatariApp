@@ -116,7 +116,10 @@ export default class SignUp extends React.Component {
           {this.state.errorMessage &&
             //   <Text style={{ color: "red", textAlign: "center" }}>{this.state.errorMessage}</Text>
             Alert.alert("Error filling out form.", this.state.errorMessage, [
-              { text: "OK", onPress: () => console.log("OK Pressed") },
+              {
+                text: "OK",
+                onPress: () => this.setState({ errorMessage: null }),
+              },
             ])}
           <View style={styles.imageContainer}>
             <Image
