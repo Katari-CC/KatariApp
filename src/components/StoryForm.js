@@ -6,6 +6,7 @@ import {
   Dimensions,
   TextInput,
   Alert,
+  TouchableOpacity,
 } from "react-native";
 
 import { TEXT_COLOR } from "../constants/Colors";
@@ -170,21 +171,35 @@ class StoryForm extends React.Component {
               onChangeText={(text) => this.setState({ newStoryText: text })}
             />
 
-            {this.state.newStoryImageURI ? (
-              <Image
-                style={styles.imgStory}
-                source={{ uri: this.state.newStoryImageURI }}
-              />
-            ) : (
-              <Text style={styles.textList}>No image</Text>
-            )}
-            <Button
-              title="Provide an Image"
-              buttonStyle={styles.button}
-              onPress={() => {
-                this.imageDialog();
-              }}
-            />
+            <View>
+              {this.state.newStoryImageURI ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    this.imageDialog();
+                  }}
+                >
+                  <Image
+                    style={styles.imgStory}
+                    source={{ uri: this.state.newStoryImageURI }}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.cameraButton}>
+                  <Icon
+                    style={{ marginRight: 20 }}
+                    reverse
+                    name="camera"
+                    type="font-awesome"
+                    color="#442C2E"
+                    onPress={() => {
+                      this.imageDialog();
+                    }}
+                  />
+                  <Text style={styles.textList}>No image</Text>
+                </View>
+              )}
+            </View>
+
             <Button
               title="Save your story"
               buttonStyle={styles.button}
@@ -218,7 +233,6 @@ var styles = StyleSheet.create({
     marginBottom: 5,
   },
   textList: {
-    marginTop: 20,
     fontWeight: "bold",
     color: "#442C2E",
   },
@@ -238,7 +252,15 @@ var styles = StyleSheet.create({
     paddingLeft: 50,
     paddingRight: 50,
   },
+  cameraButton: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    margin: 5,
+    // justifyContent: "",
+  },
   imgStory: {
+    marginTop: 10,
     width: 200,
     height: 150,
   },
