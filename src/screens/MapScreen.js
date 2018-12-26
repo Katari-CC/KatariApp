@@ -153,15 +153,16 @@ class Main extends React.Component {
           marker.longitude >= min.longitude
         ) {
           marker.isVisible = true;
-          visibleMarkers.push(marker);
+          //ENABLE TO SEE WHAT MARKERS ARE VISIBLE IN SCREEN
+          // visibleMarkers.push(marker);
         }
       }
       return marker;
     });
-    console.log(
-      "VISIBLE MARKERS",
-      visibleMarkers.map((marker) => marker.title)
-    );
+    // console.log(
+    //   "VISIBLE MARKERS",
+    //   visibleMarkers.map((marker) => marker.title)
+    // );
     this.setState({ markers });
   }
 

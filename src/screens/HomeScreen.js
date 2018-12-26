@@ -138,21 +138,18 @@ class Home extends React.Component {
           isAddStoryFormVisible: false,
         });
       }
-      const p1 = firestore
+      firestore
         .collection("stories")
         .where("location", "==", item.title)
-        .get()
-        .then((snapshot) => {
+        .onSnapshot((snapshot) => {
           stories = [];
           (snapshot || []).forEach((doc) => {
             let story = doc.data();
             story.id = doc.id;
             stories.push(story);
           });
-          return stories;
-        })
-        .then((stories) => {
           this.setState({ stories });
+          return stories;
         });
     }
   };
