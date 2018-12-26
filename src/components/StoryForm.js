@@ -63,14 +63,19 @@ class StoryForm extends React.Component {
                 snapshot.ref.getDownloadURL().then((downloadURL) => {
                   console.log("Image Available at: ", downloadURL);
                   this.addURL(downloadURL, docRef.id);
+                  // Update the current HomeScreen with the newStory
+                  let tempStory = newStory;
+                  tempStory.photoURL = downloadURL;
+                  this.props.addStory(newStory);
                 });
               })
               .catch((e) => {
                 console.log(e);
                 return null;
               });
+          } else {
+            this.props.addStory(newStory);
           }
-          this.props.addStory(newStory);
           this.props.toggleDisplayForm();
         });
     } else {
