@@ -66,7 +66,7 @@ export default class SignUp extends React.Component {
         .createUserWithEmailAndPassword(email, password)
         .then((user) => {
           // Once Signup is successful
-          console.log("Signup Successfull");
+          console.log("Signup Successful");
           // Get the current user object
           const currentUser = firebase.auth().currentUser;
           // then update the displayName
