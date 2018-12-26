@@ -139,8 +139,7 @@ class Home extends React.Component {
       firestore
         .collection("stories")
         .where("location", "==", item.title)
-        .get()
-        .then((snapshot) => {
+        .onSnapshot((snapshot) => {
           stories = [];
           (snapshot || []).forEach((doc) => {
             let story = doc.data();
