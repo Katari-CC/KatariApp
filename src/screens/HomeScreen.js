@@ -53,46 +53,36 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    newLocation = [];
     firestore
       .collection("locations")
       // .where("image", ">=", "")
-      .get()
-      .then((snapshot) => {
-        (snapshot || []).forEach((doc) => {
-          let tempLocation = doc.data();
-          // Need to pass a key parameter to avoid warning
-          tempLocation.key = doc.id;
-          newLocation.push(tempLocation);
-        });
-        this.setState({
-          locations: newLocation,
-          imgListStyle: {
-            height: Dimensions.get("window").height / 1.4,
-            width: Dimensions.get("window").width / 1.5,
-            borderRadius: 5,
-            margin: 2,
-            // transform: [
-            //   {
-            //     translateY: this.animateToSmall.interpolate({
-            //       inputRange: [0, 1],
-            //       outputRange: [0, 140]
-            //     })
-            //   },
-            //   {
-            //     scaleY: this.animateToSmall.interpolate({
-            //       inputRange: [0, 1],
-            //       outputRange: [1, .25]
-            //     })
-            //   }
-            // ]
-          },
-        });
-        this.backupLocation = newLocation;
-      })
-      .catch((err) => {
-        console.log("Error getting documents", err);
-      });
+      .onSnapshot(
+        (snapshot) => {
+          const newLocation = [];
+          (snapshot || []).forEach((doc) => {
+            let tempLocation = doc.data();
+            // Need to pass a key parameter to avoid warning
+            tempLocation.key = doc.id;
+            newLocation.push(tempLocation);
+          });
+          this.setState({
+            locations: newLocation,
+            imgListStyle: {
+              height: Dimensions.get("window").height / 1.4,
+              width: Dimensions.get("window").width / 1.5,
+              borderRadius: 5,
+              margin: 2,
+            },
+          });
+          this.backupLocation = newLocation;
+        },
+        (err) => {
+          console.log("Error getting documents", err);
+        }
+      );
+    // .catch((err) => {
+    //   console.log("Error getting documents", err);
+    // });
   }
 
   changeBigImage = () => {
