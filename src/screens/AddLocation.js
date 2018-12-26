@@ -60,6 +60,8 @@ export default class AddLocation extends React.Component {
     this.onRegionChange = this.onRegionChange.bind(this);
     this.backToMap = this.backToMap.bind(this);
     this.renderMarkers = this.renderMarkers.bind(this);
+    this.imageDialog = this.imageDialog.bind(this);
+    this.addURL = this.addURL.bind(this);
   }
 
   componentDidMount() {
@@ -322,21 +324,34 @@ export default class AddLocation extends React.Component {
                   }
                 />
 
-                {this.state.newLocationImageURI ? (
-                  <Image
-                    style={styles.imgLocation}
-                    source={{ uri: this.state.newLocationImageURI }}
-                  />
-                ) : (
-                  <Text style={styles.textList}>No Image</Text>
-                )}
-                <Button
-                  title="Provide an Image"
-                  buttonStyle={styles.button}
-                  onPress={() => {
-                    this.imageDialog();
-                  }}
-                />
+                <View>
+                  {this.state.newLocationImageURI ? (
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.imageDialog();
+                      }}
+                    >
+                      <Image
+                        style={styles.imgStory}
+                        source={{ uri: this.state.newLocationImageURI }}
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <View style={styles.cameraButton}>
+                      <Icon
+                        style={{ marginRight: 20 }}
+                        reverse
+                        name="camera"
+                        type="font-awesome"
+                        color="#442C2E"
+                        onPress={() => {
+                          this.imageDialog();
+                        }}
+                      />
+                      <Text style={styles.textList}>No image</Text>
+                    </View>
+                  )}
+                </View>
                 <Button
                   buttonStyle={styles.button}
                   title="Save location"
@@ -426,12 +441,23 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     color: "#56b1bf",
   },
+  cameraButton: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    margin: 5,
+    // justifyContent: "",
+  },
   modalContainer: {
     justifyContent: "center",
     alignItems: "center",
   },
+  imgStory: {
+    marginTop: 10,
+    width: 200,
+    height: 150,
+  },
   textList: {
-    marginTop: 20,
     fontWeight: "bold",
     color: "#442C2E",
   },

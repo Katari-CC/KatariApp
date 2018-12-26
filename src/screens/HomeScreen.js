@@ -46,8 +46,6 @@ class Home extends React.Component {
       listKey: 1,
     };
     this.backupLocation = [];
-    this.animateToSmall = new Animated.Value(0);
-    this.animateToBig = new Animated.Value(1);
     this.changeBigImage = this.changeBigImage.bind(this);
     this.changeSmallImage = this.changeSmallImage.bind(this);
   }
