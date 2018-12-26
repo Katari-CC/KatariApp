@@ -330,12 +330,6 @@ class Home extends React.Component {
                     centerContent={true}
                   >
                     {this.state.stories.length == 0 ? (
-<<<<<<< HEAD
-                      <Card
-                        title={"This location has no stories."}
-                        containerStyle={styles.storyCard}
-                      />
-=======
                       <Card containerStyle={styles.noStoryCard}>
                         <Image
                           style={{
@@ -346,7 +340,6 @@ class Home extends React.Component {
                           source={require("../../assets/images/no_stories.png")}
                         />
                       </Card>
->>>>>>> b5142484e3428c098d3954ed0796a84cac8e2050
                     ) : (
                       <View />
                     )}
