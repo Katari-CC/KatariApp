@@ -263,6 +263,7 @@ var styles = StyleSheet.create({
     paddingLeft: 8,
     borderRadius: 8,
     textAlignVertical: "top",
+    marginBottom: "10",
   },
   storytitle: {
     width: Dimensions.get("window").width - 40,

@@ -50,8 +50,10 @@ export default class Story extends React.Component {
 
   displayOptions = () => {
     Alert.alert(
-      "Options",
-      "Choose an option:",
+      // "Options",
+      // "Choose an option:",
+      "Delete Story?",
+      "",
       [
         // {
         //   text: "Edit Story",
@@ -92,7 +94,8 @@ export default class Story extends React.Component {
             <View style={{ position: "absolute", right: 10, zIndex: 10 }}>
               <Icon
                 // style={{ zIndex: 10 }}
-                name="md-settings"
+                // name="md-settings"
+                name="md-trash"
                 type="ionicon"
                 color={"#442C2E"}
                 onPress={() => this.displayOptions()}
@@ -188,6 +191,7 @@ const styles = StyleSheet.create({
     height: Dimensions.get("screen").height - 130,
     marginTop: 30,
     backgroundColor: "#56b1bf",
+    // backgroundColor: "grey",
   },
   cardContent: {
     marginTop: 30,

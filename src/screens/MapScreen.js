@@ -52,11 +52,9 @@ class Main extends React.Component {
 
   componentDidMount() {
     getLocationPermission();
-    let markers = [];
-    firestore
-      .collection("locations")
-      .get()
-      .then((snapshot) => {
+    firestore.collection("locations").onSnapshot(
+      (snapshot) => {
+        const markers = [];
         (snapshot || []).forEach((doc) => {
           const marker = doc.data();
           marker["coordinate"] = {
@@ -68,11 +66,11 @@ class Main extends React.Component {
         this.setState({
           markers,
         });
-        this.forceUpdate();
-      })
-      .catch((err) => {
+      },
+      (err) => {
         console.log("Error getting documents", err);
-      });
+      }
+    );
 
     const options = {
       enableHighAccuracy: true,

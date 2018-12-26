@@ -122,7 +122,7 @@ export default class AddLocation extends React.Component {
                   this.addURL(downloadURL, docRef.id);
                   newLocation.image = downloadURL;
                   this.setState({
-                    markers: [...this.state.markers, newLocation],
+                    // markers: [...this.state.markers, newLocation],
                     modalVisible: false,
                     selectedCategory: undefined,
                     newLocationDescription: undefined,
@@ -144,7 +144,7 @@ export default class AddLocation extends React.Component {
               newLocationTitle: undefined,
               newLocationImage: undefined,
             });
-            this.backToMap(newLocation);
+            this.backToMap();
           }
         })
         .catch((e) => {
