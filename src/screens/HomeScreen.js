@@ -254,7 +254,6 @@ class Home extends React.Component {
                 source={require("../../assets/images/no_results.png")}
               />
             ) : (
-              //
               <FlatList
                 key={this.state.listKey}
                 style={styles.locationList}
@@ -301,7 +300,6 @@ class Home extends React.Component {
               }}
             />
           </View>
-
           <ScrollView style={styles.locationDetail}>
             <View style={styles.locationDetail}>
               {this.state.isAddStoryFormVisible ? (
@@ -311,50 +309,37 @@ class Home extends React.Component {
                   toggleDisplayForm={this.toggleFormDisplay}
                   addStory={this.addStory}
                 />
-              </View>
-            ) : this.state.locationSelected ? (
-              // DISPLAY THE DESCRIPTION TEXT
-              <View style={styles.storyContainer}>
-                <Panel
-                  style={styles.storyList}
-                  title={this.state.selectedLocation.title}
-                >
-                  <Text style={styles.detailText}>
-                    {this.state.selectedLocation.description}
-                  </Text>
-                </Panel>
-
-                <ScrollView
-                  style={styles.storyList}
-                  horizontal={true}
-                  showsHorizontalScrollIndicator={false}
-                  removeClippedSubviews
-                  bounce={true}
-                  overScrollMode="always"
-                  centerContent={true}
-                >
-                  {this.state.stories.length == 0 ? (
-                    <Card containerStyle={styles.noStoryCard}>
-                      <Image
-                        style={{
-                          width: 120,
-                          height: 110,
-                        }}
-                        resizeMode="cover"
-                        source={require("../../assets/images/no_stories.png")}
-                      />
-                    </Card>
-                  ) : (
-                    <View />
-                  )}
-                  {this.state.stories.map((story, index) => {
-                    return (
-                      <StoryCard
-                        prevRoute="Home"
-                        key={index}
-                        story={story}
-                        navigation={this.props.navigation}
-                      />
+              ) : this.state.locationSelected ? (
+                // DISPLAY THE DESCRIPTION TEXT
+                <View style={styles.storyContainer}>
+                  <Panel
+                    style={styles.storyList}
+                    title={this.state.selectedLocation.title}
+                  >
+                    <Text style={styles.detailText}>
+                      {this.state.selectedLocation.description}
+                    </Text>
+                  </Panel>
+                  <ScrollView
+                    style={styles.storyList}
+                    horizontal={true}
+                    showsHorizontalScrollIndicator={false}
+                    removeClippedSubviews
+                    bounce={true}
+                    overScrollMode="always"
+                    centerContent={true}
+                  >
+                    {this.state.stories.length == 0 ? (
+                      <Card containerStyle={styles.noStoryCard}>
+                        <Image
+                          style={{
+                            width: 120,
+                            height: 110,
+                          }}
+                          resizeMode="cover"
+                          source={require("../../assets/images/no_stories.png")}
+                        />
+                      </Card>
                     ) : (
                       <View />
                     )}
@@ -417,16 +402,15 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     marginBottom: -80,
   },
-
-  // Horizonthal locations list
-  locationList: {
-    paddingTop: 60,
-    marginTop: 20,
-  },
   noResult: {
     marginTop: 90,
     height: Dimensions.get("window").height / 2,
     width: Dimensions.get("window").width,
+  },
+  // Horizonthal locations list
+  locationList: {
+    paddingTop: 60,
+    marginTop: 20,
   },
   storyList: {
     // paddingTop: 20,
