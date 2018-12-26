@@ -116,7 +116,10 @@ export default class AddLocation extends React.Component {
                 snapshot.ref.getDownloadURL().then((downloadURL) => {
                   console.log("Image Available at: ", downloadURL);
                   // update the newLocation document with the url of the photo
-                  this.addURL(downloadURL, docRef.id);
+                  this.addURL(downloadURL, docRef.id, {
+                    ...newLocation,
+                    image: downloadURL,
+                  });
                 });
               })
               .catch((e) => {
@@ -126,7 +129,6 @@ export default class AddLocation extends React.Component {
           }
           this.setState({
             modalVisible: false,
-            markers: [...this.state.markers, newLocation],
             selectedCategory: undefined,
             newLocationDescription: undefined,
             newLocationTitle: undefined,
@@ -191,7 +193,7 @@ export default class AddLocation extends React.Component {
     this.props.navigation.dispatch(navigateAction);
   }
 
-  addURL = (url, locationID) => {
+  addURL = (url, locationID, newLocation) => {
     console.log("Update the url of the picture for location on the DB.");
     firestore
       .collection("locations")

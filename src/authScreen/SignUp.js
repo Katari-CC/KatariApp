@@ -24,6 +24,9 @@ import firestore from "../utils/firestore";
 //   statusCodes
 // } from "react-native-google-signin";
 
+const AVATAR_URL =
+  "https://firebasestorage.googleapis.com/v0/b/storymapapp.appspot.com/o/avatar.png?alt=media&token=1f953209-d7c9-41ae-a46f-787fa25d579c";
+
 export default class SignUp extends React.Component {
   state = {
     email: "",
@@ -62,7 +65,7 @@ export default class SignUp extends React.Component {
         .createUserWithEmailAndPassword(email, password)
         .then((user) => {
           // Once Signup is successful
-          console.log("Signup Successfull");
+          console.log("Signup Successful");
           // Get the current user object
           const currentUser = firebase.auth().currentUser;
           // then update the displayName
