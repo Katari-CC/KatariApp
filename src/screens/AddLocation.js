@@ -64,10 +64,12 @@ export default class AddLocation extends React.Component {
 
   componentDidMount() {
     if (this.isFirstLaunch) {
-      ToastAndroid.showWithGravity(
+      ToastAndroid.showWithGravityAndOffset(
         "Move the map to position the pin at the location you wish to add.",
         ToastAndroid.LONG,
-        ToastAndroid.CENTER
+        ToastAndroid.CENTER,
+        0,
+        20
       );
       this.isFirstLaunch = false;
     }
@@ -77,7 +79,8 @@ export default class AddLocation extends React.Component {
     if (
       !this.state.newLocationTitle ||
       !this.state.selectedCategory ||
-      !this.state.newLocationDescription
+      !this.state.newLocationDescription ||
+      !this.state.newLocationImageURI
     ) {
       Alert.alert(
         "Missing some field(s)!",
@@ -116,31 +119,39 @@ export default class AddLocation extends React.Component {
                 snapshot.ref.getDownloadURL().then((downloadURL) => {
                   console.log("Image Available at: ", downloadURL);
                   // update the newLocation document with the url of the photo
-                  this.addURL(downloadURL, docRef.id, {
-                    ...newLocation,
-                    image: downloadURL,
+                  this.addURL(downloadURL, docRef.id);
+                  newLocation.image = downloadURL;
+                  this.setState({
+                    markers: [...this.state.markers, newLocation],
+                    modalVisible: false,
+                    selectedCategory: undefined,
+                    newLocationDescription: undefined,
+                    newLocationTitle: undefined,
+                    newLocationImage: undefined,
                   });
+                  this.backToMap(newLocation);
                 });
               })
               .catch((e) => {
                 console.log(e);
                 return null;
               });
+          } else {
+            this.setState({
+              modalVisible: false,
+              selectedCategory: undefined,
+              newLocationDescription: undefined,
+              newLocationTitle: undefined,
+              newLocationImage: undefined,
+            });
+            this.backToMap(newLocation);
           }
-          this.setState({
-            modalVisible: false,
-            selectedCategory: undefined,
-            newLocationDescription: undefined,
-            newLocationTitle: undefined,
-            newLocationImage: undefined,
-          });
         })
         .catch((e) => {
           console.log(e);
           return null;
         });
     }
-    // this.backToMap(newLocation);
   }
 
   onRegionChange(region) {
@@ -201,9 +212,6 @@ export default class AddLocation extends React.Component {
       .update({ image: url })
       .then(() => {
         console.log("Update Successful");
-        this.setState({
-          markers: [...this.state.markers, newLocation],
-        });
       })
       .catch((e) => {
         console.log(e);
