@@ -4,10 +4,10 @@
 
 # KATARI: Life to Location
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Katari-CC/KatariApp/master/graphics/icon_white.png">
+  <img src="https://raw.githubusercontent.com/Katari-CC/KatariApp/master/graphics/icon_readme.png">
 </p>  
 
-##### This app was created during our time in Code Chrysalis.
+##### This app was created during our time as students in Code Chrysalis.
 
 Looking for information and stories from locals? KATARI is a crowd-sourced information exchange app that provides a platform for users to post pictures, location information, and most importantly stories about destinations that can range from super touristy to an undiscovered treasure. With a Japanese meaning that stands for deep narrative, KATARI wants you to dive into the lives of locals as they tell you the history of certain monuments, give tips on the best way to experience a restaurant, and even share a funny story related to their personal experiences at their favourite spot. Join us and make a platform that no tourist site can ever achieve! For the people, by the people. Bring life back to location.
 
