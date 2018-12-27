@@ -5,7 +5,7 @@
     "privacy": "public",
     "sdkVersion": "31.0.0",
     "platforms": ["ios", "android"],
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon_white.png",
     "splash": {
@@ -19,7 +19,8 @@
     "assetBundlePatterns": ["assets/*"],
     "android": {
       "package": "com.codechrysalis.katari",
-      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
+      "versionCode": 3
     },
     "ios": {
       "supportsTablet": true,
