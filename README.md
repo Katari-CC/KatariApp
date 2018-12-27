@@ -20,3 +20,5 @@ https://play.google.com/store/apps/details?id=com.codechrysalis.katari
 
 To use our app from GitHub, make sure you install the Expo app.
 "yarn start" to open the local host and Metro Bundler and scan the QR code when the message "Tunnel ready." is displayed.
+
+Created by @Brend0n, @chcliu, @SoraMaruyama aka Team Katari.
