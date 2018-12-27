@@ -48,11 +48,12 @@ class Main extends React.Component {
     this.onRegionChange = this.onRegionChange.bind(this);
     this.handleOnNavigateBack = this.handleOnNavigateBack.bind(this);
     this.renderMarkers = this.renderMarkers.bind(this);
+    this.unsubscribe = null;
   }
 
   componentDidMount() {
     getLocationPermission();
-    firestore.collection("locations").onSnapshot(
+    this.unsubscribe = firestore.collection("locations").onSnapshot(
       (snapshot) => {
         const markers = [];
         (snapshot || []).forEach((doc) => {
@@ -119,6 +120,12 @@ class Main extends React.Component {
     // );
 
     this.renderMarkers();
+  }
+
+  componentWillUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   }
 
   toAddLocation() {
