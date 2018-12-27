@@ -48,10 +48,12 @@ class Home extends React.Component {
     this.backupLocation = [];
     this.changeBigImage = this.changeBigImage.bind(this);
     this.changeSmallImage = this.changeSmallImage.bind(this);
+    this.unsubscribe = null;
+    this.itemListUnsubscribe = null;
   }
 
   componentDidMount() {
-    firestore
+    this.unsubscribe = firestore
       .collection("locations")
       // .where("image", ">=", "")
       .onSnapshot(
@@ -78,9 +80,12 @@ class Home extends React.Component {
           console.log("Error getting documents", err);
         }
       );
-    // .catch((err) => {
-    //   console.log("Error getting documents", err);
-    // });
+  }
+
+  componentWillUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   }
 
   changeBigImage = () => {
@@ -124,6 +129,9 @@ class Home extends React.Component {
       this.state.selectedLocation.key === item.key &&
       this.state.isImageSmall
     ) {
+      if (!this.itemListUnsubscribe) {
+        this.itemListUnsubscribe();
+      }
       this.changeBigImage();
     } else {
       if (!this.state.isImageSmall) {
@@ -136,7 +144,7 @@ class Home extends React.Component {
           isAddStoryFormVisible: false,
         });
       }
-      firestore
+      this.itemListUnsubscribe = firestore
         .collection("stories")
         .where("location", "==", item.title)
         .onSnapshot((snapshot) => {
