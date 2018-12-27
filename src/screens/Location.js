@@ -28,19 +28,17 @@ class LocationScreen extends React.Component {
       newStoryTitle: "",
       newStoryText: "",
     };
-    // this.saveNewStory = this.saveNewStory.bind(this);
     this.onStoryPress = this.onStoryPress.bind(this);
     this.toggleFormDisplay = this.toggleFormDisplay.bind(this);
-    this.addStory = this.addStory.bind(this);
+    this.unsubscribe = null;
   }
 
   componentDidMount() {
-    stories = [];
-    // let avatar;
-    const p1 = firestore
+    this.unsubscribe = firestore
       .collection("stories")
       .where("location", "==", this.props.navigation.state.params.title)
       .onSnapshot((snapshot) => {
+        const stories = [];
         (snapshot || []).forEach((doc) => {
           let story = doc.data();
           story.id = doc.id;
@@ -68,6 +66,12 @@ class LocationScreen extends React.Component {
       });
   }
 
+  componentWillUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
+  }
+
   onStoryPress(story) {
     const navigateAction = NavigationActions.navigate({
       routeName: "Story",
@@ -86,34 +90,6 @@ class LocationScreen extends React.Component {
   toggleFormDisplay = () => {
     this.setState({ isAddStoryFormVisible: !this.state.isAddStoryFormVisible });
   };
-
-  addStory = (newStory) => {
-    const tempStoryList = this.state.stories;
-    tempStoryList.push(newStory);
-    this.setState({
-      stories: tempStoryList,
-    });
-  };
-
-  // saveNewStory() {
-  //   const newStory = {
-  //     userID: firebase.auth().currentUser.uid,
-  //     title: this.state.newStoryTitle,
-  //     story: this.state.newStoryText,
-  //     location: this.props.navigation.state.params.title,
-  //     username: firebase.auth().currentUser.displayName,
-  //   };
-  //   firestore
-  //     .collection("stories")
-  //     .doc()
-  //     .set(newStory)
-  //     .then(() => {
-  //       this.setState({
-  //         isAddStoryFormVisible: false,
-  //         stories: [...this.state.stories, newStory],
-  //       });
-  //     });
-  // }
 
   render() {
     return (
@@ -144,7 +120,6 @@ class LocationScreen extends React.Component {
               <StoryForm
                 location={this.props.navigation.state.params.title}
                 toggleDisplayForm={this.toggleFormDisplay}
-                addStory={this.addStory}
               />
             ) : (
               <View style={styles.storyContainer}>
